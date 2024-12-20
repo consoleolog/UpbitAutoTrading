@@ -1,4 +1,4 @@
-package com.consoleolog.v1.service.impl;
+package com.consoleolog.v1.common.component;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -7,7 +7,7 @@ import com.consoleolog.v1.model.dto.*;
 import com.consoleolog.v1.model.dto.type.IntervalType;
 import com.consoleolog.v1.model.dto.type.OrderType;
 import com.consoleolog.v1.model.dto.type.SideType;
-import com.consoleolog.v1.service.UpbitService;
+
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -26,8 +25,8 @@ import java.util.*;
 
 @RequiredArgsConstructor
 @Service
-public class UpbitServiceImpl implements UpbitService {
-    
+public class UpbitComponent {
+
     private final AppProperties appProperties;
     private final RestTemplate restTemplate;
     private final ParameterNamesModule parameterNamesModule;
@@ -42,7 +41,6 @@ public class UpbitServiceImpl implements UpbitService {
         return appProperties.getUpbit().getServerUrl();
     }
 
-    @Override
     public List<CurrencyDto> getCurrencies(){
         Algorithm algorithm = Algorithm.HMAC256(appProperties.getUpbit().getSecretKey());
         String jwtToken = JWT.create()
@@ -72,7 +70,6 @@ public class UpbitServiceImpl implements UpbitService {
         }
     }
 
-    @Override
     public CurrencyDto getCurrency(String currency){
         List<CurrencyDto> currencies = getCurrencies();
 
@@ -84,7 +81,6 @@ public class UpbitServiceImpl implements UpbitService {
         throw new RuntimeException("Currency not found");
     }
 
-    @Override
     public OrderResDto createOrder(OrderReqDto orderReqDto) throws NoSuchAlgorithmException {
 
         Map<String, Object> params = createOrdParams(orderReqDto);
@@ -127,7 +123,7 @@ public class UpbitServiceImpl implements UpbitService {
         return response.getBody();
     }
 
-    private static Map<String, Object> createOrdParams(OrderReqDto orderReqDto) {
+    private Map<String, Object> createOrdParams(OrderReqDto orderReqDto) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("market", orderReqDto.getMarket());
@@ -150,7 +146,6 @@ public class UpbitServiceImpl implements UpbitService {
     }
 
 
-    @Override
     public List<CandleResDto> getCandles(CandleReqDto candleReqDto) {
 
         String url = createUrl(candleReqDto);
