@@ -50,7 +50,7 @@ class UpbitProviderV2(UpbitDocument):
         self._print_result(result)
         return result
 
-    def get_currency(self, ticker) -> int:
+    def get_currency(self, ticker) -> float:
         payload = {
             'access_key': access_key,
             'nonce': str(uuid.uuid4()),
@@ -65,7 +65,7 @@ class UpbitProviderV2(UpbitDocument):
         for b in balances:
             if b['currency'] == ticker:
                 self._print_result(b['balance'])
-                return int(b['balance'])
+                return float(b['balance'])
             else:
                 return 0
 
@@ -98,7 +98,7 @@ class UpbitProviderV2(UpbitDocument):
         try:
             response = requests.get(url, params=params, headers=headers)
             result = response.json()
-            self._print_result(result)
+            # self._print_result(result)
             return result
         except Exception as err:
             self.logger.error(err)

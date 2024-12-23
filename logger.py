@@ -1,6 +1,7 @@
 import logging
 import os
-from logging.handlers import RotatingFileHandler
+import time
+from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
 
 
 class Logger:
@@ -110,3 +111,67 @@ class Logger:
             cls.HANDLER.close()
 
         cls.HANDLER = new_file_handler
+
+class SafeRotatingFileHandler(TimedRotatingFileHandler):
+
+    def __init__(
+            self,
+            filename,
+            where='h',
+            interval=1,
+            backup_count=0,
+            encoding=None,
+            delay=False,
+            utc=False,
+    ):
+        TimedRotatingFileHandler.__init__(
+            self,
+            filename,
+            where,
+            interval,
+            backup_count,
+            encoding,
+            delay,
+            utc
+        )
+
+    def do_rollover(self):
+        if self.stream:
+            self.stream.close()
+            self.stream = None
+        current_time = int(time.time())
+        dst_now = time.localtime(current_time)[-1]
+        t = self.rolloverAt - self.interval
+        if self.utc:
+            time_tuple = time.gmtime(t)
+        else:
+            time_tuple = time.localtime(t)
+            dst_then = time_tuple[-1]
+            if dst_now != dst_then:
+                if dst_now:
+                    addend = 3600
+                else:
+                    addend = -3600
+                time_tuple = time.localtime(t + addend)
+        dfn = self.baseFilename + "," + time.strftime(self.suffix, time_tuple)
+
+        if not os.path.exists(dfn) and os.path.exists(self.baseFilename):
+            os.rename(self.baseFilename, dfn)
+        if self.backupCount > 0:
+            for s in self.getFilesToDelete():
+                os.rename(s)
+        if not self.delay:
+            self.mode = "a"
+            self.stream = self._open()
+        new_rollover_at = self.computeRollover(current_time)
+        while new_rollover_at <= current_time:
+            new_rollover_at = new_rollover_at + self.interval
+        if self.when == "MIDNIGHT" or self.when.startswith("`") and not self.utc:
+            dst_at_rollover = time.localtime(new_rollover_at)[-1]
+            if dst_now != dst_at_rollover:
+                if not dst_now:
+                    addend = -3600
+                else:
+                    addend = 3600
+                new_rollover_at += addend
+        self.rolloverAt = new_rollover_at
