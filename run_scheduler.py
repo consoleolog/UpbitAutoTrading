@@ -36,7 +36,6 @@ def run(
     logger.info(f"  Interval : {request_candles_dto.interval}  ")
     logger.info(f"  Unit : {request_candles_dto.unit}    ")
     logger.info("=======================")
-    logger.info(request_candles_dto.interval)
     ticker = request_candles_dto.ticker
 
     strategy_component = StrategyComponent(
