@@ -32,7 +32,6 @@ class UpbitProviderV2(UpbitDocument):
         self.logger.debug("=============")
 
     def get_currencies(self) -> list[dict]:
-
         payload = {
             'access_key': access_key,
             'nonce': str(uuid.uuid4()),
