@@ -6,10 +6,3 @@ services:
     ports:
       - "8000:8000"
     build: .
-    develop:
-      watch:
-        - action: sync+restart
-          path: .
-          target: /app
-        - action: rebuild
-          path: requirement.txt
