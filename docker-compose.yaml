@@ -11,6 +11,5 @@ services:
         - action: sync+restart
           path: .
           target: /app
-
         - action: rebuild
           path: requirement.txt
