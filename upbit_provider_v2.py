@@ -22,7 +22,6 @@ access_key = os.environ['UPBIT_OPEN_API_ACCESS_KEY']
 secret_key = os.environ['UPBIT_OPEN_API_SECRET_KEY']
 server_url = os.environ['UPBIT_OPEN_API_SERVER_URL']
 
-
 class UpbitProviderV2(UpbitDocument):
     def __init__(self):
         self.logger = Logger().get_logger(__class__.__name__)
