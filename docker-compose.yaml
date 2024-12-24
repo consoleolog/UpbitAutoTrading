@@ -1,8 +1,6 @@
 services:
   server-container:
     image: upbit_trading:v1
-    env_file:
-      - .env
     ports:
       - "8000:8000"
     command: uvicorn main:app --host 0.0.0.0 --port 8000
