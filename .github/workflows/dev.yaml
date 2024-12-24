@@ -1,0 +1,18 @@
+name: dev-workflow
+
+on:
+  push:
+    - develop
+
+jobs:
+  SSH:
+    runs-on: ubuntu-20.04
+      - uses: actions/checkout@v3
+        name: ssh to compute engine
+        uses: appleboy/ssh-action@master
+        with:
+          key: ${{secrets.SSH_KEY}}
+          host: ${{secrets.HOST}}
+          username: ${{secrets.USER}}
+          script:
+            mkdir test

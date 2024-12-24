@@ -1,8 +1,14 @@
 import logging
 import os
-import time
-from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
+import smtplib
+from email import encoders
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+from logging.handlers import RotatingFileHandler
 
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class Logger:
 
@@ -112,66 +118,18 @@ class Logger:
 
         cls.HANDLER = new_file_handler
 
-class SafeRotatingFileHandler(TimedRotatingFileHandler):
-
-    def __init__(
-            self,
-            filename,
-            where='h',
-            interval=1,
-            backup_count=0,
-            encoding=None,
-            delay=False,
-            utc=False,
-    ):
-        TimedRotatingFileHandler.__init__(
-            self,
-            filename,
-            where,
-            interval,
-            backup_count,
-            encoding,
-            delay,
-            utc
-        )
-
-    def do_rollover(self):
-        if self.stream:
-            self.stream.close()
-            self.stream = None
-        current_time = int(time.time())
-        dst_now = time.localtime(current_time)[-1]
-        t = self.rolloverAt - self.interval
-        if self.utc:
-            time_tuple = time.gmtime(t)
-        else:
-            time_tuple = time.localtime(t)
-            dst_then = time_tuple[-1]
-            if dst_now != dst_then:
-                if dst_now:
-                    addend = 3600
-                else:
-                    addend = -3600
-                time_tuple = time.localtime(t + addend)
-        dfn = self.baseFilename + "," + time.strftime(self.suffix, time_tuple)
-
-        if not os.path.exists(dfn) and os.path.exists(self.baseFilename):
-            os.rename(self.baseFilename, dfn)
-        if self.backupCount > 0:
-            for s in self.getFilesToDelete():
-                os.rename(s)
-        if not self.delay:
-            self.mode = "a"
-            self.stream = self._open()
-        new_rollover_at = self.computeRollover(current_time)
-        while new_rollover_at <= current_time:
-            new_rollover_at = new_rollover_at + self.interval
-        if self.when == "MIDNIGHT" or self.when.startswith("`") and not self.utc:
-            dst_at_rollover = time.localtime(new_rollover_at)[-1]
-            if dst_now != dst_at_rollover:
-                if not dst_now:
-                    addend = -3600
-                else:
-                    addend = 3600
-                new_rollover_at += addend
-        self.rolloverAt = new_rollover_at
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = '[Upbit Auto Trading] 로그 파일 백업'
+        msg['From'] = os.getenv('SMTP_FROM')
+        msg['To'] = os.getenv('SMTP_TO')
+        with open(cls.LOG_FILE, 'rb') as handler:
+            file = MIMEBase('application', 'octet-stream')
+            file.set_payload(handler.read())
+            encoders.encode_base64(file)
+            file.add_header("Content-Disposition", f'attachment; filename="{log_file}"')
+            msg.attach(file)
+        s = smtplib.SMTP(os.getenv('SMTP_HOST'), os.getenv('SMTP_PORT') or 587)
+        s.starttls()
+        s.login(os.getenv("SMTP_ID"), os.getenv("SMTP_PASSWORD"))
+        s.sendmail(msg['From'], msg['To'], msg.as_string())
+        s.close()
