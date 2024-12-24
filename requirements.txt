@@ -1,8 +1,7 @@
 pyupbit~=0.2.34
 pandas~=2.2.3
 apscheduler~=3.10.4
-psycopg2~=2.9.10
+psycopg2-binary
 python-dotenv~=1.0.1
-psycopg[binary, pool]
 fastapi~=0.115.2
 requests~=2.32.3
