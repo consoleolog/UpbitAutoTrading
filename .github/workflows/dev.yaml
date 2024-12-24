@@ -7,8 +7,10 @@ on:
 jobs:
   SSH:
     runs-on: ubuntu-20.04
+
+    steps:
       - uses: actions/checkout@v3
-        name: ssh to compute engine
+      - name: ssh to compute engine
         uses: appleboy/ssh-action@master
         with:
           key: ${{secrets.SSH_KEY}}
