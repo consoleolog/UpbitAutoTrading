@@ -161,116 +161,116 @@ def run(
 
 scheduler = BackgroundScheduler()
 
-scheduler.add_job(run, "interval", seconds=2, kwargs={
-    "request_candles_dto": (RequestCandlesDto().
-                            set_ticker("KRW-BTC")
-                            .set_count(200)
-                            .set_interval(RequestCandlesDto.Interval.SECOND)
-                            .build()),
-    "ema_dto": EmaDto(
-        short=14,
-        middle=28,
-        long=60
-    ),
-    "macd_dto": MacdDto()
-})
+# scheduler.add_job(run, "interval", seconds=2, kwargs={
+#     "request_candles_dto": (RequestCandlesDto().
+#                             set_ticker("KRW-BTC")
+#                             .set_count(200)
+#                             .set_interval(RequestCandlesDto.Interval.SECOND)
+#                             .build()),
+#     "ema_dto": EmaDto(
+#         short=14,
+#         middle=28,
+#         long=60
+#     ),
+#     "macd_dto": MacdDto()
+# })
 
-# for ticker in tickers:
-#     scheduler.add_job(run, "interval", minutes=RequestCandlesDto.Unit.MINUTE_5, kwargs={
-#         "request_candles_dto": (RequestCandlesDto().
-#                                 set_ticker(ticker)
-#                                 .set_count(200)
-#                                 .set_interval(RequestCandlesDto.Interval.MINUTE)
-#                                 .set_unit(RequestCandlesDto.Unit.MINUTE_5)
-#                                 .build()),
-#         "ema_dto": EmaDto(
-#             short=14,
-#             middle=28,
-#             long=60
-#         ),
-#         "macd_dto": MacdDto()
-#     })
-#     scheduler.add_job(run, "interval", minutes=RequestCandlesDto.Unit.MINUTE_10, kwargs={
-#         "request_candles_dto": (RequestCandlesDto().
-#                                 set_ticker(ticker)
-#                                 .set_count(200)
-#                                 .set_interval(RequestCandlesDto.Interval.MINUTE)
-#                                 .set_unit(RequestCandlesDto.Unit.MINUTE_10)
-#                                 .build()),
-#         "ema_dto": EmaDto(
-#             short=14,
-#             middle=28,
-#             long=56
-#         ),
-#         "macd_dto": MacdDto(),
-#     })
-#     scheduler.add_job(run, "interval", minutes=RequestCandlesDto.Unit.MINUTE_15, kwargs={
-#         "request_candles_dto": (RequestCandlesDto()
-#                                 .set_ticker(ticker)
-#                                 .set_count(200)
-#                                 .set_interval(RequestCandlesDto.Interval.MINUTE)
-#                                 .set_unit(RequestCandlesDto.Unit.MINUTE_15)
-#                                 .build()),
-#         "ema_dto": EmaDto(
-#             short=14,
-#             middle=28,
-#             long=60
-#         ),
-#         "macd_dto": MacdDto()
-#     })
-#     scheduler.add_job(run, "interval", minutes=RequestCandlesDto.Unit.HALF_HOUR, kwargs={
-#         "request_candles_dto": (RequestCandlesDto()
-#                                 .set_ticker(ticker)
-#                                 .set_count(200)
-#                                 .set_interval(RequestCandlesDto.Interval.MINUTE)
-#                                 .set_unit(RequestCandlesDto.Unit.HALF_HOUR)
-#                                 .build()),
-#         "ema_dto": EmaDto(
-#             short=14,
-#             middle=28,
-#             long=60
-#         ),
-#         "macd_dto": MacdDto(),
-#     })
-#     scheduler.add_job(run, "interval", minutes=RequestCandlesDto.Unit.HOUR, kwargs={
-#         "request_candles_dto": (RequestCandlesDto()
-#                                 .set_ticker(ticker)
-#                                 .set_count(200)
-#                                 .set_interval(RequestCandlesDto.Interval.MINUTE)
-#                                 .set_unit(RequestCandlesDto.Unit.HOUR)
-#                                 .build()),
-#         "ema_dto": EmaDto(
-#             short=14,
-#             middle=28,
-#             long=60
-#         ),
-#         "macd_dto": MacdDto()
-#     })
-#     scheduler.add_job(run, "interval", minutes=RequestCandlesDto.Unit.HOUR_4, kwargs={
-#         "request_candles_dto": (RequestCandlesDto()
-#                                 .set_ticker(ticker)
-#                                 .set_count(200)
-#                                 .set_interval(RequestCandlesDto.Interval.MINUTE)
-#                                 .set_unit(RequestCandlesDto.Unit.HOUR_4)
-#                                 .build()),
-#         "ema_dto": EmaDto(
-#             short=14,
-#             middle=28,
-#             long=60
-#         ),
-#         "macd_dto": MacdDto()
-#     })
-#     scheduler.add_job(run, "interval", days=1, kwargs={
-#         "request_candles_dto": (RequestCandlesDto()
-#                                 .set_ticker(ticker)
-#                                 .set_count(200)
-#                                 .set_interval(RequestCandlesDto.Interval.DAY)
-#                                 .build()),
-#         "ema_dto": EmaDto(
-#             short=14,
-#             middle=28,
-#             long=60
-#         ),
-#         "macd_dto": MacdDto()
-#     })
+for ticker in tickers:
+    scheduler.add_job(run, "interval", minutes=RequestCandlesDto.Unit.MINUTE_5, kwargs={
+        "request_candles_dto": (RequestCandlesDto().
+                                set_ticker(ticker)
+                                .set_count(200)
+                                .set_interval(RequestCandlesDto.Interval.MINUTE)
+                                .set_unit(RequestCandlesDto.Unit.MINUTE_5)
+                                .build()),
+        "ema_dto": EmaDto(
+            short=14,
+            middle=28,
+            long=60
+        ),
+        "macd_dto": MacdDto()
+    })
+    scheduler.add_job(run, "interval", minutes=RequestCandlesDto.Unit.MINUTE_10, kwargs={
+        "request_candles_dto": (RequestCandlesDto().
+                                set_ticker(ticker)
+                                .set_count(200)
+                                .set_interval(RequestCandlesDto.Interval.MINUTE)
+                                .set_unit(RequestCandlesDto.Unit.MINUTE_10)
+                                .build()),
+        "ema_dto": EmaDto(
+            short=14,
+            middle=28,
+            long=56
+        ),
+        "macd_dto": MacdDto(),
+    })
+    scheduler.add_job(run, "interval", minutes=RequestCandlesDto.Unit.MINUTE_15, kwargs={
+        "request_candles_dto": (RequestCandlesDto()
+                                .set_ticker(ticker)
+                                .set_count(200)
+                                .set_interval(RequestCandlesDto.Interval.MINUTE)
+                                .set_unit(RequestCandlesDto.Unit.MINUTE_15)
+                                .build()),
+        "ema_dto": EmaDto(
+            short=14,
+            middle=28,
+            long=60
+        ),
+        "macd_dto": MacdDto()
+    })
+    scheduler.add_job(run, "interval", minutes=RequestCandlesDto.Unit.HALF_HOUR, kwargs={
+        "request_candles_dto": (RequestCandlesDto()
+                                .set_ticker(ticker)
+                                .set_count(200)
+                                .set_interval(RequestCandlesDto.Interval.MINUTE)
+                                .set_unit(RequestCandlesDto.Unit.HALF_HOUR)
+                                .build()),
+        "ema_dto": EmaDto(
+            short=14,
+            middle=28,
+            long=60
+        ),
+        "macd_dto": MacdDto(),
+    })
+    scheduler.add_job(run, "interval", minutes=RequestCandlesDto.Unit.HOUR, kwargs={
+        "request_candles_dto": (RequestCandlesDto()
+                                .set_ticker(ticker)
+                                .set_count(200)
+                                .set_interval(RequestCandlesDto.Interval.MINUTE)
+                                .set_unit(RequestCandlesDto.Unit.HOUR)
+                                .build()),
+        "ema_dto": EmaDto(
+            short=14,
+            middle=28,
+            long=60
+        ),
+        "macd_dto": MacdDto()
+    })
+    scheduler.add_job(run, "interval", minutes=RequestCandlesDto.Unit.HOUR_4, kwargs={
+        "request_candles_dto": (RequestCandlesDto()
+                                .set_ticker(ticker)
+                                .set_count(200)
+                                .set_interval(RequestCandlesDto.Interval.MINUTE)
+                                .set_unit(RequestCandlesDto.Unit.HOUR_4)
+                                .build()),
+        "ema_dto": EmaDto(
+            short=14,
+            middle=28,
+            long=60
+        ),
+        "macd_dto": MacdDto()
+    })
+    scheduler.add_job(run, "interval", days=1, kwargs={
+        "request_candles_dto": (RequestCandlesDto()
+                                .set_ticker(ticker)
+                                .set_count(200)
+                                .set_interval(RequestCandlesDto.Interval.DAY)
+                                .build()),
+        "ema_dto": EmaDto(
+            short=14,
+            middle=28,
+            long=60
+        ),
+        "macd_dto": MacdDto()
+    })
 
