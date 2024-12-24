@@ -18,5 +18,4 @@ jobs:
           script: |
             cd AutoTrading
             git pull https://github.com/consoleolog/AutoTrading.git 
-            sudo docker build -t upbit_trading:v1 .
-            sudo docker-compose up
+            sudo docker-compose up --build
