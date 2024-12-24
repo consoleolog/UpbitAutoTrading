@@ -1,3 +1,6 @@
+from models import ResponseOrderDto
+
+
 class Mapper:
     def __init__(
             self,
@@ -100,7 +103,7 @@ class OrderMapper:
             """,
         )
 
-    def insert_one(self, order_data):
+    def insert_one(self, order_data: ResponseOrderDto):
         return self.mapper(
             template="""
             INSERT INTO ORDER_DATA(
@@ -138,20 +141,20 @@ class OrderMapper:
             )
             """,
             data=(
-                order_data['uuid'],
-                order_data['side'],
-                order_data['ord_type'],
-                order_data['price'],
-                order_data['volume'],
-                order_data['state'],
-                order_data['market'],
-                order_data['created_at'],
-                order_data['reserve_fee'],
-                order_data['remaining_fee'],
-                order_data['remaining_volume'],
-                order_data['paid_fee'],
-                order_data['locked'],
-                order_data['executed_volume'],
-                order_data['trades_count'],
+                order_data.uuid,
+                order_data.side,
+                order_data.ord_type,
+                order_data.price,
+                order_data.volume,
+                order_data.state,
+                order_data.market,
+                order_data.created_at,
+                order_data.reserved_fee,
+                order_data.remaining_fee,
+                order_data.remaining_volume,
+                order_data.paid_fee,
+                order_data.locked,
+                order_data.executed_volume,
+                order_data.trades_count,
             )
         )
