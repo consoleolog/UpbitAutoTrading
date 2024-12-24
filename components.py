@@ -117,6 +117,7 @@ class UpbitComponent:
             ticker=ticker,
             volume=volume,
         )
+        self.logger.info(res)
         return ResponseOrderDto.created_by_sell_res(res)
 
     def create_buy_order(self, ticker, price):
@@ -124,8 +125,8 @@ class UpbitComponent:
             ticker=ticker,
             price=price,
         )
+        self.logger.info(res)
         return ResponseOrderDto.created_by_buy_res(res)
-
 
     def get_candles(self, request_candles_dto: RequestCandlesDto):
         ticker = request_candles_dto.ticker
