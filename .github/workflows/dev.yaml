@@ -2,7 +2,8 @@ name: dev-workflow
 
 on:
   push:
-    - develop
+    branches:
+      - develop
 
 jobs:
   SSH:
