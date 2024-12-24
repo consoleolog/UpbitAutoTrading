@@ -2,3 +2,7 @@
 /.idea/
 /__pycache__/
 /**/__pycache__/
+/.github/
+.gitignore
+upbit_document.py
+upbit_provider_v2.py

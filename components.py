@@ -134,6 +134,7 @@ class UpbitComponent:
             ticker=ticker,
             volume=volume,
         )
+        self.logger.info(res)
         return ResponseOrderDto.created_by_sell_res(res)
 
     def create_buy_order(self, ticker, price):
@@ -141,6 +142,7 @@ class UpbitComponent:
             ticker=ticker,
             price=price,
         )
+        self.logger.info(f"{ticker} BUY RESULT :: {res}")
         return ResponseOrderDto.created_by_buy_res(res)
 
     def get_candles(self, request_candles_dto: RequestCandlesDto):
@@ -166,4 +168,3 @@ class UpbitComponent:
             if b['currency'] == ticker.replace("KRW-", ""):
                 current_price = self.get_current_price(ticker)
                 return ( current_price - float(b['avg_buy_price'])) / float(b['avg_buy_price']) * 100.0
-

@@ -21,7 +21,7 @@ upbit_component = UpbitComponent(
 
 my_krw = upbit_component.get_balance("KRW")
 
-PRICE = my_krw / len(tickers)
+PRICE = 10000
 
 candle_service = CandleService(
     connection=connection,
@@ -105,11 +105,8 @@ def run(
     logger.info(f"""
     =======================
             JOB START
-
       Interval : {interval}  
-      
-      STAGE : {stage}
-
+         STAGE : {stage}
     =======================
     """)
 
@@ -120,7 +117,6 @@ def run(
     ord_type = strategy_component.before_order(df)
 
     my_balance = upbit_component.get_balance(ticker)
-
 
     if ord_type.mode == RequestOrderDto.OrdType.BUY and my_balance == 0 and stage == 4:
         logger.info(f"""
@@ -157,12 +153,11 @@ def run(
 
 scheduler = BackgroundScheduler()
 
-# scheduler.add_job(run, "interval", seconds=10, kwargs={
+# scheduler.add_job(run, "interval", seconds=2, kwargs={
 #     "request_candles_dto": (RequestCandlesDto().
 #                             set_ticker("KRW-BTC")
 #                             .set_count(200)
-#                             .set_interval(RequestCandlesDto.Interval.MINUTE)
-#                             # .set_unit(RequestCandlesDto.Unit.MINUTE_5)
+#                             .set_interval(RequestCandlesDto.Interval.SECOND)
 #                             .build()),
 #     "ema_dto": EmaDto(
 #         short=14,
