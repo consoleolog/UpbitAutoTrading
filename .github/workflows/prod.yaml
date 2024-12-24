@@ -1,9 +1,9 @@
-name: dev-workflow
+name: prod-workflow
 
 on:
   push:
     branches:
-      - develop
+      - production
 jobs:
   SSH:
     runs-on: ubuntu-20.04
@@ -18,3 +18,5 @@ jobs:
           script: |
             cd AutoTrading
             git pull https://github.com/consoleolog/AutoTrading.git 
+            docker build -t upbit_trading:v1 .
+            docker-compose up
