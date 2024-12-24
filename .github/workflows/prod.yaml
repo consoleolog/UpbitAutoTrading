@@ -1,0 +1,22 @@
+name: prod-workflow
+
+on:
+  push:
+    branches:
+      - production
+jobs:
+  SSH:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: ssh to ec2
+        uses: appleboy/ssh-action@master
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          script: |
+            cd AutoTrading
+            git pull https://github.com/consoleolog/AutoTrading.git 
+            docker build -t upbit_trading:v1 .
+            docker-compose up

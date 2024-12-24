@@ -22,7 +22,6 @@ access_key = os.environ['UPBIT_OPEN_API_ACCESS_KEY']
 secret_key = os.environ['UPBIT_OPEN_API_SECRET_KEY']
 server_url = os.environ['UPBIT_OPEN_API_SERVER_URL']
 
-
 class UpbitProviderV2(UpbitDocument):
     def __init__(self):
         self.logger = Logger().get_logger(__class__.__name__)
@@ -33,7 +32,6 @@ class UpbitProviderV2(UpbitDocument):
         self.logger.debug("=============")
 
     def get_currencies(self) -> list[dict]:
-
         payload = {
             'access_key': access_key,
             'nonce': str(uuid.uuid4()),

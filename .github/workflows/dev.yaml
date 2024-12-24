@@ -1,0 +1,20 @@
+name: dev-workflow
+
+on:
+  push:
+    branches:
+      - develop
+jobs:
+  SSH:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: ssh to ec2
+        uses: appleboy/ssh-action@master
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          script: |
+            cd AutoTrading
+            git pull https://github.com/consoleolog/AutoTrading.git 

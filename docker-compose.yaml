@@ -1,0 +1,15 @@
+services:
+  server-container:
+    image: upbit_trading:v1
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    build: .
+    develop:
+      watch:
+        - action: sync+restart
+          path: .
+          target: /app
+        - action: rebuild
+          path: requirement.txt
