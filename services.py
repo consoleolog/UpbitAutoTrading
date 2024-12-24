@@ -53,6 +53,4 @@ class OrderService:
             )
             self.connection.commit()
 
-load_dotenv()
 
-# def send_mail():

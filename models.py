@@ -48,10 +48,6 @@ class RequestCandlesDto:
             raise ValueError("ticker is required")
         if not self.interval:
             raise ValueError("interval is required")
-        if self.count is None:
-            raise ValueError("count is required")
-        if self.interval == RequestCandlesDto.Interval.MINUTE and not self.unit:
-            raise ValueError("unit is required")
         return self
 
 class ResponseCandlesDto:

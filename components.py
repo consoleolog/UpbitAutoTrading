@@ -50,6 +50,23 @@ class StrategyComponent:
 
         return df
 
+    def get_stage(self, df: DataFrame):
+        ema_short = df.iloc[-1][self.ema_dto.SHORT.name]
+        ema_middle = df.iloc[-1][self.ema_dto.MIDDLE.name]
+        ema_long = df.iloc[-1][self.ema_dto.LONG.name]
+        if ema_short > ema_middle > ema_long:
+            return 1
+        elif ema_middle > ema_short > ema_long:
+            return 2
+        elif ema_middle > ema_long > ema_short:
+            return 3
+        elif ema_long > ema_middle > ema_short:
+            return 4
+        elif ema_long > ema_short > ema_middle:
+            return 5
+        elif ema_short > ema_long > ema_middle:
+            return 6
+
     def before_order(self, df: DataFrame):
         up = df[self.macd_dto.UPPER.INCREASE]
         mid = df[self.macd_dto.MIDDLE.INCREASE]
@@ -117,7 +134,6 @@ class UpbitComponent:
             ticker=ticker,
             volume=volume,
         )
-        self.logger.info(res)
         return ResponseOrderDto.created_by_sell_res(res)
 
     def create_buy_order(self, ticker, price):
@@ -125,7 +141,6 @@ class UpbitComponent:
             ticker=ticker,
             price=price,
         )
-        self.logger.info(res)
         return ResponseOrderDto.created_by_buy_res(res)
 
     def get_candles(self, request_candles_dto: RequestCandlesDto):
@@ -144,3 +159,11 @@ class UpbitComponent:
             interval=interval,
             to=to,
         )
+
+    def get_profit(self, ticker: str):
+        balances = self.get_balances()
+        for b in balances:
+            if b['currency'] == ticker.replace("KRW-", ""):
+                current_price = self.get_current_price(ticker)
+                return ( current_price - float(b['avg_buy_price'])) / float(b['avg_buy_price']) * 100.0
+
