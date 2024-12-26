@@ -10,7 +10,7 @@ services:
     healthcheck:
       test: >
         bash -c ': > /dev/tcp/localhost/8000' || exit 1
-      interval: 60s
+      interval: 30s
       timeout: 10s
       retries: 2
     volumes:
