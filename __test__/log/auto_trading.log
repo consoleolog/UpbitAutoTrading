@@ -1,0 +1,204 @@
+[INFO] 2024-12-26 14:34:24,652 : upbit_module_test : test_get_currencies : 18 :: -  [{'currency': 'KRW', 'balance': '15896.42057895', 'locked': '0', 'avg_buy_price': '0', 'avg_buy_price_modified': True, 'unit_currency': 'KRW'}, {'currency': 'ETH', 'balance': '0.00285216', 'locked': '0', 'avg_buy_price': '5489000', 'avg_buy_price_modified': False, 'unit_currency': 'KRW'}]
+[INFO] 2024-12-26 14:34:36,175 : upbit_module_test : test_get_currencies : 18 :: -  2
+[INFO] 2024-12-26 15:20:41,833 : integration_test : test_get_data : 43 :: -  open      1.468480e+08
+high      1.468490e+08
+low       1.468000e+08
+close     1.468070e+08
+volume    9.083030e-01
+value     1.333503e+08
+Name: 2024-12-26 15:20:00, dtype: float64
+[INFO] 2024-12-26 15:20:41,866 : integration_test : test_get_data : 46 :: -  open                         146848000.0
+high                         146849000.0
+low                          146800000.0
+close                        146807000.0
+volume                          0.908303
+value                    133350300.85444
+EMA_SHORT               146953533.754103
+EMA_MIDDLE              147003118.687129
+EMA_LONG                147028115.785558
+MACD_UPPER                 -49584.933026
+MACD_MIDDLE                -74582.031454
+MACD_LOWER                 -24997.098428
+MACD_UPPER_INCREASE                False
+MACD_MIDDLE_INCREASE               False
+MACD_LOWER_INCREASE                False
+Name: 2024-12-26 15:20:00, dtype: object
+[INFO] 2024-12-26 15:20:41,872 : integration_test : test_get_data : 49 :: -  4
+[INFO] 2024-12-26 15:21:44,713 : integration_test : test_get_data : 46 :: -  open      1.468070e+08
+high      1.468070e+08
+low       1.467930e+08
+close     1.467950e+08
+volume    9.422364e-01
+value     1.383188e+08
+Name: 2024-12-26 15:21:00, dtype: float64
+[INFO] 2024-12-26 15:21:44,729 : integration_test : test_get_data : 49 :: -  open                         146807000.0
+high                         146807000.0
+low                          146793000.0
+close                        146795000.0
+volume                          0.942236
+value                      138318802.285
+EMA_SHORT               146924709.435175
+EMA_MIDDLE              146983297.859548
+EMA_LONG                147020421.664575
+MACD_UPPER                 -58588.424373
+MACD_MIDDLE                -95712.229399
+MACD_LOWER                 -37123.805027
+MACD_UPPER_INCREASE                False
+MACD_MIDDLE_INCREASE               False
+MACD_LOWER_INCREASE                False
+Name: 2024-12-26 15:21:00, dtype: object
+[INFO] 2024-12-26 15:21:44,738 : integration_test : test_get_data : 52 :: -  4
+[INFO] 2024-12-26 15:21:44,739 : integration_test : test_get_data : 66 :: -  <models.entity.candle_data.CandleData object at 0x0000027833F375E0>
+[INFO] 2024-12-26 15:22:35,150 : integration_test : test_get_data : 46 :: -  open      1.467900e+08
+high      1.467950e+08
+low       1.467170e+08
+close     1.467580e+08
+volume    7.865555e-01
+value     1.154197e+08
+Name: 2024-12-26 15:22:00, dtype: float64
+[INFO] 2024-12-26 15:22:35,168 : integration_test : test_get_data : 49 :: -  open                         146790000.0
+high                         146795000.0
+low                          146717000.0
+close                        146758000.0
+volume                          0.786556
+value                    115419700.51014
+EMA_SHORT               146894249.868449
+EMA_MIDDLE              146961754.752484
+EMA_LONG                147011729.932444
+MACD_UPPER                 -67504.884035
+MACD_MIDDLE               -117480.063995
+MACD_LOWER                  -49975.17996
+MACD_UPPER_INCREASE                False
+MACD_MIDDLE_INCREASE               False
+MACD_LOWER_INCREASE                False
+Name: 2024-12-26 15:22:00, dtype: object
+[INFO] 2024-12-26 15:22:35,181 : integration_test : test_get_data : 52 :: -  4
+[INFO] 2024-12-26 15:22:35,183 : integration_test : test_get_data : 66 :: -  <models.entity.candle_data.CandleData object at 0x0000028F113E66A0>
+[INFO] 2024-12-26 15:23:40,167 : integration_test : test_get_data : 46 :: -  open      1.467230e+08
+high      1.467600e+08
+low       1.467060e+08
+close     1.467070e+08
+volume    7.236451e-01
+value     1.061757e+08
+Name: 2024-12-26 15:23:00, dtype: float64
+[INFO] 2024-12-26 15:23:40,184 : integration_test : test_get_data : 49 :: -  open                         146723000.0
+high                         146760000.0
+low                          146706000.0
+close                        146707000.0
+volume                          0.723645
+value                    106175662.46063
+EMA_SHORT               146854997.826252
+EMA_MIDDLE              146934476.521849
+EMA_LONG                147000577.019302
+MACD_UPPER                 -79478.695597
+MACD_MIDDLE                -145579.19305
+MACD_LOWER                 -66100.497453
+MACD_UPPER_INCREASE                False
+MACD_MIDDLE_INCREASE               False
+MACD_LOWER_INCREASE                False
+Name: 2024-12-26 15:23:00, dtype: object
+[INFO] 2024-12-26 15:23:40,195 : integration_test : test_get_data : 52 :: -  4
+[INFO] 2024-12-26 15:23:40,196 : integration_test : test_get_data : 66 :: -  <models.entity.candle_data.CandleData object at 0x00000241E78A9640>
+[INFO] 2024-12-26 15:23:40,274 : integration_test : test_get_data : 75 :: -  <models.dto.order_request_dto.OrderRequestDto object at 0x00000241E78A9A90>
+[INFO] 2024-12-26 15:23:56,324 : integration_test : test_get_data : 46 :: -  open      1.467230e+08
+high      1.467600e+08
+low       1.467020e+08
+close     1.467020e+08
+volume    9.024009e-01
+value     1.324001e+08
+Name: 2024-12-26 15:23:00, dtype: float64
+[INFO] 2024-12-26 15:23:56,358 : integration_test : test_get_data : 49 :: -  open                         146723000.0
+high                         146760000.0
+low                          146702000.0
+close                        146702000.0
+volume                          0.902401
+value                    132400136.08451
+EMA_SHORT               146854088.735343
+EMA_MIDDLE              146934000.331372
+EMA_LONG                147000412.876111
+MACD_UPPER                 -79911.596029
+MACD_MIDDLE               -146324.140768
+MACD_LOWER                 -66412.544739
+MACD_UPPER_INCREASE                False
+MACD_MIDDLE_INCREASE               False
+MACD_LOWER_INCREASE                False
+Name: 2024-12-26 15:23:00, dtype: object
+[INFO] 2024-12-26 15:23:56,397 : integration_test : test_get_data : 52 :: -  4
+[INFO] 2024-12-26 15:23:56,398 : integration_test : test_get_data : 66 :: -  <models.entity.candle_data.CandleData object at 0x0000017D0C719640>
+[INFO] 2024-12-26 15:23:56,459 : integration_test : test_get_data : 75 :: -  <models.dto.order_request_dto.OrderRequestDto object at 0x0000017D0C719A90>
+[INFO] 2024-12-26 15:26:13,790 : integration_test : test_get_b : 46 :: -  6.793e-05
+[INFO] 2024-12-26 15:33:15,936 : integration_test : test_buy_market_order : 56 :: -  {'uuid': '51fb848b-25c4-4ddf-bf4a-932f2293c8e1', 'side': 'bid', 'ord_type': 'price', 'price': '5500', 'state': 'wait', 'market': 'KRW-XRP', 'created_at': '2024-12-26T15:33:16+09:00', 'reserved_fee': '2.75', 'remaining_fee': '2.75', 'paid_fee': '0', 'locked': '5502.75', 'executed_volume': '0', 'trades_count': 0}
+[INFO] 2024-12-26 15:33:15,938 : integration_test : test_buy_market_order : 72 :: -  OrderResponseDto(
+        uuid: 51fb848b-25c4-4ddf-bf4a-932f2293c8e1,
+        side: bid,
+        ord_type: price,
+        price: 5500,
+        volume: None,
+        state: wait,
+        market: KRW-XRP,
+        created_at: 2024-12-26T15:33:16+09:00,
+        reserved_fee: 2.75,
+        remaining_fee: 2.75,
+        remaining_volume: None,
+        paid_fee: 0,
+        locked: 5502.75,
+        executed_volume: 0,
+        trades_count: 0
+        )
+[INFO] 2024-12-26 15:34:00,070 : integration_test : test_sell_market_order : 84 :: -  {'uuid': 'c09bd1e4-d0ee-42af-8326-d2999f1d4a0d', 'side': 'ask', 'ord_type': 'market', 'state': 'wait', 'market': 'KRW-XRP', 'created_at': '2024-12-26T15:34:00+09:00', 'volume': '1.6413011', 'remaining_volume': '1.6413011', 'reserved_fee': '0', 'remaining_fee': '0', 'paid_fee': '0', 'locked': '1.6413011', 'executed_volume': '0', 'trades_count': 0}
+[INFO] 2024-12-26 15:34:00,072 : integration_test : test_sell_market_order : 101 :: -  OrderResponseDto(
+        uuid: c09bd1e4-d0ee-42af-8326-d2999f1d4a0d,
+        side: ask,
+        ord_type: market,
+        price: None,
+        volume: 1.6413011,
+        state: wait,
+        market: KRW-XRP,
+        created_at: 2024-12-26T15:34:00+09:00,
+        reserved_fee: 0,
+        remaining_fee: 0,
+        remaining_volume: 1.6413011,
+        paid_fee: 0,
+        locked: 1.6413011,
+        executed_volume: 0,
+        trades_count: 0
+        )
+[INFO] 2024-12-26 15:34:00,074 : integration_test : test_sell_market_order : 103 :: -  None
+[INFO] 2024-12-26 15:37:08,833 : integration_test : test_buy_market_order : 56 :: -  {'uuid': '60c75d9a-fe60-43cc-aa30-ebf2ac143a33', 'side': 'bid', 'ord_type': 'price', 'price': '5500', 'state': 'wait', 'market': 'KRW-XRP', 'created_at': '2024-12-26T15:37:09+09:00', 'reserved_fee': '2.75', 'remaining_fee': '2.75', 'paid_fee': '0', 'locked': '5502.75', 'executed_volume': '0', 'trades_count': 0}
+[INFO] 2024-12-26 15:37:08,834 : integration_test : test_buy_market_order : 72 :: -  OrderResponseDto(
+        uuid: 60c75d9a-fe60-43cc-aa30-ebf2ac143a33,
+        side: bid,
+        ord_type: price,
+        price: 5500,
+        volume: None,
+        state: wait,
+        market: KRW-XRP,
+        created_at: 2024-12-26T15:37:09+09:00,
+        reserved_fee: 2.75,
+        remaining_fee: 2.75,
+        remaining_volume: None,
+        paid_fee: 0,
+        locked: 5502.75,
+        executed_volume: 0,
+        trades_count: 0
+        )
+[INFO] 2024-12-26 15:37:08,838 : integration_test : test_buy_market_order : 74 :: -  None
+[INFO] 2024-12-26 15:39:37,857 : integration_test : test_sell_market_order : 84 :: -  {'uuid': 'f7017bc3-ecc6-48c8-89a1-31a8317346f8', 'side': 'ask', 'ord_type': 'market', 'state': 'wait', 'market': 'KRW-XRP', 'created_at': '2024-12-26T15:39:38+09:00', 'volume': '1.6413011', 'remaining_volume': '1.6413011', 'reserved_fee': '0', 'remaining_fee': '0', 'paid_fee': '0', 'locked': '1.6413011', 'executed_volume': '0', 'trades_count': 0}
+[INFO] 2024-12-26 15:39:37,858 : integration_test : test_sell_market_order : 101 :: -  OrderResponseDto(
+        uuid: f7017bc3-ecc6-48c8-89a1-31a8317346f8,
+        side: ask,
+        ord_type: market,
+        price: None,
+        volume: 1.6413011,
+        state: wait,
+        market: KRW-XRP,
+        created_at: 2024-12-26T15:39:38+09:00,
+        reserved_fee: 0,
+        remaining_fee: 0,
+        remaining_volume: 1.6413011,
+        paid_fee: 0,
+        locked: 1.6413011,
+        executed_volume: 0,
+        trades_count: 0
+        )
+[INFO] 2024-12-26 15:39:37,862 : integration_test : test_sell_market_order : 103 :: -  <models.entity.order_data.OrderData object at 0x0000015394E43B20>
