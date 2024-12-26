@@ -1,6 +1,8 @@
 services:
   server-container:
     container_name: autotrading-green
+    environment:
+      TZ: "Asia/Seoul"
     image: upbit_trading:v1
     ports:
       - "8000:8000"

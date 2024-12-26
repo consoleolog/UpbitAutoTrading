@@ -44,6 +44,14 @@ class JobFactory:
 
         stage = data_util.get_stage_from_ema(data=data)
 
+        self.logger.info(f"""
+        =======================
+                JOB START
+          Interval : {candle_request_dto.interval}  
+             STAGE : {stage}
+        =======================
+        """)
+
         candle_data = CandleData(
             ticker=candle_request_dto.ticker,
             close=float(data[CandleResponseDto.CLOSE].iloc[-1]),
