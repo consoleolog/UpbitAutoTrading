@@ -73,7 +73,13 @@ class JobFactory:
             )
 
             if order_request_dto is None:
-                self.logger.warn()
+                self.logger.warn(f"""
+                =========================
+                           WARN
+                      ticker : {candle_request_dto.ticker}
+                order_request_dto is null
+                =========================
+                """)
             else:
                 # 매수 신호
                 if order_request_dto.price is not None:
