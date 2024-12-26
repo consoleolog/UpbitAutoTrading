@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, status
 from pydantic import BaseModel
-from scheduler import scheduler, job_factory
+from scheduler import scheduler, create_table_if_not_exist
 from logger import Logger
 
 logger = Logger().get_logger(__name__)
@@ -11,6 +11,7 @@ async def lifespan(app):
     logger.info("========================")
     logger.info("        START UP        ")
     logger.info("========================")
+    create_table_if_not_exist()
     scheduler.start()
     yield
     logger.info("========================")

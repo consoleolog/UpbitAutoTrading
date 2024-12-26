@@ -14,3 +14,10 @@ class EMA:
         self.short = short
         self.middle = middle
         self.long = long
+
+    def __str__(self):
+        return f"""EMA(
+            short={self.short},
+            middle={self.middle},
+            long={self.long}
+        )"""

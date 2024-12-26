@@ -35,12 +35,12 @@ class JobFactory:
              ):
         try:
             candle_service = CandleService(
-                candle_data_repository=self.candle_data_repository,
                 ema=ema,
+                candle_data_repository=self.candle_data_repository,
+                upbit_module=self.upbit_module
             )
 
-            data = self.upbit_module.get_candles_data(candle_request_dto)
-            data = candle_service.create_sub_data(data=data)
+            data = candle_service.get_candle_data(candle_request_dto)
 
             stage = data_util.get_stage_from_ema(data=data)
 
@@ -72,15 +72,7 @@ class JobFactory:
                 data=data
             )
 
-            if order_request_dto is None:
-                self.logger.warn(f"""
-                =========================
-                           WARN
-                      ticker : {candle_request_dto.ticker}
-                order_request_dto is null
-                =========================
-                """)
-            else:
+            if order_request_dto is not None:
                 # 매수 신호
                 if order_request_dto.price is not None:
                     order_response_dto = self.order_service.buy_market_order(order_request_dto)

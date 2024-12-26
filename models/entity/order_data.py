@@ -59,3 +59,23 @@ class OrderData:
             executed_volume=order_response_dto.executed_volume,
             trades_count=order_response_dto.trades_count,
         )
+
+    def __str__(self):
+        return f"""OrderData(
+            order_id={self.order_id},
+            order_uuid={self.order_uuid},
+            side={self.side},
+            ord_type={self.ord_type},
+            price={self.price},
+            volume={self.volume},
+            state={self.state},
+            market={self.market},
+            created_at={self.created_at},
+            reserved_fee={self.reserved_fee},
+            remaining_fee={self.remaining_fee},
+            remaining_volume={self.remaining_volume},
+            paid_fee={self.paid_fee},
+            locked={self.locked},
+            executed_volume={self.executed_volume},
+            trades_count={self.trades_count},
+        )"""

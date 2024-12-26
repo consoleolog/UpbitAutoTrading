@@ -18,8 +18,8 @@ class CandleRequestDto:
 
     def __str__(self):
         return f"""CandleRequestDto(
-        ticker={self.ticker},
-        count={self.count},
-        interval={self.interval},
-        to={self.to}
+            ticker={self.ticker},
+            count={self.count},
+            interval={self.interval},
+            to={self.to}
         )"""

@@ -13,7 +13,7 @@ class OrderRequestDto:
 
     def __str__(self):
         return f"""OrderRequestDto(
-        ticker={self.ticker},
-        price={self.price},
-        volume={self.volume}
+            ticker={self.ticker},
+            price={self.price},
+            volume={self.volume}
         )"""

@@ -29,3 +29,18 @@ class CandleData:
         self.macd_middle = macd_middle
         self.macd_lower = macd_lower
         self.interval = interval
+
+    def __str__(self):
+        return f"""CandleData(
+            date={self.date},
+            ticker={self.ticker},
+            close={self.close},
+            ema_short={self.ema_short},
+            ema_middle={self.ema_middle},
+            ema_long={self.ema_long},
+            stage={self.stage},
+            macd_upper={self.macd_upper},
+            macd_middle={self.macd_middle},
+            macd_lower={self.macd_lower},
+            interval={self.interval}
+        )"""

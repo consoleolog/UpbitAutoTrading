@@ -37,19 +37,19 @@ class OrderResponseDto:
 
     def __str__(self):
         return f"""OrderResponseDto(
-        uuid: {self.uuid},
-        side: {self.side},
-        ord_type: {self.ord_type},
-        price: {self.price},
-        volume: {self.volume},
-        state: {self.state},
-        market: {self.market},
-        created_at: {self.created_at},
-        reserved_fee: {self.reserved_fee},
-        remaining_fee: {self.remaining_fee},
-        remaining_volume: {self.remaining_volume},
-        paid_fee: {self.paid_fee},
-        locked: {self.locked},
-        executed_volume: {self.executed_volume},
-        trades_count: {self.trades_count}
+            uuid: {self.uuid},
+            side: {self.side},
+            ord_type: {self.ord_type},
+            price: {self.price},
+            volume: {self.volume},
+            state: {self.state},
+            market: {self.market},
+            created_at: {self.created_at},
+            reserved_fee: {self.reserved_fee},
+            remaining_fee: {self.remaining_fee},
+            remaining_volume: {self.remaining_volume},
+            paid_fee: {self.paid_fee},
+            locked: {self.locked},
+            executed_volume: {self.executed_volume},
+            trades_count: {self.trades_count}
         )"""

@@ -8,7 +8,8 @@ from models.type.interval_type import IntervalType
 from models.type.unit_type import UnitType
 
 tickers = [
-    "KRW-BTC"
+    "KRW-BTC",
+    "KRW-ETH"
 ]
 
 job_factory = JobFactory()
@@ -54,6 +55,23 @@ for ticker in tickers:
     scheduler.add_job(
         func=job_factory.main,
         trigger='interval',
+        minutes=UnitType.MINUTE_15,
+        kwargs={
+            "candle_request_dto": CandleRequestDto(
+                ticker=ticker,
+                interval=IntervalType(UnitType.MINUTE_15).MINUTE
+            ),
+            "ema": EMA(
+                short=14,
+                middle=30,
+                long=60,
+            )
+        }
+    )
+
+    scheduler.add_job(
+        func=job_factory.main,
+        trigger='interval',
         minutes=UnitType.HALF_HOUR,
         kwargs={
             "candle_request_dto": CandleRequestDto(
@@ -81,6 +99,18 @@ for ticker in tickers:
                 short=14,
                 middle=30,
                 long=60,
+            )
+        }
+    )
+
+    scheduler.add_job(
+        func=job_factory.main,
+        trigger='interval',
+        minutes=UnitType.HOUR_4,
+        kwargs={
+            "candle_request_dto": CandleRequestDto(
+                ticker=ticker,
+                interval=IntervalType(UnitType.HOUR_4).MINUTE
             )
         }
     )
