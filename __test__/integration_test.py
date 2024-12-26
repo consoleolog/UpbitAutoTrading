@@ -127,7 +127,7 @@ class IntegrationTest(unittest.TestCase):
         )
         # self.logger.info(candle_data)
 
-        # self.candle_service.save_data(candle_data=candle_data)
+        self.candle_service.save_data(candle_data=candle_data)
 
 
 

@@ -46,14 +46,14 @@ class JobFactory:
 
         candle_data = CandleData(
             ticker=candle_request_dto.ticker,
-            close=data[CandleResponseDto.CLOSE].iloc[-1],
-            ema_short=data[EMA.SHORT].iloc[-1],
-            ema_middle=data[EMA.MIDDLE].iloc[-1],
-            ema_long=data[EMA.LONG].iloc[-1],
+            close=float(data[CandleResponseDto.CLOSE].iloc[-1]),
+            ema_short=float(data[EMA.SHORT].iloc[-1]),
+            ema_middle=float(data[EMA.MIDDLE].iloc[-1]),
+            ema_long=float(data[EMA.LONG].iloc[-1]),
             stage=stage,
-            macd_upper=data[MACD.UPPER].iloc[-1],
-            macd_middle=data[MACD.MIDDLE].iloc[-1],
-            macd_lower=data[MACD.LOWER].iloc[-1],
+            macd_upper=float(data[MACD.UPPER].iloc[-1]),
+            macd_middle=float(data[MACD.MIDDLE].iloc[-1]),
+            macd_lower=float(data[MACD.LOWER].iloc[-1]),
             interval=candle_request_dto.interval,
         )
 
