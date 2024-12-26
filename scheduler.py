@@ -118,44 +118,44 @@ def run(
 
     candle_data = create_candle_data(df)
 
-    # candle_service.add_one(candle_data)
+    candle_service.add_one(candle_data)
 
     ord_type = strategy_component.before_order(df)
 
     my_balance = upbit_component.get_balance(ticker)
 
-    # if ord_type.mode == RequestOrderDto.OrdType.BUY and my_balance == 0 and stage == 4:
-    #     logger.info(f"""
-    #     =======================
-    #           BUY SIGNAL
-    #         TICKER : {ticker}
-    #     =======================
-    #     """)
-    #     result = upbit_component.create_buy_order(
-    #         ticker=ticker,
-    #         price=PRICE
-    #     )
-    #     order_service.add_one(result)
-    #
-    # elif ord_type.mode == RequestOrderDto.OrdType.SELL and my_balance != 0 and stage == 1:
-    #     profit = upbit_component.get_profit(ticker)
-    #
-    #     logger.info(f"""
-    #     =======================
-    #           SELL SIGNAL
-    #         TICKER : {ticker}
-    #         PROFIT : {profit}
-    #     =======================
-    #     """)
-    #
-    #     if profit > 0.1:
-    #         result = upbit_component.create_sell_order(
-    #             ticker=ticker,
-    #             volume=my_balance,
-    #         )
-    #         order_service.add_one(result)
-    # else:
-    #     pass
+    if ord_type.mode == RequestOrderDto.OrdType.BUY and my_balance == 0 and stage == 4:
+        logger.info(f"""
+        =======================
+              BUY SIGNAL
+            TICKER : {ticker}
+        =======================
+        """)
+        result = upbit_component.create_buy_order(
+            ticker=ticker,
+            price=PRICE
+        )
+        order_service.add_one(result)
+
+    elif ord_type.mode == RequestOrderDto.OrdType.SELL and my_balance != 0 and stage == 1:
+        profit = upbit_component.get_profit(ticker)
+
+        logger.info(f"""
+        =======================
+              SELL SIGNAL
+            TICKER : {ticker}
+            PROFIT : {profit}
+        =======================
+        """)
+
+        if profit > 0.1:
+            result = upbit_component.create_sell_order(
+                ticker=ticker,
+                volume=my_balance,
+            )
+            order_service.add_one(result)
+    else:
+        pass
 
 scheduler = BackgroundScheduler()
 
@@ -265,9 +265,9 @@ for ticker in tickers:
                                 .set_interval(RequestCandlesDto.Interval.DAY)
                                 .build()),
         "ema_dto": EmaDto(
-            short=7,
-            middle=14,
-            long=54
+            short=10,
+            middle=20,
+            long=60
         ),
         "macd_dto": MacdDto()
     })
