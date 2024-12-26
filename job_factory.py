@@ -74,12 +74,12 @@ class JobFactory:
 
             if order_request_dto is not None:
                 # 매수 신호
-                if order_request_dto.price is not None:
+                if order_request_dto.price is not None and (stage == 4 or stage == 5) :
                     order_response_dto = self.order_service.buy_market_order(order_request_dto)
                     self.order_service.save_data(order_response_dto)
 
                 # 매도 신호
-                elif order_request_dto.volume is not None:
+                elif order_request_dto.volume is not None and stage == 1:
                     is_profit = self.order_service.is_profit(candle_request_dto.ticker)
                     if is_profit:
                         order_response_dto = self.order_service.sell_market_order(order_request_dto)
