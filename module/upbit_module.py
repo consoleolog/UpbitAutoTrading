@@ -7,7 +7,6 @@ from pyupbit import Upbit
 from logger import Logger
 from models.dto.candle_request_dto import CandleRequestDto
 from models.dto.order_request_dto import OrderRequestDto
-from models.dto.order_response_dto import OrderResponseDto
 
 load_dotenv()
 

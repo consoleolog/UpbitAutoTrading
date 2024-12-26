@@ -1,4 +1,3 @@
-from typing import Union
 
 from models.entity.candle_data import CandleData
 
