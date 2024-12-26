@@ -150,7 +150,7 @@ def run(
         =======================
         """)
 
-        if profit > 0.07:
+        if profit > 0.1:
             result = upbit_component.create_sell_order(
                 ticker=ticker,
                 volume=my_balance,

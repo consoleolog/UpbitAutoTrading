@@ -168,3 +168,12 @@ class UpbitComponent:
             if b['currency'] == ticker.replace("KRW-", ""):
                 current_price = self.get_current_price(ticker)
                 return ( current_price - float(b['avg_buy_price'])) / float(b['avg_buy_price']) * 100.0
+
+
+upbit_c = UpbitComponent(
+    app_properties=AppProperties()
+)
+
+p = upbit_c.get_profit("KRW-BTC")
+
+print(p)
