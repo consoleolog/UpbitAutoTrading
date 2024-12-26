@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
-
+from fastapi import FastAPI, status
+from pydantic import BaseModel
 from scheduler import scheduler, init
 from logger import Logger
 
@@ -22,3 +22,16 @@ async def lifespan(app):
 
 
 app = FastAPI(lifespan=lifespan)
+
+class HealthCheck(BaseModel):
+    status: str = "OK"
+@app.get(
+    "/health",
+    tags=["health_check"],
+    summary="Perform a Health Check",
+    response_description="Return Http Status Code 200 (OK)",
+    status_code=status.HTTP_200_OK,
+    response_model=HealthCheck,
+)
+def health_check():
+    return HealthCheck(status="OK")
