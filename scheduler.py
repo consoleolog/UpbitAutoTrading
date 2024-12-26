@@ -1,4 +1,3 @@
-from logging import Logger
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
