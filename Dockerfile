@@ -2,7 +2,7 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-RUN apk add tzdata
+RUN apt-get update && apt-get install -y tzdata
 
 RUN pip install --upgrade pip
 
