@@ -1,3 +1,10 @@
+import os
+import smtplib
+from email import encoders
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+
+import pandas as pd
 from database import connection
 from logger import Logger
 from models.dto.candle_request_dto import CandleRequestDto
@@ -15,19 +22,62 @@ from util import data_util
 
 class JobFactory:
     def __init__(self):
+        self.connection = connection
         self.upbit_module = UpbitModule()
-        self.candle_data_repository = CandleDataRepository(connection=connection)
-        self.order_data_repository = OrderDataRepository(connection=connection)
+        self.candle_data_repository = CandleDataRepository(connection=self.connection)
+        self.order_data_repository = OrderDataRepository(connection=self.connection)
         self.order_service = OrderService(
             upbit_module=self.upbit_module,
             order_data_repository=self.order_data_repository
         )
         self.logger = Logger().get_logger(__class__.__name__)
 
+        self.data_filename = "data.csv"
+
 
     def before_starting_job(self):
         self.candle_data_repository.init()
         self.order_data_repository.init()
+
+    def backup_data(self):
+        SQL = """
+        SELECT C.CANDLE_ID,
+               C.DATE,
+               C.TICKER,
+               C.CLOSE,
+               C.EMA_SHORT,
+               C.EMA_MIDDLE,
+               C.EMA_LONG,
+               C.STAGE,
+               C.MACD_UPPER,
+               C.MACD_MIDDLE,
+               C.MACD_LOWER,
+               C.INTERVAL
+        FROM CANDLE_DATA C 
+        ORDER BY C.CANDLE_ID;  
+        """
+        data = pd.read_sql(SQL, self.connection)
+        data.to_csv(self.data_filename, encoding="utf-8")
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = '[Upbit Auto Trading] 데이터 파일 백업'
+        msg['From'] = os.getenv('SMTP_FROM')
+        msg['To'] = os.getenv('SMTP_TO')
+        with open(self.data_filename, 'rb') as handler:
+            file = MIMEBase('application', 'octet-stream')
+            file.set_payload(handler.read())
+            encoders.encode_base64(file)
+            file.add_header("Content-Disposition", f'attachment; filename="{self.data_filename}"')
+            msg.attach(file)
+        s = smtplib.SMTP(os.getenv('SMTP_HOST'), os.getenv('SMTP_PORT') or 587)
+        s.starttls()
+        s.login(os.getenv("SMTP_ID"), os.getenv("SMTP_PASSWORD"))
+        s.sendmail(msg['From'], msg['To'], msg.as_string())
+        s.close()
+
+        with self.connection.cursor() as cursor:
+            cursor.execute("DELETE FROM CANDLE_DATA WHERE date < CURRENT_TIMESTAMP;")
+            self.connection.commit()
+
 
     def main(self,
              ema: EMA = EMA(),

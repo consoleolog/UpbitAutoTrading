@@ -16,6 +16,12 @@ job_factory = JobFactory()
 
 scheduler = BackgroundScheduler()
 
+scheduler.add_job(
+    func=job_factory.backup_data,
+    trigger='interval',
+    days=7
+)
+
 for ticker in tickers:
 
     scheduler.add_job(
