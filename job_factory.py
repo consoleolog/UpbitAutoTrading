@@ -78,6 +78,7 @@ class JobFactory:
             cursor.execute("DELETE FROM CANDLE_DATA WHERE date < CURRENT_TIMESTAMP;")
             self.connection.commit()
 
+        os.remove(self.data_filename)
 
     def main(self,
              ema: EMA = EMA(),
