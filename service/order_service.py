@@ -126,14 +126,15 @@ class OrderService:
             mid.iloc[-3] == False,
         ])
 
-        if UP_INCREASE and MID_INCREASE and LOW_INCREASE:
+        if UP_INCREASE and MID_INCREASE and LOW_INCREASE :
             krw = self.upbit_module.get_balance("KRW")
             currencies = self.upbit_module.get_currencies()
             price = krw / len(currencies) - 1
-            return OrderRequestDto(
-                ticker=ticker,
-                price=price,
-            )
+            if price > 6000:
+                return OrderRequestDto(
+                    ticker=ticker,
+                    price=price,
+                )
         elif UP_DECREASE and MID_DECREASE and LOW_DECREASE:
             my_vol = self.upbit_module.get_balance(ticker)
             return OrderRequestDto(
