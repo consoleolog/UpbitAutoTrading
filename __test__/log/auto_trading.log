@@ -202,3 +202,8 @@ Name: 2024-12-26 15:23:00, dtype: object
         trades_count: 0
         )
 [INFO] 2024-12-26 15:39:37,862 : integration_test : test_sell_market_order : 103 :: -  <models.entity.order_data.OrderData object at 0x0000015394E43B20>
+[INFO] 2025-01-03 11:55:04,818 : upbit_module_test : test_get_currencies : 18 :: -  1
+[DEBUG] 2025-01-03 11:55:23,694 : upbit_module_test : test_get_currencies : 18 :: -  [{'currency': 'KRW', 'balance': '30172.78259649', 'locked': '0', 'avg_buy_price': '0', 'avg_buy_price_modified': True, 'unit_currency': 'KRW'}]
+[INFO] 2025-01-03 11:55:23,695 : upbit_module_test : test_get_currencies : 19 :: -  1
+[DEBUG] 2025-01-03 11:55:49,011 : upbit_module_test : test_get_currencies : 18 :: -  1
+[INFO] 2025-01-03 11:55:49,011 : upbit_module_test : test_get_currencies : 19 :: -  1
