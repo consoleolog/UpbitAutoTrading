@@ -15,4 +15,5 @@ class UpbitModuleTest(unittest.TestCase):
 
     def test_get_currencies(self):
         currencies = self.Upbit.get_balances()
+        self.logger.debug(currencies.__len__())
         self.logger.info(len(currencies))
