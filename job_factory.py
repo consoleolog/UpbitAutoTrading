@@ -58,27 +58,31 @@ class JobFactory:
         """
         data = pd.read_sql(SQL, self.connection)
         data.to_csv(self.data_filename, encoding="utf-8")
-        msg = MIMEMultipart('alternative')
-        msg['Subject'] = '[Upbit Auto Trading] 데이터 파일 백업'
-        msg['From'] = os.getenv('SMTP_FROM')
-        msg['To'] = os.getenv('SMTP_TO')
-        with open(self.data_filename, 'rb') as handler:
-            file = MIMEBase('application', 'octet-stream')
-            file.set_payload(handler.read())
-            encoders.encode_base64(file)
-            file.add_header("Content-Disposition", f'attachment; filename="{self.data_filename}"')
-            msg.attach(file)
-        s = smtplib.SMTP(os.getenv('SMTP_HOST'), os.getenv('SMTP_PORT') or 587)
-        s.starttls()
-        s.login(os.getenv("SMTP_ID"), os.getenv("SMTP_PASSWORD"))
-        s.sendmail(msg['From'], msg['To'], msg.as_string())
-        s.close()
+        try:
+            msg = MIMEMultipart('alternative')
+            msg['Subject'] = '[Upbit Auto Trading] 데이터 파일 백업'
+            msg['From'] = os.getenv('SMTP_FROM')
+            msg['To'] = os.getenv('SMTP_TO')
+            with open(self.data_filename, 'rb') as handler:
+                file = MIMEBase('application', 'octet-stream')
+                file.set_payload(handler.read())
+                encoders.encode_base64(file)
+                file.add_header("Content-Disposition", f'attachment; filename="{self.data_filename}"')
+                msg.attach(file)
+            s = smtplib.SMTP(os.getenv('SMTP_HOST'), os.getenv('SMTP_PORT') or 587)
+            s.starttls()
+            s.login(os.getenv("SMTP_ID"), os.getenv("SMTP_PASSWORD"))
+            s.sendmail(msg['From'], msg['To'], msg.as_string())
+            s.close()
 
-        with self.connection.cursor() as cursor:
-            cursor.execute("DELETE FROM CANDLE_DATA WHERE date < CURRENT_TIMESTAMP;")
-            self.connection.commit()
+            with self.connection.cursor() as cursor:
+                cursor.execute("DELETE FROM CANDLE_DATA WHERE date < CURRENT_TIMESTAMP;")
+                self.connection.commit()
+        except Exception as e:
+            self.logger.warn(e)
+        finally:
+            os.remove(self.data_filename)
 
-        os.remove(self.data_filename)
 
     def main(self,
              ema: EMA = EMA(),
@@ -122,6 +126,12 @@ class JobFactory:
                 ticker=candle_request_dto.ticker,
                 data=data
             )
+
+            self.logger.info("""
+            ==========================
+             order_request_dto : {}
+            ==========================
+            """.format(order_request_dto))
 
             if order_request_dto is not None:
                 # 매수 신호

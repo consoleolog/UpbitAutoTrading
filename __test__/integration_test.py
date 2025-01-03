@@ -1,4 +1,12 @@
+import os
+import smtplib
 import unittest
+from email import encoders
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+
+import pandas as pd
+from dotenv import load_dotenv
 
 from database import connection
 from logger import Logger
@@ -19,7 +27,7 @@ from service.candle_service import CandleService
 from service.order_service import OrderService
 from util import data_util
 
-
+load_dotenv()
 class IntegrationTest(unittest.TestCase):
     def setUp(self):
         self.upbit_module = UpbitModule()
@@ -38,7 +46,9 @@ class IntegrationTest(unittest.TestCase):
         self.candle_service = CandleService(
             candle_data_repository=self.candle_data_repository,
             ema=self.ema,
+            upbit_module=self.upbit_module
         )
+        self.connection = connection
 
     def test_init(self):
         self.candle_data_repository.init()
@@ -128,6 +138,40 @@ class IntegrationTest(unittest.TestCase):
         # self.logger.info(candle_data)
 
         self.candle_service.save_data(candle_data=candle_data)
+
+    def test_refresh(self):
+        SQL = """
+        SELECT C.CANDLE_ID,
+               C.DATE,
+               C.TICKER,
+               C.CLOSE,
+               C.EMA_SHORT,
+               C.EMA_MIDDLE,
+               C.EMA_LONG,
+               C.STAGE,
+               C.MACD_UPPER,
+               C.MACD_MIDDLE,
+               C.MACD_LOWER,
+               C.INTERVAL
+        FROM CANDLE_DATA C;  
+        """
+        data = pd.read_sql(SQL, self.connection)
+        data.to_csv("data.csv", encoding="utf-8")
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = '[Upbit Auto Trading] 로그 파일 백업'
+        msg['From'] = os.getenv('SMTP_FROM')
+        msg['To'] = os.getenv('SMTP_TO')
+        with open("data.csv", 'rb') as handler:
+            file = MIMEBase('application', 'octet-stream')
+            file.set_payload(handler.read())
+            encoders.encode_base64(file)
+            file.add_header("Content-Disposition", f'attachment; filename=data.csv')
+            msg.attach(file)
+        s = smtplib.SMTP(os.getenv('SMTP_HOST'), os.getenv('SMTP_PORT') or 587)
+        s.starttls()
+        s.login(os.getenv("SMTP_ID"), os.getenv("SMTP_PASSWORD"))
+        s.sendmail(msg['From'], msg['To'], msg.as_string())
+        s.close()
 
 
 
