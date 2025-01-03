@@ -153,7 +153,7 @@ class OrderService:
         if UP_INCREASE and MID_INCREASE and LOW_INCREASE :
             krw = self.upbit_module.get_balance("KRW")
             currencies = self.upbit_module.get_currencies()
-            price = krw / len(currencies) - 1
+            price = krw / len(currencies)
             if price > 6000:
                 return OrderRequestDto(
                     ticker=ticker,
