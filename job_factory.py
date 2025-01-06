@@ -128,11 +128,12 @@ class JobFactory:
                 data=data
             )
 
-            self.logger.info("""
-            ==========================
-             order_request_dto : {}
-            ==========================
-            """.format(order_request_dto))
+            if order_request_dto is not None:
+                self.logger.info("""
+                ==========================
+                 order_request_dto : {}
+                ==========================
+                """.format(order_request_dto))
 
             if order_request_dto is not None:
                 # 매수 신호

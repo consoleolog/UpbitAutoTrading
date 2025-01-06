@@ -26,6 +26,8 @@ class OrderService:
     def is_profit(self, ticker):
         try:
             profit = self.upbit_module.get_profit(ticker)
+            if profit is None:
+                return False
             self.logger.info(f"""
             =======================
                   ABOUT PROFIT
