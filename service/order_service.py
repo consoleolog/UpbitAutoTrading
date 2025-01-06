@@ -112,24 +112,27 @@ class OrderService:
             """)
 
     def create_order_request_dto(self, ticker ,data: DataFrame):
-        up = data[MACD.UP_INCREASE]
-        mid = data[MACD.MID_INCREASE]
-        low = data[MACD.LOW_INCREASE]
+        up: DataFrame = data[MACD.UP_INCREASE]
+        mid: DataFrame = data[MACD.MID_INCREASE]
+        low: DataFrame = data[MACD.LOW_INCREASE]
 
         UP_INCREASE = all([
             up.iloc[-1] == True,
             up.iloc[-2] == True,
-            up.iloc[-3] == True,
+            up.iloc[-3] == False,
+            up.iloc[-4] == False,
         ])
         MID_INCREASE = all([
             mid.iloc[-1] == True,
             mid.iloc[-2] == True,
-            mid.iloc[-3] == True,
+            mid.iloc[-3] == False,
+            mid.iloc[-4] == False,
         ])
         LOW_INCREASE = all([
             low.iloc[-1] == True,
             low.iloc[-2] == True,
-            low.iloc[-3] == True,
+            low.iloc[-3] == False,
+            low.iloc[-4] == False,
         ])
 
         UP_DECREASE = all([
@@ -147,13 +150,11 @@ class OrderService:
         LOW_DECREASE = all([
             mid.iloc[-1] == False,
             mid.iloc[-2] == False,
-            mid.iloc[-3] == False,
         ])
 
         if UP_INCREASE and MID_INCREASE and LOW_INCREASE :
             krw = self.upbit_module.get_balance("KRW")
-            currencies = self.upbit_module.get_currencies()
-            price = krw / 2.5
+            price = krw / 7.5
             if price > 6000:
                 return OrderRequestDto(
                     ticker=ticker,

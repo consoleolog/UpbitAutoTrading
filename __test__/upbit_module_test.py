@@ -1,6 +1,7 @@
 import os
 import unittest
 
+import pyupbit
 from dotenv import load_dotenv
 from pyupbit import Upbit
 
@@ -17,3 +18,11 @@ class UpbitModuleTest(unittest.TestCase):
         currencies = self.Upbit.get_balances()
         self.logger.debug(currencies.__len__())
         self.logger.info(len(currencies))
+
+    def test_get_tickers(self):
+        tickers = pyupbit.get_tickers(fiat="KRW")
+        self.logger.info(tickers)
+
+
+
+

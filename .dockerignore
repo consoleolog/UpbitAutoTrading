@@ -4,5 +4,4 @@
 /**/__pycache__/
 /.github/
 .gitignore
-upbit_document.py
-upbit_provider_v2.py
+/__test__/

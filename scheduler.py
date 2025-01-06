@@ -12,6 +12,17 @@ tickers = [
     "KRW-ETH"
 ]
 
+sub_tickers = [
+    "KRW-BCH",
+    "KRW-AAVE",
+    "KRW-SOL"
+]
+
+other_tickers = [
+    "KRW-BSV",
+    "KRW-XRP"
+]
+
 job_factory = JobFactory()
 
 scheduler = BackgroundScheduler()
@@ -134,6 +145,74 @@ for ticker in tickers:
     )
 
 
+for ticker in sub_tickers:
+
+    scheduler.add_job(
+        func=job_factory.main,
+        trigger='interval',
+        minutes=UnitType.HOUR,
+        kwargs={
+            "candle_request_dto": CandleRequestDto(
+                ticker=ticker,
+                interval=IntervalType(UnitType.HOUR).MINUTE
+            ),
+            "ema": EMA(
+                short=14,
+                middle=30,
+                long=60,
+            )
+        }
+    )
+
+    scheduler.add_job(
+        func=job_factory.main,
+        trigger='interval',
+        minutes=UnitType.HOUR_4,
+        kwargs={
+            "candle_request_dto": CandleRequestDto(
+                ticker=ticker,
+                interval=IntervalType(UnitType.HOUR_4).MINUTE
+            )
+        }
+    )
+
+    scheduler.add_job(
+        func=job_factory.main,
+        trigger='interval',
+        days=1,
+        kwargs={
+            "candle_request_dto": CandleRequestDto(
+                ticker=ticker,
+                interval=IntervalType.DAY
+            )
+        }
+    )
+
+for ticker in other_tickers:
+
+    scheduler.add_job(
+        func=job_factory.main,
+        trigger='interval',
+        minutes=UnitType.HOUR_4,
+        kwargs={
+            "candle_request_dto": CandleRequestDto(
+                ticker=ticker,
+                interval=IntervalType(UnitType.HOUR_4).MINUTE
+            )
+        }
+    )
+
+    scheduler.add_job(
+        func=job_factory.main,
+        trigger='interval',
+        days=1,
+        kwargs={
+            "candle_request_dto": CandleRequestDto(
+                ticker=ticker,
+                interval=IntervalType.DAY
+            )
+        }
+    )
 
 def create_table_if_not_exist():
     job_factory.before_starting_job()
