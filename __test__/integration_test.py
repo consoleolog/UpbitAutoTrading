@@ -40,7 +40,7 @@ class IntegrationTest(unittest.TestCase):
         self.logger = Logger().get_logger(__class__.__name__)
         self.ema = EMA()
         self.candle_request_dto = CandleRequestDto(
-            ticker="KRW-BTC",
+            ticker="KRW-AAVE",
             interval=IntervalType(UnitType.MINUTE).MINUTE
         )
         self.candle_service = CandleService(
