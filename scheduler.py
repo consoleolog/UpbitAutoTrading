@@ -2,6 +2,7 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from job_factory import JobFactory
+from logger import Logger
 from models.dto.candle_request_dto import CandleRequestDto
 from models.type.ema import EMA
 from models.type.interval_type import IntervalType
@@ -19,7 +20,7 @@ tickers = [
     "KRW-SOL"
 ]
 
-
+logger = Logger().get_logger("scheduler")
 
 job_factory = JobFactory()
 
@@ -32,6 +33,12 @@ scheduler.add_job(
 )
 
 for ticker in tickers:
+
+    logger.debug(f"""
+    =================
+       ADD {ticker}
+    =================
+    """)
 
     if ticker == "KRW-BTC" or ticker == "KRW-ETH" :
 
