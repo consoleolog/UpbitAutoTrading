@@ -9,19 +9,17 @@ from models.type.unit_type import UnitType
 
 tickers = [
     "KRW-BTC",
-    "KRW-ETH"
-]
-
-sub_tickers = [
+    "KRW-ETH",
+    ###################
+    "KRW-BSV",
+    "KRW-XRP",
+    ###################
     "KRW-BCH",
     "KRW-AAVE",
     "KRW-SOL"
 ]
 
-other_tickers = [
-    "KRW-BSV",
-    "KRW-XRP"
-]
+
 
 job_factory = JobFactory()
 
@@ -35,117 +33,75 @@ scheduler.add_job(
 
 for ticker in tickers:
 
-    scheduler.add_job(
-        func=job_factory.main,
-        trigger='interval',
-        minutes=UnitType.MINUTE_5,
-        kwargs={
-            "candle_request_dto": CandleRequestDto(
-                ticker=ticker,
-                interval=IntervalType(UnitType.MINUTE_5).MINUTE
-            ),
-            "ema": EMA(
-                short=14,
-                middle=30,
-                long=60,
-            )
-        }
-    )
+    if ticker == "KRW-BTC" or ticker == "KRW-ETH" :
 
-    scheduler.add_job(
-        func=job_factory.main,
-        trigger='interval',
-        minutes=UnitType.MINUTE_10,
-        kwargs={
-            "candle_request_dto": CandleRequestDto(
-                ticker=ticker,
-                interval=IntervalType(UnitType.MINUTE_10).MINUTE
-            ),
-            "ema": EMA(
-                short=14,
-                middle=30,
-                long=60,
-            )
-        }
-    )
+        scheduler.add_job(
+            func=job_factory.main,
+            trigger='interval',
+            minutes=UnitType.MINUTE_5,
+            kwargs={
+                "candle_request_dto": CandleRequestDto(
+                    ticker=ticker,
+                    interval=IntervalType(UnitType.MINUTE_5).MINUTE
+                ),
+                "ema": EMA(
+                    short=14,
+                    middle=30,
+                    long=60,
+                )
+            }
+        )
 
-    scheduler.add_job(
-        func=job_factory.main,
-        trigger='interval',
-        minutes=UnitType.MINUTE_15,
-        kwargs={
-            "candle_request_dto": CandleRequestDto(
-                ticker=ticker,
-                interval=IntervalType(UnitType.MINUTE_15).MINUTE
-            ),
-            "ema": EMA(
-                short=14,
-                middle=30,
-                long=60,
-            )
-        }
-    )
+        scheduler.add_job(
+            func=job_factory.main,
+            trigger='interval',
+            minutes=UnitType.MINUTE_10,
+            kwargs={
+                "candle_request_dto": CandleRequestDto(
+                    ticker=ticker,
+                    interval=IntervalType(UnitType.MINUTE_10).MINUTE
+                ),
+                "ema": EMA(
+                    short=14,
+                    middle=30,
+                    long=60,
+                )
+            }
+        )
 
-    scheduler.add_job(
-        func=job_factory.main,
-        trigger='interval',
-        minutes=UnitType.HALF_HOUR,
-        kwargs={
-            "candle_request_dto": CandleRequestDto(
-                ticker=ticker,
-                interval=IntervalType(UnitType.HALF_HOUR).MINUTE
-            ),
-            "ema": EMA(
-                short=14,
-                middle=30,
-                long=60,
-            )
-        }
-    )
+        scheduler.add_job(
+            func=job_factory.main,
+            trigger='interval',
+            minutes=UnitType.MINUTE_15,
+            kwargs={
+                "candle_request_dto": CandleRequestDto(
+                    ticker=ticker,
+                    interval=IntervalType(UnitType.MINUTE_15).MINUTE
+                ),
+                "ema": EMA(
+                    short=14,
+                    middle=30,
+                    long=60,
+                )
+            }
+        )
 
-    scheduler.add_job(
-        func=job_factory.main,
-        trigger='interval',
-        minutes=UnitType.HOUR,
-        kwargs={
-            "candle_request_dto": CandleRequestDto(
-                ticker=ticker,
-                interval=IntervalType(UnitType.HOUR).MINUTE
-            ),
-            "ema": EMA(
-                short=14,
-                middle=30,
-                long=60,
-            )
-        }
-    )
-
-    scheduler.add_job(
-        func=job_factory.main,
-        trigger='interval',
-        minutes=UnitType.HOUR_4,
-        kwargs={
-            "candle_request_dto": CandleRequestDto(
-                ticker=ticker,
-                interval=IntervalType(UnitType.HOUR_4).MINUTE
-            )
-        }
-    )
-
-    scheduler.add_job(
-        func=job_factory.main,
-        trigger='interval',
-        days=1,
-        kwargs={
-            "candle_request_dto": CandleRequestDto(
-                ticker=ticker,
-                interval=IntervalType.DAY
-            )
-        }
-    )
-
-
-for ticker in sub_tickers:
+        scheduler.add_job(
+            func=job_factory.main,
+            trigger='interval',
+            minutes=UnitType.HALF_HOUR,
+            kwargs={
+                "candle_request_dto": CandleRequestDto(
+                    ticker=ticker,
+                    interval=IntervalType(UnitType.HALF_HOUR).MINUTE
+                ),
+                "ema": EMA(
+                    short=14,
+                    middle=30,
+                    long=60,
+                )
+            }
+        )
 
     scheduler.add_job(
         func=job_factory.main,
@@ -188,31 +144,6 @@ for ticker in sub_tickers:
         }
     )
 
-for ticker in other_tickers:
-
-    scheduler.add_job(
-        func=job_factory.main,
-        trigger='interval',
-        minutes=UnitType.HOUR_4,
-        kwargs={
-            "candle_request_dto": CandleRequestDto(
-                ticker=ticker,
-                interval=IntervalType(UnitType.HOUR_4).MINUTE
-            )
-        }
-    )
-
-    scheduler.add_job(
-        func=job_factory.main,
-        trigger='interval',
-        days=1,
-        kwargs={
-            "candle_request_dto": CandleRequestDto(
-                ticker=ticker,
-                interval=IntervalType.DAY
-            )
-        }
-    )
 
 def create_table_if_not_exist():
     job_factory.before_starting_job()
