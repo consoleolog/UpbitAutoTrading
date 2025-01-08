@@ -30,6 +30,11 @@ class CandleService:
             data[MACD.MIDDLE] = data[EMA.SHORT] - data[EMA.LONG]
             data[MACD.LOWER] = data[EMA.MIDDLE] - data[EMA.LONG]
 
+            data[MACD.SIGNAL] = data[CandleResponseDto.CLOSE].ewm(span=9).mean()
+            data[MACD.UP_SIGNAL] = data[MACD.UPPER] - data[MACD.SIGNAL]
+            data[MACD.MID_SIGNAL] = data[MACD.MIDDLE] - data[MACD.SIGNAL]
+            data[MACD.LOW_SIGNAL] = data[MACD.LOWER] - data[MACD.LOWER]
+
             data[MACD.UP_INCREASE] = data[MACD.UPPER] > data[MACD.UPPER].shift(1)
             data[MACD.MID_INCREASE] = data[MACD.MIDDLE] > data[MACD.MIDDLE].shift(1)
             data[MACD.LOW_INCREASE] = data[MACD.LOWER] > data[MACD.LOWER].shift(1)
