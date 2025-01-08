@@ -74,7 +74,7 @@ class OrderService:
         except Exception as err:
             self.logger.warn(f"""
             =======================
-                     {order_request_dto.ticker}
+                  {order_request_dto.ticker}
                 err: {str(err)}
             =======================
             """)
@@ -114,50 +114,52 @@ class OrderService:
             """)
 
     def create_order_request_dto(self, ticker ,data: DataFrame):
-        up: DataFrame = data[MACD.UP_INCREASE]
-        mid: DataFrame = data[MACD.MID_INCREASE]
-        low: DataFrame = data[MACD.LOW_INCREASE]
+        try:
+            up: DataFrame = data[MACD.UP_INCREASE]
+            mid: DataFrame = data[MACD.MID_INCREASE]
+            low: DataFrame = data[MACD.LOW_INCREASE]
 
-        UP_INCREASE = all([
-            up.iloc[-1] == True,
-            up.iloc[-2] == True,
-            up.iloc[-3] == False,
-            up.iloc[-4] == False,
-        ])
-        MID_INCREASE = all([
-            mid.iloc[-1] == True,
-            mid.iloc[-2] == True,
-            mid.iloc[-3] == False,
-            mid.iloc[-4] == False,
-        ])
+            UP_INCREASE = all([
+                up.iloc[-1] == True,
+                up.iloc[-2] == True,
+                up.iloc[-3] == False,
+                up.iloc[-4] == False,
+            ])
+            MID_INCREASE = all([
+                mid.iloc[-1] == True,
+                mid.iloc[-2] == True,
+                mid.iloc[-3] == False,
+                mid.iloc[-4] == False,
+            ])
 
+            UP_DECREASE = all([
+                up.iloc[-1] == False,
+                up.iloc[-2] == False,
+            ])
 
-        UP_DECREASE = all([
-            up.iloc[-1] == False,
-            up.iloc[-2] == False,
-        ])
+            MID_DECREASE = all([
+                mid.iloc[-1] == False,
+                mid.iloc[-2] == False,
+            ])
 
-        MID_DECREASE = all([
-            mid.iloc[-1] == False,
-            mid.iloc[-2] == False,
-        ])
+            LOW_DECREASE = all([
+                low.iloc[-1] == False,
+                low.iloc[-2] == False,
+            ])
 
-        LOW_DECREASE = all([
-            low.iloc[-1] == False,
-            low.iloc[-2] == False,
-        ])
-
-        if UP_INCREASE and MID_INCREASE :
-            krw = self.upbit_module.get_balance("KRW")
-            price = krw / 7.5
-            if price > 6000:
+            if UP_INCREASE and MID_INCREASE:
+                krw = self.upbit_module.get_balance("KRW")
+                price = krw / 2
+                if price > 6000:
+                    return OrderRequestDto(
+                        ticker=ticker,
+                        price=price,
+                    )
+            elif UP_DECREASE and MID_DECREASE and LOW_DECREASE:
+                my_vol = self.upbit_module.get_balance(ticker)
                 return OrderRequestDto(
                     ticker=ticker,
-                    price=price,
+                    volume=my_vol,
                 )
-        elif UP_DECREASE and MID_DECREASE and LOW_DECREASE:
-            my_vol = self.upbit_module.get_balance(ticker)
-            return OrderRequestDto(
-                ticker=ticker,
-                volume=my_vol,
-            )
+        except Exception as e:
+            self.logger.warn(e)
