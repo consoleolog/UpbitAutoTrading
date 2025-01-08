@@ -103,6 +103,7 @@ class JobFactory:
             self.logger.info(f"""
             =======================
                     JOB START
+                TICKER : {candle_request_dto.ticker}
               Interval : {candle_request_dto.interval}  
                  STAGE : {stage}
             =======================
@@ -127,13 +128,6 @@ class JobFactory:
                 ticker=candle_request_dto.ticker,
                 data=data
             )
-
-            if order_request_dto is not None:
-                self.logger.info("""
-                ==========================
-                 order_request_dto : {}
-                ==========================
-                """.format(order_request_dto))
 
             if order_request_dto is not None:
                 # 매수 신호
