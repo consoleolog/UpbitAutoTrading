@@ -9,15 +9,15 @@ from models.type.interval_type import IntervalType
 from models.type.unit_type import UnitType
 
 tickers = [
-    "KRW-BTC",
-    "KRW-ETH",
-    ###################
     "KRW-BSV",
     "KRW-XRP",
-    ###################
+
     "KRW-BCH",
     "KRW-AAVE",
-    "KRW-SOL"
+    "KRW-SOL",
+
+    "KRW-BTC",
+    "KRW-ETH",
 ]
 
 logger = Logger().get_logger("scheduler")
@@ -34,12 +34,6 @@ scheduler.add_job(
 
 try :
     for ticker in tickers:
-
-        logger.debug(f"""
-        =================
-           ADD {ticker}
-        =================
-        """)
 
         scheduler.add_job(
             func=job_factory.main,
@@ -157,6 +151,9 @@ try :
                 },
                 id=f"{ticker}_{IntervalType(UnitType.HALF_HOUR).MINUTE}"
             )
+        else:
+            pass
+
 except Exception as e:
     logger.warn(f"""
     {"-" * 40}
