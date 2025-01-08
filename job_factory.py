@@ -125,22 +125,23 @@ class JobFactory:
             candle_service.save_data(candle_data=candle_data)
 
             order_request_dto = self.order_service.create_order_request_dto(
-                ticker=candle_request_dto.ticker,
-                data=data
+                candle_request_dto=candle_request_dto,
+                data=data,
+                stage=stage
             )
-
             if order_request_dto is not None:
                 # 매수 신호
-                if order_request_dto.price is not None and stage == StageType.STABLE_DECREASE:
+                if order_request_dto.price is not None:
                     order_response_dto = self.order_service.buy_market_order(order_request_dto)
                     self.order_service.save_data(order_response_dto)
 
                 # 매도 신호
-                elif order_request_dto.volume is not None and stage == StageType.STABLE_INCREASE:
+                elif order_request_dto.volume is not None:
                     is_profit = self.order_service.is_profit(candle_request_dto.ticker)
                     if is_profit:
                         order_response_dto = self.order_service.sell_market_order(order_request_dto)
                         self.order_service.save_data(order_response_dto)
+
         except Exception as err:
             self.logger.warn(f"""
             =======================

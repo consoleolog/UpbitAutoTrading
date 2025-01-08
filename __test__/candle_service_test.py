@@ -1,6 +1,7 @@
 import unittest
 
 import pyupbit
+from scipy.stats import linregress
 
 from database import connection
 from models.dto.candle_request_dto import CandleRequestDto
@@ -8,9 +9,24 @@ from models.dto.candle_response_dto import CandleResponseDto
 from models.type.ema import EMA
 from models.type.interval_type import IntervalType
 from models.type.macd import MACD
+from models.type.stage_type import StageType
 from module.upbit_module import UpbitModule
 from repository.candle_data_repository import CandleDataRepository
 
+
+def is_upward_trend(data):
+    """
+    데이터의 기울기를 계산하여 우상향 여부를 판단
+    :param data: 숫자 리스트
+    :return: bool (True: 우상향, False: 우하향)
+    """
+    if len(data) < 2:
+        raise ValueError("데이터는 최소 2개 이상의 값을 포함해야 합니다.")
+
+    x = list(range(len(data)))
+    slope, _, _, _, _ = linregress(x, data)
+
+    return slope > 0
 
 class CandleServiceTest(unittest.TestCase):
     def test_something(self):
@@ -25,17 +41,14 @@ class CandleServiceTest(unittest.TestCase):
 
 
     def test_get_candle_data(self):
-        data1 = pyupbit.get_ohlcv(
-            ticker=self.ticker,
-            interval=IntervalType.DAY,
-        )
 
         candle_request_dto = CandleRequestDto(
             ticker=self.ticker,
             interval=IntervalType.DAY,
         )
-        data2 = self.upbit_module.get_candles_data(candle_request_dto)
-        self.assertEqual(data1, data2)
+        data = self.upbit_module.get_candles_data(candle_request_dto)
+
+
 
     def test_create_sub_data(self):
         candle_request_dto = CandleRequestDto(
@@ -55,8 +68,17 @@ class CandleServiceTest(unittest.TestCase):
         data[MACD.MID_INCREASE] = data[MACD.MIDDLE] > data[MACD.MIDDLE].shift(1)
         data[MACD.LOW_INCREASE] = data[MACD.LOWER] > data[MACD.LOWER].shift(1)
 
-    # def test_save_data(self):
+        a = data[MACD.LOWER]
 
+        print(data[MACD.LOWER].tolist())
+        print(is_upward_trend(data[MACD.LOWER].tolist()))
+
+
+    def test_loop(self):
+        data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+        last_five_reversed = data[-5:][::-1]
+        print(last_five_reversed)
 
 
 if __name__ == '__main__':

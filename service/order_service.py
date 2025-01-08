@@ -1,14 +1,18 @@
+from typing import Union
 
-
-from pandas import DataFrame
+from pandas import DataFrame, Series
 
 from logger import Logger
+from models.dto.candle_request_dto import CandleRequestDto
 from models.dto.order_request_dto import OrderRequestDto
 from models.dto.order_response_dto import OrderResponseDto
 from models.entity.order_data import OrderData
+from models.type.interval_type import IntervalType
 from models.type.macd import MACD
+from models.type.stage_type import StageType
 from module.upbit_module import UpbitModule
 from repository.order_data_repository import OrderDataRepository
+from util import data_util
 
 
 class OrderService:
@@ -113,53 +117,38 @@ class OrderService:
             =======================
             """)
 
-    def create_order_request_dto(self, ticker ,data: DataFrame):
+    def create_order_request_dto(self, candle_request_dto: CandleRequestDto ,data: DataFrame, stage:int):
+        MY_KRW = self.upbit_module.get_balance("KRW")
+        MY_VOL = self.upbit_module.get_balance(candle_request_dto.ticker)
         try:
-            up: DataFrame = data[MACD.UP_INCREASE]
-            mid: DataFrame = data[MACD.MID_INCREASE]
-            low: DataFrame = data[MACD.LOW_INCREASE]
+            up: Union[Series, None, DataFrame] = data[MACD.UPPER]
+            mid: Union[Series, None, DataFrame] = data[MACD.MIDDLE]
+            low: Union[Series, None, DataFrame] = data[MACD.LOWER]
 
-            UP_INCREASE = all([
-                up.iloc[-1] == True,
-                up.iloc[-2] == True,
-                up.iloc[-3] == False,
-                up.iloc[-4] == False,
-            ])
-            MID_INCREASE = all([
-                mid.iloc[-1] == True,
-                mid.iloc[-2] == True,
-                mid.iloc[-3] == False,
-                mid.iloc[-4] == False,
-            ])
+            if stage == StageType.STABLE_DECREASE and MY_KRW / 2 > 6000:
 
-            UP_DECREASE = all([
-                up.iloc[-1] == False,
-                up.iloc[-2] == False,
-            ])
+                ui = data_util.is_upward_trend(up.tolist()[-3:][::-1])
+                mi = data_util.is_upward_trend(mid.tolist()[-3:][::-1])
+                si = data_util.is_upward_trend(mid.tolist()[-3:][::-1])
 
-            MID_DECREASE = all([
-                mid.iloc[-1] == False,
-                mid.iloc[-2] == False,
-            ])
+                if ui == True and mi == True and si == True:
 
-            LOW_DECREASE = all([
-                low.iloc[-1] == False,
-                low.iloc[-2] == False,
-            ])
-
-            if UP_INCREASE and MID_INCREASE:
-                krw = self.upbit_module.get_balance("KRW")
-                price = krw / 2
-                if price > 6000:
                     return OrderRequestDto(
-                        ticker=ticker,
-                        price=price,
+                        ticker=candle_request_dto.ticker,
+                        price=MY_KRW / 2
                     )
-            elif UP_DECREASE and MID_DECREASE and LOW_DECREASE:
-                my_vol = self.upbit_module.get_balance(ticker)
-                return OrderRequestDto(
-                    ticker=ticker,
-                    volume=my_vol,
-                )
+
+            elif stage == StageType.STABLE_INCREASE and self.is_profit(candle_request_dto.ticker) == True and MY_VOL is not None:
+
+                ud = data_util.is_downward_trend(up.tolist()[-2:][::-1])
+                md = data_util.is_downward_trend(mid.tolist()[-2:][::-1])
+                ld = data_util.is_downward_trend(low.tolist()[-2:][::-1])
+
+                if ud == True and md == True and ld == True:
+                    return OrderRequestDto(
+                        ticker=candle_request_dto.ticker,
+                        volume=MY_VOL,
+                    )
+
         except Exception as e:
             self.logger.warn(e)

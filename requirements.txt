@@ -6,3 +6,4 @@ python-dotenv~=1.0.1
 fastapi~=0.115.2
 uvicorn[standard]
 requests~=2.32.3
+scipy

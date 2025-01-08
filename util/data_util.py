@@ -1,4 +1,5 @@
 from pandas import DataFrame
+from scipy.stats import linregress
 
 from models.type.ema import EMA
 from models.type.stage_type import StageType
@@ -20,3 +21,21 @@ def get_stage_from_ema(data: DataFrame):
         return StageType.END_OF_DECREASE
     elif ema_short > ema_long > ema_middle:
         return StageType.START_OF_INCREASE
+
+def is_downward_trend(data):
+    if len(data) < 2:
+        raise ValueError("List's length is must be over 2")
+
+    x = list(range(len(data)))
+    slope, _, _, _, _ = linregress(x, data)
+
+    return slope < 0
+
+def is_upward_trend(data):
+    if len(data) < 2:
+        raise ValueError("List's length is must be over 2")
+
+    x = list(range(len(data)))
+    slope, _, _, _, _ = linregress(x, data)
+
+    return slope > 0
