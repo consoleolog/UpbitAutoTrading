@@ -173,6 +173,11 @@ class IntegrationTest(unittest.TestCase):
         s.sendmail(msg['From'], msg['To'], msg.as_string())
         s.close()
 
+    def test_get_balance(self):
+        ticker = "KRW-AAVE"
+        balance = self.upbit_module.get_balance(ticker)
+
+        self.logger.debug(balance)
 
 
 
