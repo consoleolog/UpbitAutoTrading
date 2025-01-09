@@ -125,20 +125,20 @@ class OrderService:
             mid: Union[Series, None, DataFrame] = data[MACD.MIDDLE]
             low: Union[Series, None, DataFrame] = data[MACD.LOWER]
 
-            if stage == StageType.STABLE_DECREASE and MY_KRW / 2 > 6000:
+            if stage == StageType.STABLE_DECREASE and MY_KRW / 2 > 6000 and MY_VOL == 0:
 
                 ui = data_util.is_upward_trend(up.tolist()[-3:][::-1])
                 mi = data_util.is_upward_trend(mid.tolist()[-3:][::-1])
-                si = data_util.is_upward_trend(mid.tolist()[-3:][::-1])
+                li = data_util.is_upward_trend(low.tolist()[-2:][::-1])
 
-                if ui == True and mi == True and si == True:
+                if ui == True and mi == True and li == True:
 
                     return OrderRequestDto(
                         ticker=candle_request_dto.ticker,
                         price=MY_KRW / 2
                     )
 
-            elif stage == StageType.STABLE_INCREASE and self.is_profit(candle_request_dto.ticker) == True and MY_VOL is not None:
+            elif stage == StageType.STABLE_INCREASE and self.is_profit(candle_request_dto.ticker) == True and MY_VOL != 0:
 
                 ud = data_util.is_downward_trend(up.tolist()[-2:][::-1])
                 md = data_util.is_downward_trend(mid.tolist()[-2:][::-1])
