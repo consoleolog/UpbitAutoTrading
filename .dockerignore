@@ -5,3 +5,4 @@
 /.github/
 .gitignore
 /__test__/
+/.venv/
