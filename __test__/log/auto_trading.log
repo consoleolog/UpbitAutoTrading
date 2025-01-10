@@ -404,3 +404,25 @@ Name: 2024-12-26 15:23:00, dtype: object
         
 [DEBUG] 2025-01-10 11:46:44,981 : integration_test : test_get_data : 163 :: -  14.719601443879746
 [INFO] 2025-01-10 11:46:44,982 : integration_test : test_get_data : 172 :: -  감소
+[DEBUG] 2025-01-10 12:31:48,664 : integration_test : test_get_balance : 216 :: -  0.16023806798672313
+[DEBUG] 2025-01-10 13:06:46,642 : integration_test : test_get_balance : 216 :: -  -0.3319217122582122
+[DEBUG] 2025-01-10 13:06:59,276 : integration_test : test_get_balance : 216 :: -  -0.4234863225363397
+[DEBUG] 2025-01-10 13:08:44,139 : integration_test : test_get_balance : 216 :: -  -0.2403571019800847
+[DEBUG] 2025-01-10 13:19:05,372 : integration_test : test_get_balance : 216 :: -  -0.11445576284765938
+[DEBUG] 2025-01-10 13:29:23,337 : integration_test : test_get_balance : 216 :: -  -0.3319217122582122
+[DEBUG] 2025-01-10 13:36:28,107 : integration_test : test_get_balance : 216 :: -  -0.6981801533707221
+[DEBUG] 2025-01-10 14:36:43,838 : integration_test : test_get_balance : 216 :: -  -0.6409522719468925
+[DEBUG] 2025-01-10 14:54:59,316 : integration_test : test_get_balance : 216 :: -  0.0
+[INFO] 2025-01-10 15:00:26,678 : upbit_module_test : test_load_keys : 39 :: -  Upbit
+[DEBUG] 2025-01-10 15:18:28,630 : integration_test : test_get_balance : 216 :: -  0.46926862767540345
+[INFO] 2025-01-10 15:30:58,023 : upbit_module_test : test_get_tickers : 25 :: -  ['KRW-BTC', 'KRW-ETH', 'KRW-NEO', 'KRW-MTL', 'KRW-XRP', 'KRW-ETC', 'KRW-SNT', 'KRW-WAVES', 'KRW-XEM', 'KRW-QTUM', 'KRW-LSK', 'KRW-STEEM', 'KRW-XLM', 'KRW-ARDR', 'KRW-ARK', 'KRW-STORJ', 'KRW-GRS', 'KRW-ADA', 'KRW-SBD', 'KRW-POWR', 'KRW-BTG', 'KRW-ICX', 'KRW-EOS', 'KRW-TRX', 'KRW-SC', 'KRW-ONT', 'KRW-ZIL', 'KRW-POLYX', 'KRW-ZRX', 'KRW-LOOM', 'KRW-BCH', 'KRW-BAT', 'KRW-IOST', 'KRW-CVC', 'KRW-IQ', 'KRW-IOTA', 'KRW-HIFI', 'KRW-ONG', 'KRW-GAS', 'KRW-BOUNTY', 'KRW-ELF', 'KRW-KNC', 'KRW-BSV', 'KRW-THETA', 'KRW-QKC', 'KRW-BTT', 'KRW-MOC', 'KRW-TFUEL', 'KRW-MANA', 'KRW-ANKR', 'KRW-AERGO', 'KRW-ATOM', 'KRW-TT', 'KRW-GAME2', 'KRW-MBL', 'KRW-WAXP', 'KRW-HBAR', 'KRW-MED', 'KRW-MLK', 'KRW-STPT', 'KRW-ORBS', 'KRW-VET', 'KRW-CHZ', 'KRW-STMX', 'KRW-DKA', 'KRW-HIVE', 'KRW-KAVA', 'KRW-AHT', 'KRW-LINK', 'KRW-XTZ', 'KRW-BORA', 'KRW-JST', 'KRW-CRO', 'KRW-TOKAMAK', 'KRW-SXP', 'KRW-HUNT', 'KRW-DOT', 'KRW-MVL', 'KRW-STRAX', 'KRW-AQT', 'KRW-GLM', 'KRW-META', 'KRW-FCT2', 'KRW-CBK', 'KRW-SAND', 'KRW-HPO', 'KRW-DOGE', 'KRW-STRIKE', 'KRW-PUNDIX', 'KRW-FLOW', 'KRW-AXS', 'KRW-STX', 'KRW-XEC', 'KRW-SOL', 'KRW-POL', 'KRW-AAVE', 'KRW-1INCH', 'KRW-ALGO', 'KRW-NEAR', 'KRW-AVAX', 'KRW-T', 'KRW-CELO', 'KRW-GMT', 'KRW-APT', 'KRW-SHIB', 'KRW-MASK', 'KRW-ARB', 'KRW-EGLD', 'KRW-SUI', 'KRW-GRT', 'KRW-BLUR', 'KRW-IMX', 'KRW-SEI', 'KRW-MINA', 'KRW-CTC', 'KRW-ASTR', 'KRW-ID', 'KRW-PYTH', 'KRW-MNT', 'KRW-AKT', 'KRW-ZETA', 'KRW-AUCTION', 'KRW-STG', 'KRW-BEAM', 'KRW-TAIKO', 'KRW-USDT', 'KRW-ONDO', 'KRW-ZRO', 'KRW-BLAST', 'KRW-JUP', 'KRW-ENS', 'KRW-G', 'KRW-PENDLE', 'KRW-ATH', 'KRW-USDC', 'KRW-UXLINK', 'KRW-BIGTIME', 'KRW-CKB', 'KRW-W', 'KRW-CARV', 'KRW-INJ', 'KRW-MEW', 'KRW-UNI', 'KRW-SAFE', 'KRW-DRIFT', 'KRW-AGLD', 'KRW-PEPE', 'KRW-BONK', 'KRW-RENDER', 'KRW-MOVE', 'KRW-ME', 'KRW-MOCA', 'KRW-VANA', 'KRW-SONIC']
+[DEBUG] 2025-01-10 15:31:08,845 : integration_test : test_get_balance : 216 :: -  1.0415474419137003
+[DEBUG] 2025-01-10 15:31:30,439 : integration_test : test_get_balance : 216 :: -  0.8011903399336157
+[DEBUG] 2025-01-10 15:39:49,796 : integration_test : test_get_balance : 216 :: -  1.2017855099004235
+[DEBUG] 2025-01-10 16:07:00,048 : integration_test : test_get_balance : 216 :: -  1.6023806798672313
+[DEBUG] 2025-01-10 16:25:03,209 : integration_test : test_get_balance : 216 :: -  2.3234519858074854
+[DEBUG] 2025-01-10 16:38:43,115 : integration_test : test_get_balance : 216 :: -  2.8499484949067186
+[DEBUG] 2025-01-10 16:56:24,359 : integration_test : test_get_balance : 216 :: -  2.8385029186219524
+[DEBUG] 2025-01-10 17:05:48,193 : integration_test : test_get_balance : 216 :: -  2.369234290946549
+[DEBUG] 2025-01-10 17:06:19,261 : integration_test : test_get_balance : 213 :: -  [{'currency': 'KRW', 'balance': '48096.14864839', 'locked': '0', 'avg_buy_price': '0', 'avg_buy_price_modified': True, 'unit_currency': 'KRW'}, {'currency': 'AAVE', 'balance': '0.0160238', 'locked': '0', 'avg_buy_price': '436850', 'avg_buy_price_modified': False, 'unit_currency': 'KRW'}]
+[DEBUG] 2025-01-10 17:06:19,419 : integration_test : test_get_balance : 218 :: -  2.369234290946549

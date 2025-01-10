@@ -125,16 +125,16 @@ class OrderService:
             low: Union[Series, None, DataFrame] = data[MACD.LOWER]
 
             if stage == StageType.STABLE_DECREASE or stage == StageType.END_OF_DECREASE or stage == StageType.STABLE_INCREASE:
-                if data_util.is_upward_trend(up.tolist()[-5:]) and data_util.is_upward_trend(
-                        mid.tolist()[-5:]) and data_util.is_upward_trend(low.tolist()[-5:]) and MY_KRW / 7 > 7000 and MY_VOL == 0:
+                if data_util.is_upward_trend(up.tolist()[-4:]) and data_util.is_upward_trend(
+                        mid.tolist()[-4:]) and data_util.is_upward_trend(low.tolist()[-4:]) and MY_KRW / 7 > 7000 and MY_VOL == 0:
 
                     return OrderRequestDto(
                         ticker=candle_request_dto.ticker,
                         price=7000
                     )
             elif stage == StageType.STABLE_INCREASE or stage == StageType.END_OF_INCREASE or stage == StageType.START_OF_DECREASE:
-                if (data_util.is_downward_trend(up.tolist()[-5:]) and data_util.is_downward_trend(
-                        mid.tolist()[-5:]) and data_util.is_downward_trend(low.tolist()[-5:])
+                if (data_util.is_downward_trend(up.tolist()[-3:]) and data_util.is_downward_trend(
+                        mid.tolist()[-3:]) and data_util.is_downward_trend(low.tolist()[-3:])
                       and self.is_profit(candle_request_dto.ticker) == True and MY_VOL != 0):
                     return OrderRequestDto(
                         ticker=candle_request_dto.ticker,

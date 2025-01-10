@@ -79,7 +79,6 @@ try :
             id=f"{ticker}_{IntervalType.DAY}"
         )
 
-        # if ticker == "KRW-BTC" or ticker == "KRW-ETH":
         scheduler.add_job(
             func=job_factory.main,
             trigger='interval',
@@ -101,42 +100,6 @@ try :
         scheduler.add_job(
             func=job_factory.main,
             trigger='interval',
-            minutes=UnitType.MINUTE_10,
-            kwargs={
-                "candle_request_dto": CandleRequestDto(
-                    ticker=ticker,
-                    interval=IntervalType(UnitType.MINUTE_10).MINUTE
-                ),
-                "ema": EMA(
-                    short=14,
-                    middle=30,
-                    long=60,
-                )
-            },
-            id=f"{ticker}_{IntervalType(UnitType.MINUTE_10).MINUTE}"
-        )
-
-        scheduler.add_job(
-            func=job_factory.main,
-            trigger='interval',
-            minutes=UnitType.MINUTE_15,
-            kwargs={
-                "candle_request_dto": CandleRequestDto(
-                    ticker=ticker,
-                    interval=IntervalType(UnitType.MINUTE_15).MINUTE
-                ),
-                "ema": EMA(
-                    short=14,
-                    middle=30,
-                    long=60,
-                )
-            },
-            id=f"{ticker}_{IntervalType(UnitType.MINUTE_15).MINUTE}"
-        )
-
-        scheduler.add_job(
-            func=job_factory.main,
-            trigger='interval',
             minutes=UnitType.HALF_HOUR,
             kwargs={
                 "candle_request_dto": CandleRequestDto(
@@ -151,8 +114,6 @@ try :
             },
             id=f"{ticker}_{IntervalType(UnitType.HALF_HOUR).MINUTE}"
         )
-        # else:
-        #     pass
 
 except Exception as e:
     logger.warn(f"""
