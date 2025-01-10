@@ -7,9 +7,7 @@ from models.dto.candle_request_dto import CandleRequestDto
 from models.dto.order_request_dto import OrderRequestDto
 from models.dto.order_response_dto import OrderResponseDto
 from models.entity.order_data import OrderData
-from models.type.interval_type import IntervalType
 from models.type.macd import MACD
-from models.type.stage_type import StageType
 from module.upbit_module import UpbitModule
 from repository.order_data_repository import OrderDataRepository
 from util import data_util
@@ -125,30 +123,20 @@ class OrderService:
             mid: Union[Series, None, DataFrame] = data[MACD.MIDDLE]
             low: Union[Series, None, DataFrame] = data[MACD.LOWER]
 
-            if stage == StageType.STABLE_DECREASE and MY_KRW / 2 > 6000 and MY_VOL == 0:
+            if data_util.is_upward_trend(up.tolist()[-5:]) and data_util.is_upward_trend(
+                    mid.tolist()[-5:]) and data_util.is_upward_trend(low.tolist()[-5:]) and MY_KRW / 7 > 7000 and MY_VOL == 0:
 
-                ui = data_util.is_upward_trend(up.tolist()[-3:][::-1])
-                mi = data_util.is_upward_trend(mid.tolist()[-3:][::-1])
-                li = data_util.is_upward_trend(low.tolist()[-2:][::-1])
-
-                if ui == True and mi == True and li == True:
-
-                    return OrderRequestDto(
-                        ticker=candle_request_dto.ticker,
-                        price=MY_KRW / 2
-                    )
-
-            elif stage == StageType.STABLE_INCREASE and self.is_profit(candle_request_dto.ticker) == True and MY_VOL != 0:
-
-                ud = data_util.is_downward_trend(up.tolist()[-2:][::-1])
-                md = data_util.is_downward_trend(mid.tolist()[-2:][::-1])
-                ld = data_util.is_downward_trend(low.tolist()[-2:][::-1])
-
-                if ud == True and md == True and ld == True:
-                    return OrderRequestDto(
-                        ticker=candle_request_dto.ticker,
-                        volume=MY_VOL,
-                    )
+                return OrderRequestDto(
+                    ticker=candle_request_dto.ticker,
+                    price=7000
+                )
+            elif (data_util.is_downward_trend(up.tolist()[-5:]) and data_util.is_downward_trend(
+                    mid.tolist()[-5:]) and data_util.is_downward_trend(low.tolist()[-5:])
+                  and self.is_profit(candle_request_dto.ticker) == True and MY_VOL != 0):
+                return OrderRequestDto(
+                    ticker=candle_request_dto.ticker,
+                    volume=MY_VOL,
+                )
 
         except Exception as e:
             self.logger.warn(e)
