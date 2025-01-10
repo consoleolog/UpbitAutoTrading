@@ -4,17 +4,19 @@ import unittest
 from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
-
+from typing import Union
+import statistics
 import pandas as pd
 from dotenv import load_dotenv
+from pandas import Series, DataFrame
 
 from database import connection
 from logger import Logger
 from models.dto.candle_request_dto import CandleRequestDto
-from models.dto.candle_response_dto import CandleResponseDto
+
 from models.dto.order_request_dto import OrderRequestDto
 from models.dto.order_response_dto import OrderResponseDto
-from models.entity.candle_data import CandleData
+
 from models.entity.order_data import OrderData
 from models.type.ema import EMA
 from models.type.interval_type import IntervalType
@@ -38,10 +40,10 @@ class IntegrationTest(unittest.TestCase):
             order_data_repository=self.order_data_repository
         )
         self.logger = Logger().get_logger(__class__.__name__)
-        self.ema = EMA()
+        self.ema = EMA(long=40)
         self.candle_request_dto = CandleRequestDto(
-            ticker="KRW-AAVE",
-            interval=IntervalType(UnitType.MINUTE).MINUTE
+            ticker="KRW-XRP",
+            interval=IntervalType(UnitType.MINUTE_5).MINUTE
         )
         self.candle_service = CandleService(
             candle_data_repository=self.candle_data_repository,
@@ -114,30 +116,64 @@ class IntegrationTest(unittest.TestCase):
         self.order_data_repository.save(order_data)
 
     def test_get_data(self):
-        data = self.upbit_module.get_candles_data(self.candle_request_dto)
-        # self.logger.info(data.iloc[-1])
+        data = self.candle_service.get_candle_data(self.candle_request_dto)
+        up: Union[Series, None, DataFrame] = data[MACD.UPPER]
+        mid: Union[Series, None, DataFrame] = data[MACD.MIDDLE]
+        low: Union[Series, None, DataFrame] = data[MACD.LOWER]
 
-        data = self.candle_service.create_sub_data(data)
-        # self.logger.info(data.iloc[-1])
+        up_hist: Union[Series, None, DataFrame] = data[MACD.UP_HIST]
+        mid_hist: Union[Series, None, DataFrame] = data[MACD.MID_HIST]
+        low_hist: Union[Series, None, DataFrame] = data[MACD.LOW_HIST]
 
-        stage = data_util.get_stage_from_ema(data)
-        # self.logger.info(stage)
+        up_list = up.tolist()[-2:]
+        mid_list = mid.tolist()[-2:]
+        low_list = low.tolist()[-2:]
 
-        candle_data = CandleData(
-            ticker=self.candle_request_dto.ticker,
-            close=data[CandleResponseDto.CLOSE].iloc[-1],
-            ema_short=data[EMA.SHORT].iloc[-1],
-            ema_middle=data[EMA.MIDDLE].iloc[-1],
-            ema_long=data[EMA.LONG].iloc[-1],
-            stage=stage,
-            macd_upper=data[MACD.UPPER].iloc[-1],
-            macd_middle=data[MACD.MIDDLE].iloc[-1],
-            macd_lower=data[MACD.LOWER].iloc[-1],
-            interval=self.candle_request_dto.interval,
-        )
-        # self.logger.info(candle_data)
+        up_hist_list = up_hist.tolist()[-7:]
+        mid_hist_list = mid_hist.tolist()[-7:]
+        low_hist_list = low_hist.tolist()[-7:]
 
-        self.candle_service.save_data(candle_data=candle_data)
+        self.logger.info(f"""
+        {'-'*30}
+        
+        UP   : {up_list}
+        {data_util.is_upward_trend(up.tolist()[-5:])}
+        HIST : {up_hist_list}
+        STD  : {statistics.stdev(up_hist_list)}
+        
+        {'-'*30}
+        
+        MID  : {mid_list}
+        {data_util.is_upward_trend(mid.tolist()[-5:])}
+        HIST : {mid_hist_list}
+        STD  : {statistics.stdev(mid_hist_list)}
+        
+        {'-'*30}
+        
+        LOW : {low_list}
+        {data_util.is_upward_trend(low.tolist()[-5:])}
+        LOW : {low_hist_list}
+        STD : {statistics.stdev(low_hist_list)}
+        
+        {'-'*30}
+        """)
+
+        std_dev = statistics.stdev([10, 20, 30, 40, 50, 40])
+
+        self.logger.debug(std_dev)
+
+        #짧은 구간 동안 기울기가 세개다 상승인지 판단
+        if data_util.is_upward_trend(up.tolist()[-5:]) and data_util.is_upward_trend(mid.tolist()[-5:]) and data_util.is_upward_trend(low.tolist()[-5:]):
+            self.logger.info("증가")
+
+
+
+        elif data_util.is_downward_trend(up.tolist()[-5:]) and data_util.is_downward_trend(mid.tolist()[-5:]) and data_util.is_downward_trend(low.tolist()[-5:]):
+            self.logger.info("감소")
+
+
+
+
 
     def test_refresh(self):
         SQL = """

@@ -1,15 +1,16 @@
 import unittest
 
-import pyupbit
+
 from scipy.stats import linregress
 
 from database import connection
+from logger import Logger
 from models.dto.candle_request_dto import CandleRequestDto
 from models.dto.candle_response_dto import CandleResponseDto
 from models.type.ema import EMA
 from models.type.interval_type import IntervalType
 from models.type.macd import MACD
-from models.type.stage_type import StageType
+
 from module.upbit_module import UpbitModule
 from repository.candle_data_repository import CandleDataRepository
 
@@ -38,15 +39,8 @@ class CandleServiceTest(unittest.TestCase):
         self.candle_data_repository = CandleDataRepository(connection)
         self.ema = EMA()
         self.upbit_module = UpbitModule()
+        self.logger = Logger().get_logger(__class__.__name__)
 
-
-    def test_get_candle_data(self):
-
-        candle_request_dto = CandleRequestDto(
-            ticker=self.ticker,
-            interval=IntervalType.DAY,
-        )
-        data = self.upbit_module.get_candles_data(candle_request_dto)
 
 
 
@@ -64,11 +58,7 @@ class CandleServiceTest(unittest.TestCase):
         data[MACD.MIDDLE] = data[EMA.SHORT] - data[EMA.LONG]
         data[MACD.LOWER] = data[EMA.MIDDLE] - data[EMA.LONG]
 
-        data[MACD.UP_INCREASE] = data[MACD.UPPER] > data[MACD.UPPER].shift(1)
-        data[MACD.MID_INCREASE] = data[MACD.MIDDLE] > data[MACD.MIDDLE].shift(1)
-        data[MACD.LOW_INCREASE] = data[MACD.LOWER] > data[MACD.LOWER].shift(1)
 
-        a = data[MACD.LOWER]
 
         print(data[MACD.LOWER].tolist())
         print(is_upward_trend(data[MACD.LOWER].tolist()))
@@ -78,7 +68,7 @@ class CandleServiceTest(unittest.TestCase):
         data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
         last_five_reversed = data[-5:][::-1]
-        print(last_five_reversed)
+        self.logger.info(last_five_reversed)
 
 
 if __name__ == '__main__':
