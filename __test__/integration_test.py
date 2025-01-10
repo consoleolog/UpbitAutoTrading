@@ -210,8 +210,10 @@ class IntegrationTest(unittest.TestCase):
         s.close()
 
     def test_get_balance(self):
+        self.logger.debug(self.upbit_module.get_currencies())
+
         ticker = "KRW-AAVE"
-        balance = self.upbit_module.get_balance(ticker)
+        balance = self.upbit_module.get_profit(ticker)
 
         self.logger.debug(balance)
 

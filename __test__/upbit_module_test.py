@@ -24,5 +24,3 @@ class UpbitModuleTest(unittest.TestCase):
         self.logger.info(tickers)
 
 
-
-
