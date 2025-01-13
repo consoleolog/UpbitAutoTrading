@@ -160,7 +160,7 @@ class OrderService:
                 if stage == StageType.STABLE_DECREASE or stage == StageType.END_OF_DECREASE or stage == StageType.STABLE_INCREASE:
                     if data_util.is_upward_trend(up.tolist()[-2:]) and data_util.is_upward_trend(
                             mid.tolist()[-2:]) and data_util.is_upward_trend(
-                        low.tolist()[-2:]) and MY_KRW / 7 > 7000 and MY_VOL == 0:
+                        low.tolist()[-2:]) and MY_KRW  > 7000 and MY_VOL == 0:
                         return OrderRequestDto(
                             ticker=candle_request_dto.ticker,
                             price=7000
