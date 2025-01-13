@@ -13,6 +13,9 @@ async def lifespan(app):
     logger.info("========================")
     create_table_if_not_exist()
     scheduler.start()
+    logger.info("========================")
+    logger.debug(scheduler.print_jobs())
+    logger.info("========================")
     yield
 
 app = FastAPI(lifespan=lifespan)
