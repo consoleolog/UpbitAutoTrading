@@ -250,6 +250,9 @@ class IntegrationTest(unittest.TestCase):
         balance = self.upbit_module.get_profit(ticker)
 
         self.logger.debug(balance)
+        MY_VOL = self.upbit_module.get_balance("KRW-BCH")
+        self.logger.info(MY_VOL)
+
 
 
 

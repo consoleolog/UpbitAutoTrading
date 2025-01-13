@@ -176,6 +176,9 @@ class OrderService:
                     List   : {low.tolist()[-3:]}
                     Result : {data_util.is_upward_trend(low.tolist()[-3:])} 
                     {'-' * 40}
+                    
+                    KRW    : {MY_KRW}
+                    MY_VOL : {MY_VOL}
                     """)
                     if data_util.is_upward_trend(up.tolist()[-3:]) and data_util.is_upward_trend(
                             mid.tolist()[-3:]) and data_util.is_upward_trend(
@@ -213,11 +216,14 @@ class OrderService:
                     MACD (하)
                     List   : {low.tolist()[-3:]}
                     Result : {data_util.is_upward_trend(low.tolist()[-3:])} 
+                    
+                    KRW    : {MY_KRW}
+                    MY_VOL : {MY_VOL}
                     {'-' * 40}
                     """)
                     if data_util.is_upward_trend(up.tolist()[-3:]) and data_util.is_upward_trend(
                             mid.tolist()[-3:]) and data_util.is_upward_trend(
-                        low.tolist()[-3:]) and MY_KRW / 7 > 7000 and MY_VOL == 0:
+                        low.tolist()[-3:]) and MY_KRW > 7000 and MY_VOL == 0:
                         return OrderRequestDto(
                             ticker=candle_request_dto.ticker,
                             price=7000
@@ -245,6 +251,9 @@ class OrderService:
                 MACD (하)
                 List   : {low.tolist()[-2:]}
                 Result : {data_util.is_downward_trend(low.tolist()[-2:])} 
+                
+                KRW    : {MY_KRW}
+                MY_VOL : {MY_VOL}
                 {'-' * 40}
                 """)
                 if (data_util.is_downward_trend(up.tolist()[-3:]) and data_util.is_downward_trend(
