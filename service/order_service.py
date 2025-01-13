@@ -165,21 +165,21 @@ class OrderService:
                     Ticker : {candle_request_dto.ticker}
 
                     MACD (상)  
-                    List   : {up.tolist()[-2:]}
-                    Result : {data_util.is_upward_trend(up.tolist()[-2:])} 
+                    List   : {up.tolist()[-3:]}
+                    Result : {data_util.is_upward_trend(up.tolist()[-3:])} 
 
                     MACD (중) :
-                    List   : {mid.tolist()[-2:]}
-                    Result : {data_util.is_upward_trend(mid.tolist()[-2:])} 
+                    List   : {mid.tolist()[-3:]}
+                    Result : {data_util.is_upward_trend(mid.tolist()[-3:])} 
 
                     MACD (하)
-                    List   : {low.tolist()[-2:]}
-                    Result : {data_util.is_upward_trend(low.tolist()[-2:])} 
+                    List   : {low.tolist()[-3:]}
+                    Result : {data_util.is_upward_trend(low.tolist()[-3:])} 
                     {'-' * 40}
                     """)
-                    if data_util.is_upward_trend(up.tolist()[-2:]) and data_util.is_upward_trend(
-                            mid.tolist()[-2:]) and data_util.is_upward_trend(
-                        low.tolist()[-2:]) and MY_KRW  > 7000 and MY_VOL == 0:
+                    if data_util.is_upward_trend(up.tolist()[-3:]) and data_util.is_upward_trend(
+                            mid.tolist()[-3:]) and data_util.is_upward_trend(
+                        low.tolist()[-3:]) and MY_KRW  > 7000 and MY_VOL == 0:
                         return OrderRequestDto(
                             ticker=candle_request_dto.ticker,
                             price=7000
@@ -203,21 +203,21 @@ class OrderService:
                     Ticker : {candle_request_dto.ticker}
                     
                     MACD (상)  
-                    List   : {up.tolist()[-2:]}
-                    Result : {data_util.is_upward_trend(up.tolist()[-2:])} 
+                    List   : {up.tolist()[-3:]}
+                    Result : {data_util.is_upward_trend(up.tolist()[-3:])} 
                     
                     MACD (중) :
-                    List   : {mid.tolist()[-2:]}
-                    Result : {data_util.is_upward_trend(mid.tolist()[-2:])} 
+                    List   : {mid.tolist()[-3:]}
+                    Result : {data_util.is_upward_trend(mid.tolist()[-3:])} 
                     
                     MACD (하)
-                    List   : {low.tolist()[-2:]}
-                    Result : {data_util.is_upward_trend(low.tolist()[-2:])} 
+                    List   : {low.tolist()[-3:]}
+                    Result : {data_util.is_upward_trend(low.tolist()[-3:])} 
                     {'-' * 40}
                     """)
-                    if data_util.is_upward_trend(up.tolist()[-2:]) and data_util.is_upward_trend(
-                            mid.tolist()[-2:]) and data_util.is_upward_trend(
-                        low.tolist()[-2:]) and MY_KRW / 7 > 7000 and MY_VOL == 0:
+                    if data_util.is_upward_trend(up.tolist()[-3:]) and data_util.is_upward_trend(
+                            mid.tolist()[-3:]) and data_util.is_upward_trend(
+                        low.tolist()[-3:]) and MY_KRW / 7 > 7000 and MY_VOL == 0:
                         return OrderRequestDto(
                             ticker=candle_request_dto.ticker,
                             price=7000
@@ -235,20 +235,20 @@ class OrderService:
                 Ticker : {candle_request_dto.ticker}
                 
                 MACD (상)  
-                List   : {up.tolist()[-2:]}
-                Result : {data_util.is_downward_trend(up.tolist()[-2:])} 
+                List   : {up.tolist()[-3:]}
+                Result : {data_util.is_downward_trend(up.tolist()[-3:])} 
 
                 MACD (중) :
-                List   : {mid.tolist()[-2:]}
-                Result : {data_util.is_downward_trend(mid.tolist()[-2:])} 
+                List   : {mid.tolist()[-3:]}
+                Result : {data_util.is_downward_trend(mid.tolist()[-3:])} 
 
                 MACD (하)
                 List   : {low.tolist()[-2:]}
                 Result : {data_util.is_downward_trend(low.tolist()[-2:])} 
                 {'-' * 40}
                 """)
-                if (data_util.is_downward_trend(up.tolist()[-2:]) and data_util.is_downward_trend(
-                        mid.tolist()[-2:]) and data_util.is_downward_trend(low.tolist()[-2:])
+                if (data_util.is_downward_trend(up.tolist()[-3:]) and data_util.is_downward_trend(
+                        mid.tolist()[-3:]) and data_util.is_downward_trend(low.tolist()[-2:])
                         and self.is_profit(candle_request_dto.ticker) == True and MY_VOL != 0):
                     return OrderRequestDto(
                         ticker=candle_request_dto.ticker,
