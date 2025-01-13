@@ -139,37 +139,71 @@ class IntegrationTest(unittest.TestCase):
         UP   : {up_list}
         {data_util.is_upward_trend(up.tolist()[-5:])}
         HIST : {up_hist_list}
-        STD  : {statistics.stdev(up_hist_list)}
+        {up_hist.max()}
+        {up_hist.iloc[-1]}
         
         {'-'*30}
         
         MID  : {mid_list}
         {data_util.is_upward_trend(mid.tolist()[-5:])}
         HIST : {mid_hist_list}
-        STD  : {statistics.stdev(mid_hist_list)}
+        {mid_hist.max()}
+        {mid_hist.iloc[-1]}
         
         {'-'*30}
         
         LOW : {low_list}
         {data_util.is_upward_trend(low.tolist()[-5:])}
         LOW : {low_hist_list}
-        STD : {statistics.stdev(low_hist_list)}
+        {low_hist.max()}
+        {low_hist.iloc[-1]}
+
         
         {'-'*30}
         """)
 
-        std_dev = statistics.stdev([10, 20, 30, 40, 50, 40])
+        is_plus = all([
+            up_hist.max() > 0,
+            up_hist.iloc[-1] > 0,
+            mid_hist.max() > 0,
+            mid_hist.iloc[-1] > 0,
+            low_hist.max() > 0,
+            low_hist.iloc[-1] > 0,
+        ])
+        is_minus = all([
+            up_hist.min() < 0,
+            up_hist.iloc[-1] < 0,
+            mid_hist.min() < 0,
+            mid_hist.iloc[-1] < 0,
+            low_hist.min() < 0,
+            low_hist.iloc[-1] < 0,
+        ])
 
-        self.logger.debug(std_dev)
+        # 히스토그램이 양수일 때
+        if is_plus and ( up_hist.max() > up_hist.iloc[-1] and
+                         mid_hist.max() > mid_hist.iloc[-1] and
+                         low_hist.max() > low_hist.iloc[-1] ):
+            pass
+        elif is_minus and ( up_hist.min() < up_hist.iloc[-1] and
+                            mid_hist.min() < mid_hist.iloc[-1] and
+                            low_hist.min() < low_hist.iloc[-1]):
+            pass
 
-        #짧은 구간 동안 기울기가 세개다 상승인지 판단
-        if data_util.is_upward_trend(up.tolist()[-5:]) and data_util.is_upward_trend(mid.tolist()[-5:]) and data_util.is_upward_trend(low.tolist()[-5:]):
-            self.logger.info("증가")
 
 
 
-        elif data_util.is_downward_trend(up.tolist()[-5:]) and data_util.is_downward_trend(mid.tolist()[-5:]) and data_util.is_downward_trend(low.tolist()[-5:]):
-            self.logger.info("감소")
+        # std_dev = statistics.stdev([10, 20, 30, 40, 50, 40])
+        #
+        # self.logger.debug(std_dev)
+        #
+        # #짧은 구간 동안 기울기가 세개다 상승인지 판단
+        # if data_util.is_upward_trend(up.tolist()[-5:]) and data_util.is_upward_trend(mid.tolist()[-5:]) and data_util.is_upward_trend(low.tolist()[-5:]):
+        #     self.logger.info("증가")
+
+
+
+        # elif data_util.is_downward_trend(up.tolist()[-5:]) and data_util.is_downward_trend(mid.tolist()[-5:]) and data_util.is_downward_trend(low.tolist()[-5:]):
+        #     self.logger.info("감소")
 
 
 
