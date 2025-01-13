@@ -174,7 +174,8 @@ class OrderService:
                 f"""
                 {'-' * 30}
                     HISTOGRAM PEEK OUT (MINUS)
-                        매수 신호 
+                    STAGE : {stage}
+                        {candle_request_dto.ticker} 매수 신호 
                 {'-' * 30}
                 """)
                 if stage == StageType.STABLE_DECREASE or stage == StageType.END_OF_DECREASE or stage == StageType.STABLE_INCREASE:
@@ -189,7 +190,7 @@ class OrderService:
                 self.logger.info(
                     f"""
                     {'-' * 30} 
-                            매도 신호
+                           {candle_request_dto.ticker} 매도 신호
                     {'-' * 30} 
                     """)
                 if (data_util.is_downward_trend(up.tolist()[-2:]) and data_util.is_downward_trend(
