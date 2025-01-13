@@ -222,7 +222,7 @@ class OrderService:
                             ticker=candle_request_dto.ticker,
                             price=7000
                         )
-            elif stage == StageType.STABLE_INCREASE or stage == StageType.END_OF_INCREASE or stage == StageType.START_OF_DECREASE:
+            if stage == StageType.STABLE_INCREASE or stage == StageType.END_OF_INCREASE or stage == StageType.START_OF_DECREASE:
 
                 self.logger.info(f"""
                 {'-' * 40} 
