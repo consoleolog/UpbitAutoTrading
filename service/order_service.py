@@ -152,9 +152,10 @@ class OrderService:
                 self.logger.info(
                 f"""
                 {'-' * 30}
-                    HISTOGRAM PEEK OUT (PLUS)
-                        매수 신호 
-                {'-' * 30}
+                   HISTOGRAM PEEK OUT (PLUS)
+                        STAGE : {stage}
+                        {candle_request_dto.ticker} 매수 신호 
+                {'-' * 30} 
                 """
                 )
                 if stage == StageType.STABLE_DECREASE or stage == StageType.END_OF_DECREASE or stage == StageType.STABLE_INCREASE:
@@ -192,7 +193,7 @@ class OrderService:
                     {'-' * 30} 
                     """)
                 if (data_util.is_downward_trend(up.tolist()[-2:]) and data_util.is_downward_trend(
-                        mid.tolist()[-2:]) and data_util.is_downward_trend(low.tolist()[-1:])
+                        mid.tolist()[-2:]) and data_util.is_downward_trend(low.tolist()[-2:])
                         and self.is_profit(candle_request_dto.ticker) == True and MY_VOL != 0):
                     return OrderRequestDto(
                         ticker=candle_request_dto.ticker,
