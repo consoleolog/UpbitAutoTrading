@@ -3,7 +3,7 @@ name: main-workflow
 on:
   push:
     branches:
-      - main
+      - production
 jobs:
   SSH:
     runs-on: ubuntu-20.04
@@ -12,10 +12,11 @@ jobs:
       - name: ssh to compute engine
         uses: appleboy/ssh-action@master
         with:
-          key: ${{ secrets.SSH_KEY }}
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.AUTOTRADING_KEY }}
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
           script: |
+            cd cr 
             cd AutoTrading
-            git pull https://github.com/consoleolog/AutoTrading.git 
+            git pull https://github.com/consoleolog/AutoTrading.git
             sh deploy.sh
