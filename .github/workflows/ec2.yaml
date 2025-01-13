@@ -16,4 +16,6 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           script: |
-            mkdir test
+            cd cr 
+            git pull https://github.com/consoleolog/AutoTrading.git
+            sh deploy.sh
