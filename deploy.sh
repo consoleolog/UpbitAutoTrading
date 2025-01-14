@@ -4,7 +4,7 @@ IMAGE_NAME="upbit_trading:V1"
 CONTAINER_NAME="autotrading"
 
 EXIST_BLUE=$(sudo docker-compose -p $CONTAINER_NAME-blue -f docker-compose.blue.yaml ps | grep Up)
-IMAGE_ID=$(sudo docker -q $IMAGE_NAME)
+IMAGE_ID=$(sudo docker images -q $IMAGE_NAME)
 
 sudo docker rmi "$IMAGE_ID"
 
