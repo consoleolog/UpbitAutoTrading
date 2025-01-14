@@ -41,9 +41,6 @@ class CandleServiceTest(unittest.TestCase):
         self.upbit_module = UpbitModule()
         self.logger = Logger().get_logger(__class__.__name__)
 
-
-
-
     def test_create_sub_data(self):
         candle_request_dto = CandleRequestDto(
             ticker=self.ticker,
@@ -57,8 +54,6 @@ class CandleServiceTest(unittest.TestCase):
         data[MACD.UPPER] = data[EMA.SHORT] - data[EMA.MIDDLE]
         data[MACD.MIDDLE] = data[EMA.SHORT] - data[EMA.LONG]
         data[MACD.LOWER] = data[EMA.MIDDLE] - data[EMA.LONG]
-
-
 
         print(data[MACD.LOWER].tolist())
         print(is_upward_trend(data[MACD.LOWER].tolist()))
