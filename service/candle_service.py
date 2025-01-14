@@ -41,9 +41,12 @@ class CandleService:
 
 
     def get_candle_data(self, candle_request_dto: CandleRequestDto):
-        data = self.upbit_module.get_candles_data(candle_request_dto)
-        data = self.create_sub_data(data=data)
-        return data
+        try:
+            data = self.upbit_module.get_candles_data(candle_request_dto)
+            data = self.create_sub_data(data=data)
+            return data
+        except Exception as err:
+            self.logger.warn(candle_request_dto.ticker , str(err))
 
     def save_data(self, candle_data: CandleData):
         self.candle_data_repository.save(candle_data)

@@ -128,14 +128,14 @@ class OrderService:
             mid_hist: Union[Series, None, DataFrame] = data[MACD.MID_HIST]
             low_hist: Union[Series, None, DataFrame] = data[MACD.LOW_HIST]
 
-            is_plus = all([
-                up_hist[-10:].max() > 0,
-                up_hist.iloc[-1] > 0,
-                mid_hist[-10:].max() > 0,
-                mid_hist.iloc[-1] > 0,
-                low_hist[-10:].max() > 0,
-                low_hist.iloc[-1] > 0,
-            ])
+            # is_plus = all([
+            #     up_hist[-10:].max() > 0,
+            #     up_hist.iloc[-1] > 0,
+            #     mid_hist[-10:].max() > 0,
+            #     mid_hist.iloc[-1] > 0,
+            #     low_hist[-10:].max() > 0,
+            #     low_hist.iloc[-1] > 0,
+            # ])
             is_minus = all([
                 up_hist[-10:].min() < 0,
                 up_hist.iloc[-1] < 0,
@@ -145,50 +145,10 @@ class OrderService:
                 low_hist.iloc[-1] < 0,
             ])
 
-            # 히스토그램이 양수일 때 매수 신호
-            if is_plus and (up_hist.max() == up_hist.iloc[-1] and
-                            mid_hist.max() == mid_hist.iloc[-1] and
-                            low_hist.max() == low_hist.iloc[-1]):
-                self.logger.info(
-                f"""
-                {'-' * 30}
-                   HISTOGRAM PEEK OUT (PLUS)
-                        STAGE : {stage}
-                        {candle_request_dto.ticker} 매수 신호 
-                {'-' * 30} 
-                """
-                )
-                if stage == StageType.STABLE_DECREASE or stage == StageType.END_OF_DECREASE or stage == StageType.STABLE_INCREASE:
-                    self.logger.info(f"""
-                    {'-' * 40}
-                    Ticker : {candle_request_dto.ticker}
-
-                    MACD (상)  
-                    List   : {up.tolist()[-8:]}
-                    Result : {data_util.is_upward_trend(up.tolist()[-3:])} 
-
-                    MACD (중) :
-                    List   : {mid.tolist()[-8:]}
-                    Result : {data_util.is_upward_trend(mid.tolist()[-3:])} 
-
-                    MACD (하)
-                    List   : {low.tolist()[-6:]}
-                    Result : {data_util.is_upward_trend(low.tolist()[-3:])} 
-                    
-                    KRW    : {MY_KRW}
-                    MY_VOL : {MY_VOL}
-                    {'-' * 40}""")
-                    if data_util.is_upward_trend(up.tolist()[-8:]) and data_util.is_upward_trend(
-                            mid.tolist()[-8:]) and data_util.is_upward_trend(
-                        low.tolist()[-6:]) and MY_KRW  > 7000 and MY_VOL == 0:
-                        return OrderRequestDto(
-                            ticker=candle_request_dto.ticker,
-                            price=7000
-                        )
             # 히스토그램이 음수 일 때 매수 신호
-            elif is_minus and (up_hist.min() < up_hist.iloc[-1] and
-                               mid_hist.min() < mid_hist.iloc[-1] and
-                               low_hist.min() < low_hist.iloc[-1]):
+            if is_minus and (up_hist[-10:].min() < up_hist.iloc[-1] and
+                               mid_hist[-10:].min() < mid_hist.iloc[-1] and
+                               low_hist[-10:].min() < low_hist.iloc[-1]):
                 self.logger.info(f"""
                 {'-' * 30}
                     HISTOGRAM PEEK OUT (MINUS)
@@ -209,20 +169,20 @@ class OrderService:
                     Result : {data_util.is_upward_trend(mid.tolist()[-8:])} 
                     
                     MACD (하)
-                    List   : {low.tolist()[-6:]}
-                    Result : {data_util.is_upward_trend(low.tolist()[-6:])} 
+                    List   : {low.tolist()[-8:]}
+                    Result : {data_util.is_upward_trend(low.tolist()[-8:])} 
                     
                     KRW    : {MY_KRW}
                     MY_VOL : {MY_VOL}
                     {'-' * 40}""")
                     if data_util.is_upward_trend(up.tolist()[-8:]) and data_util.is_upward_trend(
                             mid.tolist()[-8:]) and data_util.is_upward_trend(
-                        low.tolist()[-6:]) and MY_KRW > 7000 and MY_VOL == 0:
+                        low.tolist()[-8:]) and MY_KRW > 7000 and MY_VOL == 0:
                         return OrderRequestDto(
                             ticker=candle_request_dto.ticker,
                             price=7000
                         )
-            elif stage == StageType.STABLE_INCREASE or stage == StageType.END_OF_INCREASE or stage == StageType.START_OF_DECREASE:
+            if stage == StageType.STABLE_INCREASE or stage == StageType.END_OF_INCREASE or stage == StageType.START_OF_DECREASE:
 
                 self.logger.info(f"""
                 {'-' * 40} 
@@ -250,6 +210,5 @@ class OrderService:
                         ticker=candle_request_dto.ticker,
                         volume=MY_VOL,
                     )
-
         except Exception as e:
             self.logger.warn(e)
