@@ -179,6 +179,8 @@ class IntegrationTest(unittest.TestCase):
             low_hist.iloc[-1] < 0,
         ])
 
+        self.logger.info(up_hist[-10:])
+
         # 히스토그램이 양수일 때
         if is_plus and ( up_hist.max() > up_hist.iloc[-1] and
                          mid_hist.max() > mid_hist.iloc[-1] and
@@ -250,6 +252,9 @@ class IntegrationTest(unittest.TestCase):
         balance = self.upbit_module.get_profit(ticker)
 
         self.logger.debug(balance)
+        MY_VOL = self.upbit_module.get_balance("KRW-BCH")
+        self.logger.info(MY_VOL)
+
 
 
 
