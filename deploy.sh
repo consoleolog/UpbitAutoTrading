@@ -1,6 +1,6 @@
 #!/bin/bash
 
-IMAGE_NAME="upbit_trading:V1"
+IMAGE_NAME="upbit_trading:v1"
 CONTAINER_NAME="autotrading"
 
 EXIST_BLUE=$(sudo docker-compose -p $CONTAINER_NAME-blue -f docker-compose.blue.yaml ps | grep Up)
