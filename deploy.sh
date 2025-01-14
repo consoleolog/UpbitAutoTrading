@@ -6,8 +6,6 @@ CONTAINER_NAME="autotrading"
 EXIST_BLUE=$(sudo docker-compose -p $CONTAINER_NAME-blue -f docker-compose.blue.yaml ps | grep Up)
 IMAGE_ID=$(sudo docker images -q $IMAGE_NAME)
 
-sudo docker rmi "$IMAGE_ID"
-
 if [ -z "$EXIST_BLUE" ]; then
   echo "blue up"
   sudo docker-compose -p $CONTAINER_NAME-blue -f docker-compose.blue.yaml up -d --build
@@ -26,4 +24,5 @@ EXIST_AFTER=$(sudo docker-compose -p autotrading-${AFTER_COMPOSE_COLOR} -f docke
 if [ -n "$EXIST_AFTER" ]; then
   sudo docker-compose -p autotrading-${BEFORE_COMPOSE_COLOR} -f docker-compose.${BEFORE_COMPOSE_COLOR}.yaml down
   echo "$BEFORE_COMPOSE_COLOR down"
+  sudo docker rmi "$IMAGE_ID"
 fi
