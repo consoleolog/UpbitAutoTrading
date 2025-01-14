@@ -155,7 +155,7 @@ class OrderService:
                     STAGE : {stage}
                         {candle_request_dto.ticker} 매수 신호 
                 {'-' * 30}""")
-                if stage == StageType.STABLE_DECREASE or stage == StageType.END_OF_DECREASE or stage == StageType.STABLE_INCREASE:
+                if stage == StageType.STABLE_DECREASE or stage == StageType.END_OF_DECREASE or stage == StageType.START_OF_INCREASE:
                     self.logger.info(f"""
                     {'-' * 40}
                     Ticker : {candle_request_dto.ticker}
