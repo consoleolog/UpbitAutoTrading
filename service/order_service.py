@@ -149,15 +149,12 @@ class OrderService:
             if is_minus and (up_hist[-6:].min() < up_hist.iloc[-1] and
                                mid_hist[-6:].min() < mid_hist.iloc[-1] and
                                low_hist[-6:].min() < low_hist.iloc[-1]):
-                self.logger.info(f"""
-                {'-' * 30}
-                    HISTOGRAM PEEK OUT (MINUS)
-                    STAGE : {stage}
-                        {candle_request_dto.ticker} 매수 신호 
-                {'-' * 30}""")
                 if stage == StageType.STABLE_DECREASE or stage == StageType.END_OF_DECREASE or stage == StageType.START_OF_INCREASE:
                     self.logger.info(f"""
                     {'-' * 40}
+                    HISTOGRAM PEEK OUT (MINUS)
+                    STAGE : {stage}
+                        {candle_request_dto.ticker} 매수 신호 
                     Ticker : {candle_request_dto.ticker}
                     
                     MACD (상)  
@@ -182,7 +179,7 @@ class OrderService:
                             ticker=candle_request_dto.ticker,
                             price=7000
                         )
-            if stage == StageType.STABLE_INCREASE or stage == StageType.END_OF_INCREASE or stage == StageType.START_OF_DECREASE:
+            if (stage == StageType.STABLE_INCREASE or stage == StageType.END_OF_INCREASE or stage == StageType.START_OF_DECREASE) and MY_VOL != 0:
 
                 self.logger.info(f"""
                 {'-' * 40} 
