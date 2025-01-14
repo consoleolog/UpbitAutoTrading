@@ -1,5 +1,6 @@
 from logger import Logger
 from models.entity.candle_data import CandleData
+from models.type.interval_type import IntervalType
 
 
 class CandleDataRepository:
@@ -29,6 +30,30 @@ class CandleDataRepository:
                 self.connection.commit()
         except Exception as e:
             self.logger.warn(e)
+
+    def find_all_by_ticker_and_interval(self, ticker:str, interval: IntervalType):
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute("""
+                SELECT C.DATE,
+                       C.TICKER,
+                       C.CLOSE,
+                       C.EMA_SHORT,
+                       C.EMA_MIDDLE,
+                       C.EMA_LONG,
+                       C.STAGE,
+                       C.MACD_UPPER,
+                       C.MACD_MIDDLE,
+                       C.MACD_LOWER,
+                       C.INTERVAL
+                FROM CANDLE_DATA C 
+                WHERE TICKER = %s
+                AND INTERVAL = %s
+                ORDER BY DATE DESC """,
+                               (ticker, interval))
+                return cursor.fetchall()
+        except Exception as err:
+            self.logger.warning(err)
 
     def save(self, candle_data: CandleData):
         try:

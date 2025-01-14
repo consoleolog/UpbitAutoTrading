@@ -102,7 +102,7 @@ class Logger:
     @classmethod
     def change_log_file(cls, log_file=DEFAULT_FILE_NAME):
         """파일 핸들러의 로그 파일을 변경"""
-        old_log_file = cls.LOG_FILE
+        old_log_file = f"{cls.LOG_FILE}.1"
         cls.LOG_FILE = f"{cls.LOG_FOLDER}/{log_file}"
         new_file_handler = RotatingFileHandler(
             filename=cls.LOG_FILE,
@@ -119,12 +119,6 @@ class Logger:
 
         cls.HANDLER = new_file_handler
 
-        try:
-            if os.path.exists(old_log_file):
-                os.remove(old_log_file)
-        except Exception as e:
-            print(f"기존 로그 파일 삭제 중 오류 발생: {e}")
-
         msg = MIMEMultipart('alternative')
         msg['Subject'] = '[Upbit Auto Trading] 로그 파일 백업'
         msg['From'] = os.getenv('SMTP_FROM')
@@ -133,7 +127,7 @@ class Logger:
             file = MIMEBase('application', 'octet-stream')
             file.set_payload(handler.read())
             encoders.encode_base64(file)
-            file.add_header("Content-Disposition", f'attachment; filename="{log_file}"')
+            file.add_header("Content-Disposition", f'attachment; filename="{old_log_file}"')
             msg.attach(file)
         s = smtplib.SMTP(os.getenv('SMTP_HOST'), os.getenv('SMTP_PORT') or 587)
         s.starttls()
@@ -141,3 +135,8 @@ class Logger:
         s.sendmail(msg['From'], msg['To'], msg.as_string())
         s.close()
 
+        try:
+            if os.path.exists(old_log_file):
+                os.remove(old_log_file)
+        except Exception as e:
+            print(f"기존 로그 파일 삭제 중 오류 발생: {e}")

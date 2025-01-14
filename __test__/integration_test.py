@@ -87,9 +87,10 @@ class IntegrationTest(unittest.TestCase):
         self.order_data_repository.save(order_data)
 
     def test_sell_market_order(self):
-        volume = self.upbit_module.get_balance("KRW-XRP")
+        ticker = "KRW-AAVE"
+        volume = self.upbit_module.get_balance(ticker)
         order_request_dto = OrderRequestDto(
-            ticker="KRW-XRP",
+            ticker=ticker,
             volume=volume
         )
         result = self.upbit_module.sell_market_order(order_request_dto)
@@ -248,13 +249,21 @@ class IntegrationTest(unittest.TestCase):
     def test_get_balance(self):
         self.logger.debug(self.upbit_module.get_currencies())
 
-        ticker = "KRW-AAVE"
+        ticker = "KRW-BCH"
         balance = self.upbit_module.get_profit(ticker)
 
         self.logger.debug(balance)
-        MY_VOL = self.upbit_module.get_balance("KRW-BCH")
-        self.logger.info(MY_VOL)
 
+    def test_get_currency(self):
+        currencies = self.upbit_module.get_currencies()
+        my_currency = []
+        for c in currencies:
+            self.logger.info(c["currency"])
+            if c["currency"] != "KRW":
+                my_currency.append(c["currency"])
+
+        for ticker in my_currency:
+            self.logger.info(self.upbit_module.get_profit(f"KRW-{ticker}"))
 
 
 
