@@ -146,9 +146,9 @@ class OrderService:
             ])
 
             # 히스토그램이 음수 일 때 매수 신호
-            if is_minus and (up_hist[-10:].min() < up_hist.iloc[-1] and
-                               mid_hist[-10:].min() < mid_hist.iloc[-1] and
-                               low_hist[-10:].min() < low_hist.iloc[-1]):
+            if is_minus and (up_hist[-6:].min() < up_hist.iloc[-1] and
+                               mid_hist[-6:].min() < mid_hist.iloc[-1] and
+                               low_hist[-6:].min() < low_hist.iloc[-1]):
                 self.logger.info(f"""
                 {'-' * 30}
                     HISTOGRAM PEEK OUT (MINUS)
@@ -161,23 +161,23 @@ class OrderService:
                     Ticker : {candle_request_dto.ticker}
                     
                     MACD (상)  
-                    List   : {up.tolist()[-8:]}
-                    Result : {data_util.is_upward_trend(up.tolist()[-8:])} 
+                    List   : {up.tolist()[-6:]}
+                    Result : {data_util.is_upward_trend(up.tolist()[-6:])} 
                     
                     MACD (중) :
-                    List   : {mid.tolist()[-8:]}
-                    Result : {data_util.is_upward_trend(mid.tolist()[-8:])} 
+                    List   : {mid.tolist()[-6:]}
+                    Result : {data_util.is_upward_trend(mid.tolist()[-6:])} 
                     
                     MACD (하)
-                    List   : {low.tolist()[-8:]}
-                    Result : {data_util.is_upward_trend(low.tolist()[-8:])} 
+                    List   : {low.tolist()[-6:]}
+                    Result : {data_util.is_upward_trend(low.tolist()[-6:])} 
                     
                     KRW    : {MY_KRW}
                     MY_VOL : {MY_VOL}
                     {'-' * 40}""")
-                    if data_util.is_upward_trend(up.tolist()[-8:]) and data_util.is_upward_trend(
-                            mid.tolist()[-8:]) and data_util.is_upward_trend(
-                        low.tolist()[-8:]) and MY_KRW > 7000 and MY_VOL == 0:
+                    if data_util.is_upward_trend(up.tolist()[-6:]) and data_util.is_upward_trend(
+                            mid.tolist()[-6:]) and data_util.is_upward_trend(
+                        low.tolist()[-6:]) and MY_KRW > 7000 and MY_VOL == 0:
                         return OrderRequestDto(
                             ticker=candle_request_dto.ticker,
                             price=7000

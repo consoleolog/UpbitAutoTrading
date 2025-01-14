@@ -87,9 +87,10 @@ class IntegrationTest(unittest.TestCase):
         self.order_data_repository.save(order_data)
 
     def test_sell_market_order(self):
-        volume = self.upbit_module.get_balance("KRW-ETH")
+        ticker = "KRW-AAVE"
+        volume = self.upbit_module.get_balance(ticker)
         order_request_dto = OrderRequestDto(
-            ticker="KRW-ETH",
+            ticker=ticker,
             volume=volume
         )
         result = self.upbit_module.sell_market_order(order_request_dto)

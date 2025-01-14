@@ -68,4 +68,4 @@ class UpbitModule:
                     current_price = self.get_current_price(ticker=ticker)
                     return (current_price - float(c['avg_buy_price'])) / float(c['avg_buy_price']) * 100.0
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(ticker, str(e))

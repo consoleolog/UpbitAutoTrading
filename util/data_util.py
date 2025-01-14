@@ -38,4 +38,4 @@ def is_upward_trend(data):
     x = list(range(len(data)))
     slope, _, _, _, _ = linregress(x, data)
 
-    return slope > 0.5
+    return slope > 0.6
