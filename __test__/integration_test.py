@@ -265,7 +265,10 @@ class IntegrationTest(unittest.TestCase):
         for ticker in my_currency:
             self.logger.info(self.upbit_module.get_profit(f"KRW-{ticker}"))
 
-
+    def test_get_profit(self):
+        ticker = "KRW-XRP"
+        a = self.upbit_module.get_profit(ticker)
+        self.logger.debug(a)
 
 
 
