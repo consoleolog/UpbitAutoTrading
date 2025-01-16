@@ -1,6 +1,23 @@
 services:
-  server-container:
-    image: upbit_trading:v1
-    ports:
-      - "8000:8000"
+  ticker-container:
+    container_name: "${TICKER}-container"
+    image: autotrading:v1
+    command: >
+          sh -c "uvicorn server:app --host 0.0.0.0 --port $PORT"
+    env_file:
+      - .env
+    environment:
+      TICKER: ${TICKER}
+      TZ: "Asia/Seoul"
+      PORT: ${PORT}
     build: .
+    ports:
+      - "${PORT}:${PORT}"
+    volumes:
+      - ./log:/app/log
+    healthcheck:
+      test: >
+        bash -c ': > /dev/tcp/localhost/${PORT}' || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 2

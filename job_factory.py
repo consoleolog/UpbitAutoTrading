@@ -79,12 +79,12 @@ class JobFactory:
             # 매수 신호
             if order_request_dto.price is not None:
                 self.logger.info(f"""
-            {'-'*40}
+            {'-'*30}
                 매수
                 Ticker : {candle_request_dto.ticker}
-            {'-'*40}""")
-                # order_response_dto = self.order_service.buy_market_order(order_request_dto)
-                # self.order_service.save_data(order_response_dto)
+            {'-'*30}""")
+                order_response_dto = self.order_service.buy_market_order(order_request_dto)
+                self.order_service.save_data(order_response_dto)
 
             # 매도 신호
             elif order_request_dto.volume is not None:
@@ -94,8 +94,8 @@ class JobFactory:
                 Ticker : {candle_request_dto.ticker}
             {'-' * 30}""")
                 is_profit = self.order_service.is_profit(candle_request_dto.ticker)
-                # if is_profit:
-                #     order_response_dto = self.order_service.sell_market_order(order_request_dto)
-                #     self.order_service.save_data(order_response_dto)
+                if is_profit:
+                    order_response_dto = self.order_service.sell_market_order(order_request_dto)
+                    self.order_service.save_data(order_response_dto)
 
 
