@@ -119,14 +119,13 @@ class OrderService:
     def create_order_request_dto(self, candle_request_dto: CandleRequestDto ,data: DataFrame, stage:int):
         MY_KRW = self.upbit_module.get_balance("KRW")
         MY_VOL = self.upbit_module.get_balance(candle_request_dto.ticker)
-        try:
-            up: Union[Series, None, DataFrame] = data[MACD.UPPER]
-            mid: Union[Series, None, DataFrame] = data[MACD.MIDDLE]
-            low: Union[Series, None, DataFrame] = data[MACD.LOWER]
+        up: Union[Series, None, DataFrame] = data[MACD.UPPER]
+        mid: Union[Series, None, DataFrame] = data[MACD.MIDDLE]
+        low: Union[Series, None, DataFrame] = data[MACD.LOWER]
 
-            up_hist: Union[Series, None, DataFrame] = data[MACD.UP_HIST]
-            mid_hist: Union[Series, None, DataFrame] = data[MACD.MID_HIST]
-            low_hist: Union[Series, None, DataFrame] = data[MACD.LOW_HIST]
+        up_hist: Union[Series, None, DataFrame] = data[MACD.UP_HIST]
+        mid_hist: Union[Series, None, DataFrame] = data[MACD.MID_HIST]
+        low_hist: Union[Series, None, DataFrame] = data[MACD.LOW_HIST]
 
             # is_plus = all([
             #     up_hist[-10:].max() > 0,
@@ -136,54 +135,58 @@ class OrderService:
             #     low_hist[-10:].max() > 0,
             #     low_hist.iloc[-1] > 0,
             # ])
-            is_minus = all([
-                up_hist[-10:].min() < 0,
-                up_hist.iloc[-1] < 0,
-                mid_hist[-10:].min() < 0,
-                mid_hist.iloc[-1] < 0,
-                low_hist[-10:].min() < 0,
-                low_hist.iloc[-1] < 0,
-            ])
+        is_minus = all([
+            up_hist[-10:].min() < 0,
+            up_hist.iloc[-1] < 0,
+            mid_hist[-10:].min() < 0,
+            mid_hist.iloc[-1] < 0,
+            low_hist[-10:].min() < 0,
+            low_hist.iloc[-1] < 0,
+        ])
 
-            # 히스토그램이 음수 일 때 매수 신호
-            if is_minus and (up_hist[-6:].min() < up_hist.iloc[-1] and
-                               mid_hist[-6:].min() < mid_hist.iloc[-1] and
-                               low_hist[-6:].min() < low_hist.iloc[-1]):
-                if stage == StageType.STABLE_DECREASE or stage == StageType.END_OF_DECREASE or stage == StageType.START_OF_INCREASE:
-                    self.logger.info(f"""
-                    {'-' * 40}
-                    HISTOGRAM PEEK OUT (MINUS)
-                    STAGE : {stage}
-                        {candle_request_dto.ticker} 매수 신호 
-                    Ticker : {candle_request_dto.ticker}
+        # 히스토그램이 음수 일 때 매수 신호
+        if is_minus and (up_hist[-6:].min() < up_hist.iloc[-1] and
+                           mid_hist[-6:].min() < mid_hist.iloc[-1] and
+                           low_hist[-6:].min() < low_hist.iloc[-1]):
+            if stage == StageType.STABLE_DECREASE or stage == StageType.END_OF_DECREASE or stage == StageType.START_OF_INCREASE:
+                self.logger.info(f"""
+                {'-' * 40}
+                HISTOGRAM PEEK OUT (MINUS)
+                {candle_request_dto.ticker} 매수 신호 
+                STAGE    : {stage}
+                Ticker   : {candle_request_dto.ticker}
+                Interval : {candle_request_dto.interval}
                     
-                    MACD (상)  
-                    List   : {up.tolist()[-6:]}
-                    Result : {data_util.is_upward_trend(up.tolist()[-6:])} 
+                MACD (상)  
+                List   : {up.tolist()[-6:]}
+                Result : {data_util.is_upward_trend(up.tolist()[-6:])} 
                     
-                    MACD (중) :
-                    List   : {mid.tolist()[-6:]}
-                    Result : {data_util.is_upward_trend(mid.tolist()[-6:])} 
+                MACD (중) :
+                List   : {mid.tolist()[-6:]}
+                Result : {data_util.is_upward_trend(mid.tolist()[-6:])} 
                     
-                    MACD (하)
-                    List   : {low.tolist()[-6:]}
-                    Result : {data_util.is_upward_trend(low.tolist()[-6:])} 
+                MACD (하)
+                List   : {low.tolist()[-6:]}
+                Result : {data_util.is_upward_trend(low.tolist()[-6:])} 
                     
-                    KRW    : {MY_KRW}
-                    MY_VOL : {MY_VOL}
-                    {'-' * 40}""")
-                    if data_util.is_upward_trend(up.tolist()[-6:]) and data_util.is_upward_trend(
-                            mid.tolist()[-6:]) and data_util.is_upward_trend(
-                        low.tolist()[-6:]) and MY_KRW > 7000 and MY_VOL == 0:
-                        return OrderRequestDto(
-                            ticker=candle_request_dto.ticker,
-                            price=7000
-                        )
-            if (stage == StageType.STABLE_INCREASE or stage == StageType.END_OF_INCREASE or stage == StageType.START_OF_DECREASE) and MY_VOL != 0:
+                KRW    : {MY_KRW}
+                MY_VOL : {MY_VOL}
+                {'-' * 40}""")
+                if data_util.is_upward_trend(up.tolist()[-6:]) and data_util.is_upward_trend(
+                        mid.tolist()[-6:]) and data_util.is_upward_trend(
+                    low.tolist()[-6:]) and MY_KRW > 7000 and MY_VOL == 0:
+                    return OrderRequestDto(
+                        ticker=candle_request_dto.ticker,
+                        price=7000
+                    )
+        if (stage == StageType.STABLE_INCREASE or stage == StageType.END_OF_INCREASE or stage == StageType.START_OF_DECREASE) and MY_VOL != 0:
 
                 self.logger.info(f"""
                 {'-' * 40} 
-                       {candle_request_dto.ticker} 매도 신호
+                {candle_request_dto.ticker} 매도 신호 
+                STAGE    : {stage}
+                Ticker   : {candle_request_dto.ticker}
+                Interval : {candle_request_dto.interval}
                 
                 MACD (상)  
                 List   : {up.tolist()[-3:]}
@@ -207,5 +210,3 @@ class OrderService:
                         ticker=candle_request_dto.ticker,
                         volume=MY_VOL,
                     )
-        except Exception as e:
-            self.logger.warn(e)
