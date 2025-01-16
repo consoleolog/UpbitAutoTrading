@@ -33,18 +33,26 @@ class CandleService:
         data[MACD.UP_HIST] = data[MACD.UPPER] - data[MACD.SIGNAL]
         data[MACD.MID_HIST] = data[MACD.MIDDLE] - data[MACD.SIGNAL]
         data[MACD.LOW_HIST] = data[MACD.LOWER] - data[MACD.SIGNAL]
-
         return data
 
     def get_candle_data(self, candle_request_dto: CandleRequestDto):
         try:
             data = self.upbit_module.get_candles_data(candle_request_dto)
+            if data is None:
+                candle_request_dto.set_count(150)
+                data = self.upbit_module.get_candles_data(candle_request_dto)
+                data = self.create_sub_data(data=data)
+                return data
             data = self.create_sub_data(data=data)
             return data
-        except Exception as err:
-            self.logger.warn(candle_request_dto.ticker , str(err))
+        except TypeError:
+            candle_request_dto.set_count(100)
+            data = self.upbit_module.get_candles_data(candle_request_dto)
+            data = self.create_sub_data(data=data)
+            return data
 
     def save_data(self, candle_data: CandleData):
         self.candle_data_repository.save(candle_data)
+
 
 

@@ -23,3 +23,6 @@ class CandleRequestDto:
             interval={self.interval},
             to={self.to}
         )"""
+
+    def set_count(self, count:int):
+        self.count = count

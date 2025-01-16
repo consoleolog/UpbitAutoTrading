@@ -73,10 +73,7 @@ class UpbitModule:
                 else:
                     self.logger.error(f"Unexpected type for 'c': {type(c)}. Expected dict.")
         except TypeError as e:
-            self.logger.error(f"TypeError occurred for ticker {ticker}: {str(e)}. Retrying...")
             time.sleep(2)
             return self.get_profit(ticker)
         except Exception as e:
             self.logger.error(f"Error occurred for ticker {ticker}: {str(e)}")
-        finally:
-            return self.get_profit(ticker)

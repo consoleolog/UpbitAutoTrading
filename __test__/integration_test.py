@@ -270,7 +270,9 @@ class IntegrationTest(unittest.TestCase):
         a = self.upbit_module.get_profit(ticker)
         self.logger.debug(a)
 
-
+    def test_set_test(self):
+        self.candle_request_dto.set_count(100)
+        print(self.candle_request_dto)
 
 
 
