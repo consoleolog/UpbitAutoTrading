@@ -1,7 +1,6 @@
 import os
-import time
-
 import pyupbit
+import requests
 from dotenv import load_dotenv
 from pyupbit import Upbit
 
@@ -24,7 +23,6 @@ class UpbitModule:
             to=candle_request_dto.to,
         )
 
-
     def sell_market_order(self, order_request_dto: OrderRequestDto):
         return self.Upbit.sell_market_order(
             ticker=order_request_dto.ticker,
@@ -37,19 +35,32 @@ class UpbitModule:
             price=order_request_dto.price,
         )
 
-
     def get_currencies(self):
         return self.Upbit.get_balances()
 
     def get_balance(self, ticker):
         return self.Upbit.get_balance(ticker)
 
+    def get_current_price(self, ticker):
+        try :
+            return pyupbit.get_current_price(ticker)
+        except (KeyError, TypeError) as e:
+            self.logger.error(e)
+            self.logger.debug("Retrying...")
+            server_url = "https://api.upbit.com"
+            params = { "markets": ticker}
+            res = requests.get(server_url + "/v1/ticker", params=params)
+            return res.json()[0]['trade_price']
+
     def get_profit(self, ticker):
+        current_price = self.get_current_price(ticker)
         try:
-            current_price = pyupbit.get_current_price(ticker)
             currencies = self.get_currencies()
             for c in currencies:
                 if c['currency'] == ticker.replace("KRW-", ""):
                     return (current_price - float(c['avg_buy_price'])) / float(c['avg_buy_price']) * 100.0
-        except TypeError:
-            return self.get_profit(ticker)
+        except (KeyError, TypeError) as e:
+            self.logger.error(e)
+            self.logger.debug("Retrying...")
+            avg_buy_price = self.Upbit.get_avg_buy_price(ticker)
+            return (current_price - float(avg_buy_price)) / float(avg_buy_price) * 100.0

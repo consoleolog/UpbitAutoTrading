@@ -2,6 +2,7 @@ import os
 import unittest
 
 import pyupbit
+import requests
 from dotenv import load_dotenv
 from pyupbit import Upbit
 
@@ -23,4 +24,12 @@ class UpbitModuleTest(unittest.TestCase):
         tickers = pyupbit.get_tickers(fiat="KRW")
         self.logger.info(tickers)
 
+    def test_get_current_price(self):
+        server_url = "https://api.upbit.com"
+        params = {"markets": "KRW-AAVE"}
+        res = requests.get(server_url + "/v1/ticker", params=params)
+        self.logger.info(res.json()[0]['trade_price'])
 
+    def test_get_avg_buy_price(self):
+        a = self.Upbit.get_avg_buy_price("KRW-AAVE")
+        self.logger.info(a)
