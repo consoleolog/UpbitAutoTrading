@@ -18,7 +18,8 @@ elif curl -X GET http://localhost:8001/health > /dev/null 2>&1; then
   AFTER_COLOR="BLUE"
 else
   echo ">>> No Container is Running..."
-  exit 1
+  echo ">>> Starting Blue Deployment..."
+  AFTER_COLOR="BLUE"
 fi
 
 if [ -f ".env" ]; then
