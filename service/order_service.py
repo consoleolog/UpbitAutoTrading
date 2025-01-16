@@ -27,94 +27,71 @@ class OrderService:
         self.order_data_repository.save(order_data)
 
     def is_profit(self, ticker):
-        try:
-            profit = self.upbit_module.get_profit(ticker)
-            if profit is None:
-                return False
-            self.logger.info(f"""
-            =======================
-                  ABOUT PROFIT
-                TICKER : {ticker}
-                PROFIT : {self.upbit_module.get_profit(ticker)}
-            =======================
-            """)
-            if profit > 0.11:
-                return True
-            else:
-                return False
-        except Exception as err:
-            self.logger.warn(f"""
-            =======================
-                   {ticker}
-                err: {str(err)}
-            =======================
-            """)
+        profit = self.upbit_module.get_profit(ticker)
+        if profit is None:
+            return False
+        self.logger.info(f"""
+        =======================
+              ABOUT PROFIT
+            TICKER : {ticker}
+            PROFIT : {self.upbit_module.get_profit(ticker)}
+        =======================
+        """)
+        if profit > 0.1:
+            return True
+        else:
+            return False
 
     def buy_market_order(self, order_request_dto: OrderRequestDto):
         self.logger.info(f"""
         =======================
-              BUY SIGNAL
+                  BUY
             TICKER : {order_request_dto.ticker}
         =======================
         """)
-        try:
-            result = self.upbit_module.buy_market_order(order_request_dto)
-            return OrderResponseDto(
-                uuid=result['uuid'],
-                side=result['side'],
-                ord_type=result['ord_type'],
-                price=result['price'],
-                state=result['state'],
-                market=result['market'],
-                created_at=result['created_at'],
-                reserved_fee=result['reserved_fee'],
-                remaining_fee=result['remaining_fee'],
-                paid_fee=result['paid_fee'],
-                locked=result['locked'],
-                executed_volume=result['executed_volume'],
-                trades_count=result['trades_count']
-            )
-        except Exception as err:
-            self.logger.warn(f"""
-            =======================
-                  {order_request_dto.ticker}
-                err: {str(err)}
-            =======================
-            """)
+        result = self.upbit_module.buy_market_order(order_request_dto)
+        return OrderResponseDto(
+            uuid=result['uuid'],
+            side=result['side'],
+            ord_type=result['ord_type'],
+            price=result['price'],
+            state=result['state'],
+            market=result['market'],
+            created_at=result['created_at'],
+            reserved_fee=result['reserved_fee'],
+            remaining_fee=result['remaining_fee'],
+            paid_fee=result['paid_fee'],
+            locked=result['locked'],
+            executed_volume=result['executed_volume'],
+            trades_count=result['trades_count']
+        )
 
     def sell_market_order(self, order_request_dto: OrderRequestDto):
         self.logger.info(f"""
         =======================
-              SELL SIGNAL
+                  SELL 
             TICKER : {order_request_dto.ticker}
             PROFIT : {self.upbit_module.get_profit(order_request_dto.ticker)}
         =======================
         """)
-        try:
-            result = self.upbit_module.sell_market_order(order_request_dto)
-            return OrderResponseDto(
-                uuid=result['uuid'],
-                side=result['side'],
-                ord_type=result['ord_type'],
-                market=result['market'],
-                state=result['state'],
-                created_at=result['created_at'],
-                volume=result['volume'],
-                remaining_volume=result['remaining_volume'],
-                reserved_fee=result['reserved_fee'],
-                remaining_fee=result['remaining_fee'],
-                paid_fee=result['paid_fee'],
-                locked=result['locked'],
-                executed_volume=result['executed_volume'],
-                trades_count=result['trades_count']
-            )
-        except Exception as err:
-            self.logger.warn(f"""
-            =======================
-                     {order_request_dto.ticker}
-                err: {str(err)}
-            =======================
-            """)
+        result = self.upbit_module.sell_market_order(order_request_dto)
+        return OrderResponseDto(
+            uuid=result['uuid'],
+            side=result['side'],
+            ord_type=result['ord_type'],
+            market=result['market'],
+            state=result['state'],
+            created_at=result['created_at'],
+            volume=result['volume'],
+            remaining_volume=result['remaining_volume'],
+            reserved_fee=result['reserved_fee'],
+            remaining_fee=result['remaining_fee'],
+            paid_fee=result['paid_fee'],
+            locked=result['locked'],
+            executed_volume=result['executed_volume'],
+            trades_count=result['trades_count']
+        )
+
 
     def create_order_request_dto(self, candle_request_dto: CandleRequestDto ,data: DataFrame, stage:int):
         MY_KRW = self.upbit_module.get_balance("KRW")
@@ -206,3 +183,4 @@ class OrderService:
                         ticker=candle_request_dto.ticker,
                         volume=MY_VOL,
                     )
+

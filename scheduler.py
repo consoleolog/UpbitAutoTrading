@@ -11,11 +11,9 @@ from models.type.unit_type import UnitType
 tickers = [
     "KRW-BSV",
     "KRW-XRP",
-
     "KRW-BCH",
     "KRW-AAVE",
     "KRW-SOL",
-
     "KRW-BTC",
     "KRW-ETH",
 ]
@@ -25,12 +23,6 @@ logger = Logger().get_logger("scheduler")
 job_factory = JobFactory()
 
 scheduler = BackgroundScheduler()
-
-scheduler.add_job(
-    func=job_factory.backup_data,
-    trigger='interval',
-    days=7
-)
 
 try :
     for ticker in tickers:
@@ -122,6 +114,3 @@ except Exception as e:
           {str(e)}
     {"-" * 40}
     """)
-
-def create_table_if_not_exist():
-    job_factory.before_starting_job()

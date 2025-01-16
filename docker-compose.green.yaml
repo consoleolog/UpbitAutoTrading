@@ -3,9 +3,12 @@ services:
     container_name: autotrading-green
     environment:
       TZ: "Asia/Seoul"
-    image: upbit_trading:v1
+    image: autotrading:v1
+    command: ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8001"]
     ports:
-      - "8000:8000"
+      - "8001:8000"
+    expose:
+      - "8001"
     build: .
     healthcheck:
       test: >
