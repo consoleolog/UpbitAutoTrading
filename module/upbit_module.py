@@ -1,4 +1,5 @@
 import os
+import json
 import pyupbit
 import requests
 from dotenv import load_dotenv
@@ -55,8 +56,9 @@ class UpbitModule:
         current_price = self.get_current_price(ticker)
         try:
             currencies = self.get_currencies()
+            format_ticker = ticker.replace("KRW-", "")
             for c in currencies:
-                if c['currency'] == ticker.replace("KRW-", ""):
+                if c['currency'] == format_ticker:
                     return (current_price - float(c['avg_buy_price'])) / float(c['avg_buy_price']) * 100.0
         except (KeyError, TypeError) as e:
             self.logger.error(e)

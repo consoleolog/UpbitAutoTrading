@@ -92,6 +92,54 @@ class OrderService:
             trades_count=result['trades_count']
         )
 
+    def _print_buy_signal_report(self, candle_request_dto, stage, up, mid, low, krw, vol):
+        self.logger.info(f"""
+        {'-' * 55}
+        HISTOGRAM PEEK OUT (MINUS)
+        {candle_request_dto.ticker} 매수 신호 
+        STAGE    : {stage}
+        Ticker   : {candle_request_dto.ticker}
+        Interval : {candle_request_dto.interval}
+
+        MACD (상)  
+        List   : {up.tolist()[-6:]}
+        Result : {data_util.is_upward_trend(up.tolist()[-6:])} 
+
+        MACD (중) :
+        List   : {mid.tolist()[-6:]}
+        Result : {data_util.is_upward_trend(mid.tolist()[-6:])} 
+
+        MACD (하)
+        List   : {low.tolist()[-6:]}
+        Result : {data_util.is_upward_trend(low.tolist()[-6:])} 
+
+        KRW    : {krw}
+        MY_VOL : {vol}
+        {'-' * 55}""")
+
+    def _print_sell_signal_report(self, candle_request_dto, stage, up, mid, low, krw, vol):
+        self.logger.info(f"""
+        {'-' * 55} 
+        {candle_request_dto.ticker} 매도 신호 
+        STAGE    : {stage}
+        Ticker   : {candle_request_dto.ticker}
+        Interval : {candle_request_dto.interval}
+
+        MACD (상)  
+        List   : {up.tolist()[-3:]}
+        Result : {data_util.is_downward_trend(up.tolist()[-3:])} 
+
+        MACD (중) :
+        List   : {mid.tolist()[-3:]}
+        Result : {data_util.is_downward_trend(mid.tolist()[-3:])} 
+
+        MACD (하)
+        List   : {low.tolist()[-2:]}
+        Result : {data_util.is_downward_trend(low.tolist()[-2:])} 
+
+        KRW    : {krw}
+        MY_VOL : {vol}
+        {'-' * 55}""")
 
     def create_order_request_dto(self, candle_request_dto: CandleRequestDto ,data: DataFrame, stage:int):
         MY_KRW = self.upbit_module.get_balance("KRW")
@@ -126,29 +174,8 @@ class OrderService:
                            mid_hist[-6:].min() < mid_hist.iloc[-1] and
                            low_hist[-6:].min() < low_hist.iloc[-1]):
             if stage == StageType.STABLE_DECREASE or stage == StageType.END_OF_DECREASE or stage == StageType.START_OF_INCREASE:
-                self.logger.info(f"""
-                {'-' * 40}
-                HISTOGRAM PEEK OUT (MINUS)
-                {candle_request_dto.ticker} 매수 신호 
-                STAGE    : {stage}
-                Ticker   : {candle_request_dto.ticker}
-                Interval : {candle_request_dto.interval}
-                    
-                MACD (상)  
-                List   : {up.tolist()[-6:]}
-                Result : {data_util.is_upward_trend(up.tolist()[-6:])} 
-                    
-                MACD (중) :
-                List   : {mid.tolist()[-6:]}
-                Result : {data_util.is_upward_trend(mid.tolist()[-6:])} 
-                    
-                MACD (하)
-                List   : {low.tolist()[-6:]}
-                Result : {data_util.is_upward_trend(low.tolist()[-6:])} 
-                    
-                KRW    : {MY_KRW}
-                MY_VOL : {MY_VOL}
-                {'-' * 40}""")
+                self._print_buy_signal_report(candle_request_dto,stage,up,mid,low,MY_KRW,MY_VOL)
+
                 if data_util.is_upward_trend(up.tolist()[-6:]) and data_util.is_upward_trend(
                         mid.tolist()[-6:]) and data_util.is_upward_trend(
                     low.tolist()[-6:]) and MY_KRW > 7000 and MY_VOL == 0:
@@ -157,29 +184,8 @@ class OrderService:
                         price=7000
                     )
         if (stage == StageType.STABLE_INCREASE or stage == StageType.END_OF_INCREASE or stage == StageType.START_OF_DECREASE) and MY_VOL != 0:
+                self._print_sell_signal_report(candle_request_dto, stage, up, mid, low, MY_KRW, MY_VOL)
 
-                self.logger.info(f"""
-                {'-' * 40} 
-                {candle_request_dto.ticker} 매도 신호 
-                STAGE    : {stage}
-                Ticker   : {candle_request_dto.ticker}
-                Interval : {candle_request_dto.interval}
-                
-                MACD (상)  
-                List   : {up.tolist()[-3:]}
-                Result : {data_util.is_downward_trend(up.tolist()[-3:])} 
-
-                MACD (중) :
-                List   : {mid.tolist()[-3:]}
-                Result : {data_util.is_downward_trend(mid.tolist()[-3:])} 
-
-                MACD (하)
-                List   : {low.tolist()[-2:]}
-                Result : {data_util.is_downward_trend(low.tolist()[-2:])} 
-                
-                KRW    : {MY_KRW}
-                MY_VOL : {MY_VOL}
-                {'-' * 40}""")
                 if (data_util.is_downward_trend(up.tolist()[-3:]) and data_util.is_downward_trend(
                         mid.tolist()[-3:]) and data_util.is_downward_trend(low.tolist()[-2:])
                         and self.is_profit(candle_request_dto.ticker) == True and MY_VOL != 0):

@@ -74,11 +74,9 @@ class JobFactory:
                 self.order_service.save_data(order_response_dto)
 
             # 매도 신호
-            elif order_request_dto.volume is not None:
-                is_profit = self.order_service.is_profit(candle_request_dto.ticker)
-                if is_profit:
-                    order_response_dto = self.order_service.sell_market_order(order_request_dto)
-                    self.order_service.save_data(order_response_dto)
+            if order_request_dto.volume is not None:
+                order_response_dto = self.order_service.sell_market_order(order_request_dto)
+                self.order_service.save_data(order_response_dto)
 
 
 
