@@ -4,8 +4,6 @@ services:
     image: autotrading:v1
     command: >
           sh -c "uvicorn server:app --host 0.0.0.0 --port $PORT"
-    env_file:
-      - .env
     environment:
       TICKER: ${TICKER}
       TZ: "Asia/Seoul"

@@ -36,23 +36,23 @@ if [ "${#TICKERS[@]}" -ne "${#BLUE_PORTS[@]}" ] || [ "${#TICKERS[@]}" -ne "${#GR
   exit 1
 fi
 
-echo "suc"
-
 # 새 컨테이너 배포
 for i in "${!TICKERS[@]}"; do
-  export TICKER=${TICKERS[$i]}
+  TICKER=${TICKERS[$i]}
 
   # 색상에 따른 포트 할당
   if [ "$AFTER_COLOR" == "blue" ]; then
-    export PORT=${BLUE_PORTS[$i]}
-    export SERVER_PORT=${BLUE_PORTS[$i]}
+    PORT=${BLUE_PORTS[$i]}
+    SERVER_PORT=${BLUE_PORTS[$i]}
   elif [ "$AFTER_COLOR" == "green" ]; then
-    export PORT=${GREEN_PORTS[$i]}
-    export SERVER_PORT=${BLUE_PORTS[$i]}
+    PORT=${GREEN_PORTS[$i]}
+    SERVER_PORT=${BLUE_PORTS[$i]}
   fi
 
   echo ">>> Deploying $TICKER on port $PORT..."
-  sudo docker-compose -p $AFTER_COLOR -f docker-compose.yaml up -d --build
+
+  # Docker Compose 명령어에 환경 변수 전달
+  sudo PORT=$PORT SERVER_PORT=$SERVER_PORT TICKER=$TICKER docker-compose -p $AFTER_COLOR -f docker-compose.yaml up -d --build
 done
 
 # 이전 컨테이너 종료
