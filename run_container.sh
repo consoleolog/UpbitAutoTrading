@@ -20,6 +20,7 @@ else
   echo ">>> No Container is Running..."
   echo ">>> Starting Blue Deployment..."
   AFTER_COLOR="blue"
+  BEFORE_COLOR=""
 fi
 
 TICKERS=("KRW-BTC" "KRW-ETH" "KRW-BCH" "KRW-AAVE" "KRW-SOL" "KRW-BSV" "KRW-XRP")
@@ -30,7 +31,6 @@ echo "TICKERS: ${TICKERS[@]}"
 echo "BLUE_PORTS: ${BLUE_PORTS[@]}"
 echo "GREEN_PORTS: ${GREEN_PORTS[@]}"
 
-# 배열 길이 확인
 if [ "${#TICKERS[@]}" -ne "${#BLUE_PORTS[@]}" ] || [ "${#TICKERS[@]}" -ne "${#GREEN_PORTS[@]}" ]; then
   echo ">>> TICKERS, BLUE_PORTS, and GREEN_PORTS do not match."
   exit 1
@@ -40,7 +40,8 @@ fi
 for i in "${!TICKERS[@]}"; do
   TICKER=${TICKERS[$i]}
 
-  # 색상에 따른 포트 할당
+  LOWER_TICKER=$(echo "$TICKER" | tr '[:upper:]' '[:lower:]')
+
   if [ "$AFTER_COLOR" == "blue" ]; then
     PORT=${BLUE_PORTS[$i]}
     SERVER_PORT=${BLUE_PORTS[$i]}
@@ -49,20 +50,29 @@ for i in "${!TICKERS[@]}"; do
     SERVER_PORT=${BLUE_PORTS[$i]}
   fi
 
-  echo ">>> Deploying $TICKER on port $PORT..."
+  echo ">>> Deploying $TICKER on port $SERVER_PORT..."
 
-  # Docker Compose 명령어에 환경 변수 전달
-  sudo PORT=$PORT SERVER_PORT=$SERVER_PORT TICKER=$TICKER docker-compose -p $AFTER_COLOR -f docker-compose.yaml up -d --build
+  sudo PORT="$PORT" SERVER_PORT="$SERVER_PORT" TICKER="$TICKER" docker-compose -p "$LOWER_TICKER-$AFTER_COLOR" -f docker-compose.yaml up -d --build
 done
 
-# 이전 컨테이너 종료
-sudo docker rmi "$IMAGE_ID"
-if [ "$BEFORE_COLOR" == "blue" ]; then
-  echo ">>> Stopping Blue Containers..."
-  sudo docker-compose -p blue down
-elif [ "$BEFORE_COLOR" == "green" ]; then
-  echo ">>> Stopping Green Containers..."
-  sudo docker-compose -p green down
+if [ -z "$BEFORE_COLOR" ]; then
+    exit 0
 fi
+for i in "${!TICKERS[@]}"; do
+  TICKER=${TICKERS[$i]}
+  LOWER_TICKER=$(echo "$TICKER" | tr '[:upper:]' '[:lower:]')
+    # 색상에 따른 포트 할당
+  if [ "$AFTER_COLOR" == "blue" ]; then
+    PORT=${BLUE_PORTS[$i]}
+    SERVER_PORT=${BLUE_PORTS[$i]}
+  elif [ "$AFTER_COLOR" == "green" ]; then
+    PORT=${GREEN_PORTS[$i]}
+    SERVER_PORT=${BLUE_PORTS[$i]}
+  fi
+  echo ">>> Stopping $TICKER on port $PORT..."
+  sudo docker-compose -p "$LOWER_TICKER-$BEFORE_COLOR" down
+done
+sudo docker rmi "$IMAGE_ID"
 
 echo ">>> Deployment Complete. Current Active: $AFTER_COLOR"
+exit 0

@@ -1,6 +1,6 @@
 services:
   ticker-container:
-    container_name: "${TICKER}-container"
+    container_name: "${TICKER}"
     image: autotrading:v1
     command: >
           sh -c "uvicorn server:app --host 0.0.0.0 --port $PORT"
