@@ -37,17 +37,17 @@ for i in "${!TICKERS[@]}"; do
   export TICKER=${TICKERS[$i]}
   export PORT=${PORTS[$i]}
   echo ">>> Deploying $TICKER on port $PORT..."
-  docker-compose -p $AFTER_COLOR up -d --build --no-recreate
+  sudo docker-compose -p $AFTER_COLOR up -d --build --no-recreate
 done
 
 # 이전 컨테이너 종료
 sudo docker rmi "$IMAGE_ID"
 if [ "$BEFORE_COLOR" == "BLUE" ]; then
   echo ">>> Stopping Blue Containers..."
-  docker-compose -p blue down
+  sudo docker-compose -p blue down
 else
   echo ">>> Stopping Green Containers..."
-  docker-compose -p green down
+  sudo docker-compose -p green down
 fi
 
 echo ">>> Deployment Complete. Current Active: $AFTER_COLOR"
