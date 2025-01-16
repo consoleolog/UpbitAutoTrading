@@ -45,7 +45,7 @@ sudo docker rmi "$IMAGE_ID"
 if [ "$BEFORE_COLOR" == "BLUE" ]; then
   echo ">>> Stopping Blue Containers..."
   sudo docker-compose -p blue down
-else
+elif [ "$BEFORE_COLOR" == "GREEN" ]; then
   echo ">>> Stopping Green Containers..."
   sudo docker-compose -p green down
 fi
