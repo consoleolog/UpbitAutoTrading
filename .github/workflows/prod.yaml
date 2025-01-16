@@ -19,3 +19,4 @@ jobs:
             cd cr 
             cd AutoTrading
             git pull https://github.com/consoleolog/AutoTrading.git production
+            sh deploy.sh
