@@ -22,13 +22,6 @@ else
   AFTER_COLOR="BLUE"
 fi
 
-if [ -f ".env" ]; then
-  source .env
-else
-  echo ">>> .env file not found."
-  exit 1
-fi
-
 # TICKERS와 PORTS 배열 생성
 TICKERS=($(echo $TICKERS | tr ',' ' '))
 PORTS=($(echo $PORTS | tr ',' ' '))
