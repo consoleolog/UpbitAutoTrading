@@ -5,12 +5,14 @@ services:
     command: >
           sh -c "uvicorn server:app --host 0.0.0.0 --port $PORT"
     environment:
-      TICKER: ${TICKER}
+      TICKER: "${TICKER}"
       TZ: "Asia/Seoul"
-      PORT: ${PORT}
+      PORT: "${PORT}"
     build: .
     ports:
       - "${PORT}:${SERVER_PORT}"
+    expose:
+      - "${SERVER_PORT}"
     volumes:
       - ./log:/app/log
     healthcheck:
