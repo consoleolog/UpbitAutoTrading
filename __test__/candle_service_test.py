@@ -47,9 +47,15 @@ class CandleServiceTest(unittest.TestCase):
     def test_create_sub_data(self):
         candle_request_dto = CandleRequestDto(
             ticker=self.ticker,
-            interval=IntervalType.DAY,
+            interval=IntervalType(UnitType.MINUTE_5).MINUTE,
         )
-        data = self.upbit_module.get_candles_data(candle_request_dto)
+        data = self.candle_data_repository.find_all_by_ticker_and_interval(
+            ticker=candle_request_dto.ticker,
+            interval=candle_request_dto.interval,
+        )
+        self.logger.debug(data)
+        self.logger.debug(data.iloc[-1])
+        self.logger.debug(data["close"].iloc[-1])
         data[EMA.SHORT] = data[CandleResponseDto.CLOSE].ewm(span=self.ema.short).mean()
         data[EMA.MIDDLE] = data[CandleResponseDto.CLOSE].ewm(span=self.ema.middle).mean()
         data[EMA.LONG] = data[CandleResponseDto.CLOSE].ewm(span=self.ema.long).mean()

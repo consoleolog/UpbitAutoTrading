@@ -34,7 +34,7 @@ class OrderService:
         =======================
               ABOUT PROFIT
             TICKER : {ticker}
-            PROFIT : {self.upbit_module.get_profit(ticker)}
+            PROFIT : {profit}
         =======================
         """)
         if profit > 0.1:

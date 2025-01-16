@@ -20,7 +20,6 @@ class UpbitModule:
             ticker=candle_request_dto.ticker,
             count=candle_request_dto.count,
             interval=candle_request_dto.interval,
-            to=candle_request_dto.to,
         )
 
     def sell_market_order(self, order_request_dto: OrderRequestDto):

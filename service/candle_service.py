@@ -46,8 +46,10 @@ class CandleService:
             data = self.create_sub_data(data=data)
             return data
         except TypeError:
-            candle_request_dto.set_count(100)
-            data = self.upbit_module.get_candles_data(candle_request_dto)
+            data = self.candle_data_repository.find_all_by_ticker_and_interval(
+                ticker=candle_request_dto.ticker,
+                interval=candle_request_dto.interval,
+            )
             data = self.create_sub_data(data=data)
             return data
 

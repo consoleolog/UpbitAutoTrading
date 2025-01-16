@@ -1,3 +1,5 @@
+import pandas as pd
+
 from logger import Logger
 from models.entity.candle_data import CandleData
 from models.type.interval_type import IntervalType
@@ -29,9 +31,9 @@ class CandleDataRepository:
             self.connection.commit()
 
     def find_all_by_ticker_and_interval(self, ticker:str, interval: IntervalType):
-        with self.connection.cursor() as cursor:
-            cursor.execute("""
-            SELECT C.DATE,
+        sql = """
+            SELECT C.CANDLE_ID,
+                   C.DATE,
                    C.TICKER,
                    C.CLOSE,
                    C.EMA_SHORT,
@@ -45,11 +47,10 @@ class CandleDataRepository:
             FROM CANDLE_DATA C 
             WHERE TICKER = %s
             AND INTERVAL = %s
-            ORDER BY DATE DESC """,
-                           (ticker, interval))
-            return cursor.fetchall()
 
-
+        """
+        data = pd.read_sql(sql, self.connection, params=(ticker, interval))
+        return data
     def save(self, candle_data: CandleData):
         with self.connection.cursor() as cursor:
             cursor.execute("""

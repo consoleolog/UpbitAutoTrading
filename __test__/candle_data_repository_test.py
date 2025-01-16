@@ -1,9 +1,13 @@
 import unittest
 from typing import List
 
+import pandas as pd
+
 from database import connection
 from logger import Logger
 from models.entity.candle_data import CandleData
+from models.type.interval_type import IntervalType
+from models.type.unit_type import UnitType
 
 
 class CandleDataRepositoryTest(unittest.TestCase):
@@ -17,9 +21,8 @@ class CandleDataRepositoryTest(unittest.TestCase):
 
     def test_get_all_by_ticker(self):
         ticker = "KRW-BTC"
-        interval = "minutes30"
-        with connection.cursor() as cursor:
-            cursor.execute("""
+        interval = IntervalType(UnitType.MINUTE_5).MINUTE
+        sql = """
             SELECT C.CANDLE_ID,
                    C.DATE,
                    C.TICKER,
@@ -35,11 +38,13 @@ class CandleDataRepositoryTest(unittest.TestCase):
             FROM CANDLE_DATA C 
             WHERE TICKER = %s
             AND INTERVAL = %s
-            ORDER BY DATE DESC """,
-            (ticker, interval))
-            result: List[CandleData] = cursor.fetchall()
-            self.logger.debug(result)
-            self.logger.debug(type(result))
-            self.logger.debug()
+            
+        """
+        # 매개변수 전달 방식 수정
+        data = pd.read_sql(sql, self.connection, params=(ticker, interval))
+        self.logger.debug(data)
+        for i in data.itertuples():  # Pandas DataFrame을 이터레이트할 때 itertuples() 사용
+            self.logger.debug(i)
+
 
 
