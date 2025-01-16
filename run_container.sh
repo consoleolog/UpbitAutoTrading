@@ -24,20 +24,28 @@ fi
 
 # TICKERS와 PORTS 배열 생성
 TICKERS=($(echo $TICKERS | tr ',' ' '))
-PORTS=($(echo $PORTS | tr ',' ' '))
+BLUE_PORTS=($(echo $BLUE_PORTS | tr ',' ' '))
+GREEN_PORTS=($(echo $GREEN_PORTS | tr ',' ' '))
 
 # 배열 길이 확인
-if [ "${#TICKERS[@]}" -ne "${#PORTS[@]}" ]; then
-  echo ">>> TICKERS and PORTS do not match."
+if [ "${#TICKERS[@]}" -ne "${#BLUE_PORTS[@]}" ] || [ "${#TICKERS[@]}" -ne "${#GREEN_PORTS[@]}" ]; then
+  echo ">>> TICKERS, BLUE_PORTS, and GREEN_PORTS do not match."
   exit 1
 fi
 
 # 새 컨테이너 배포
 for i in "${!TICKERS[@]}"; do
   export TICKER=${TICKERS[$i]}
-  export PORT=${PORTS[$i]}
+
+  # 색상에 따른 포트 할당
+  if [ "$AFTER_COLOR" == "BLUE" ]; then
+    export PORT=${BLUE_PORTS[$i]}
+  elif [ "$AFTER_COLOR" == "GREEN" ]; then
+    export PORT=${GREEN_PORTS[$i]}
+  fi
+
   echo ">>> Deploying $TICKER on port $PORT..."
-  sudo docker-compose -p $AFTER_COLOR up -d --build --no-recreate
+  sudo docker-compose -p $AFTER_COLOR up -d --build
 done
 
 # 이전 컨테이너 종료
