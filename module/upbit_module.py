@@ -1,4 +1,5 @@
 import os
+import time
 
 import pyupbit
 from dotenv import load_dotenv
@@ -60,12 +61,19 @@ class UpbitModule:
             return pyupbit.get_current_price(ticker)
         except Exception as e:
             self.logger.error(e)
+
     def get_profit(self, ticker):
         try:
             currencies = self.get_currencies()
-            for _, c in enumerate(currencies):
-                if c['currency'] == ticker.replace("KRW-", ""):
-                    current_price = self.get_current_price(ticker=ticker)
-                    return (current_price - float(c['avg_buy_price'])) / float(c['avg_buy_price']) * 100.0
+            for c in currencies:
+                if isinstance(c, dict):
+                    if c['currency'] == ticker.replace("KRW-", ""):
+                        current_price = self.get_current_price(ticker=ticker)
+                        return (current_price - float(c['avg_buy_price'])) / float(c['avg_buy_price']) * 100.0
+                else:
+                    self.logger.error(f"Unexpected type for 'c': {type(c)}. Expected dict.")
+        except TypeError as e:
+            time.sleep(2)
+            return self.get_profit(ticker)
         except Exception as e:
-            self.logger.error(ticker, str(e))
+            self.logger.error(f"Error occurred for ticker {ticker}: {str(e)}")
