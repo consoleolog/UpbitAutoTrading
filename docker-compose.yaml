@@ -12,12 +12,12 @@ services:
       PORT: ${PORT}
     build: .
     ports:
-      - "${PORT}:${PORT}"
+      - "${PORT}:${SERVER_PORT}"
     volumes:
       - ./log:/app/log
     healthcheck:
       test: >
-        bash -c ': > /dev/tcp/localhost/${PORT}' || exit 1
+        bash -c ': > /dev/tcp/localhost/${SERVER_PORT}' || exit 1
       interval: 30s
       timeout: 10s
       retries: 2
