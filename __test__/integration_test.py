@@ -12,6 +12,7 @@ from pandas import Series, DataFrame
 
 from database import connection
 from logger import Logger
+from models.dto import candle_request_dto
 from models.dto.candle_request_dto import CandleRequestDto
 from models.dto.candle_response_dto import CandleResponseDto
 
@@ -88,7 +89,7 @@ class IntegrationTest(unittest.TestCase):
         self.order_data_repository.save(order_data)
 
     def test_sell_market_order(self):
-        ticker = "KRW-AAVE"
+        ticker = "KRW-BSV"
         volume = self.upbit_module.get_balance(ticker)
         order_request_dto = OrderRequestDto(
             ticker=ticker,
@@ -118,10 +119,7 @@ class IntegrationTest(unittest.TestCase):
         self.order_data_repository.save(order_data)
 
     def test_get_data(self):
-        data = self.candle_data_repository.find_all_by_ticker_and_interval(
-            ticker=self.candle_request_dto.ticker,
-            interval=self.candle_request_dto.interval,
-        )
+        data = self.candle_service.get_candle_data(candle_request_dto=self.candle_request_dto)
         up: Union[Series, None, DataFrame] = data[MACD.UPPER]
         mid: Union[Series, None, DataFrame] = data[MACD.MIDDLE]
         low: Union[Series, None, DataFrame] = data[MACD.LOWER]
@@ -161,7 +159,7 @@ class IntegrationTest(unittest.TestCase):
         {data_util.is_upward_trend(low.tolist()[-5:])}
         LOW : {low_hist_list}
         {low_hist.max()}
-        {low_hist.iloc[-1]}
+        {low_hist.iloc[-2]}
 
         
         {'-'*30}
@@ -241,6 +239,17 @@ class IntegrationTest(unittest.TestCase):
         self.candle_request_dto.set_count(100)
         print(self.candle_request_dto)
 
+    def test_create_order_request_dto(self):
+        data_min30 = self.candle_data_repository.find_all_by_ticker_and_interval("KRW-XRP",
+                                                                                 IntervalType(
+                                                                                     UnitType.HALF_HOUR).MINUTE)
+        data_day = self.candle_data_repository.find_all_by_ticker_and_interval("KRW-XRP",
+                                                                               IntervalType.DAY)
+
+        self.logger.debug(data_min30.iloc[-1]["stage"])
+        self.logger.debug(data_min30.iloc[-1])
+        self.logger.debug(data_day.iloc[-1])
+        self.logger.debug(data_day.iloc[-1]["stage"])
 
 
 

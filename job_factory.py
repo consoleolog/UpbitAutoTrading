@@ -25,9 +25,6 @@ class JobFactory:
         )
         self.logger = Logger().get_logger(__class__.__name__)
 
-        self.data_filename = "data.csv"
-
-
     def init(self):
         self.candle_data_repository.init()
         self.order_data_repository.init()

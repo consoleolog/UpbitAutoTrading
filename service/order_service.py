@@ -2,14 +2,18 @@ from typing import Union
 
 from pandas import DataFrame, Series
 
+from database import connection
 from logger import Logger
 from models.dto.candle_request_dto import CandleRequestDto
 from models.dto.order_request_dto import OrderRequestDto
 from models.dto.order_response_dto import OrderResponseDto
 from models.entity.order_data import OrderData
+from models.type.interval_type import IntervalType
 from models.type.macd import MACD
 from models.type.stage_type import StageType
+from models.type.unit_type import UnitType
 from module.upbit_module import UpbitModule
+from repository.candle_data_repository import CandleDataRepository
 from repository.order_data_repository import OrderDataRepository
 from util import data_util
 
@@ -17,9 +21,13 @@ from util import data_util
 class OrderService:
     def __init__(self,
                  upbit_module: UpbitModule,
-                 order_data_repository: OrderDataRepository):
+                 order_data_repository: OrderDataRepository,
+                 # candle_data_repository: CandleDataRepository
+        ):
         self.order_data_repository = order_data_repository
         self.upbit_module = upbit_module
+
+        # self.candle_data_repository = candle_data_repository
         self.logger = Logger().get_logger(__class__.__name__)
 
     def save_data(self, order_response_dto: OrderResponseDto):
@@ -96,7 +104,7 @@ class OrderService:
         self.logger.info(f"""
         {'-' * 55}
         HISTOGRAM PEEK OUT (MINUS)
-        {candle_request_dto.ticker} 매수 신호 
+        {candle_request_dto.ticker} 매수 검토 
         STAGE    : {stage}
         Ticker   : {candle_request_dto.ticker}
         Interval : {candle_request_dto.interval}
@@ -120,7 +128,7 @@ class OrderService:
     def _print_sell_signal_report(self, candle_request_dto, stage, up, mid, low, krw, vol):
         self.logger.info(f"""
         {'-' * 55} 
-        {candle_request_dto.ticker} 매도 신호 
+        {candle_request_dto.ticker} 매도 검토 
         STAGE    : {stage}
         Ticker   : {candle_request_dto.ticker}
         Interval : {candle_request_dto.interval}
@@ -141,6 +149,14 @@ class OrderService:
         MY_VOL : {vol}
         {'-' * 55}""")
 
+    def _print_sell_if_not_profit_report(self, candle_request_dto, data_min30, data_day):
+        self.logger.debug(f"""
+        {'-' * 30}
+        {candle_request_dto.ticker} 손절 검토
+        MINUTE 30 STAGE : {data_min30.iloc[-1]["stage"]}
+        DAY       STAGE : {data_day.iloc[-1]["stage"]}
+        {'-' * 30}""")
+
     def create_order_request_dto(self, candle_request_dto: CandleRequestDto ,data: DataFrame, stage:int):
         MY_KRW = self.upbit_module.get_balance("KRW")
         MY_VOL = self.upbit_module.get_balance(candle_request_dto.ticker)
@@ -152,14 +168,14 @@ class OrderService:
         mid_hist: Union[Series, None, DataFrame] = data[MACD.MID_HIST]
         low_hist: Union[Series, None, DataFrame] = data[MACD.LOW_HIST]
 
-            # is_plus = all([
-            #     up_hist[-10:].max() > 0,
-            #     up_hist.iloc[-1] > 0,
-            #     mid_hist[-10:].max() > 0,
-            #     mid_hist.iloc[-1] > 0,
-            #     low_hist[-10:].max() > 0,
-            #     low_hist.iloc[-1] > 0,
-            # ])
+        is_plus = all([
+            up_hist[-10:].max() > 0,
+            up_hist.iloc[-1] > 0,
+            mid_hist[-10:].max() > 0,
+            mid_hist.iloc[-1] > 0,
+            low_hist[-10:].max() > 0,
+            low_hist.iloc[-1] > 0,
+        ])
         is_minus = all([
             up_hist[-10:].min() < 0,
             up_hist.iloc[-1] < 0,
@@ -184,13 +200,25 @@ class OrderService:
                         price=7000
                     )
         if (stage == StageType.STABLE_INCREASE or stage == StageType.END_OF_INCREASE or stage == StageType.START_OF_DECREASE) and MY_VOL != 0:
-                self._print_sell_signal_report(candle_request_dto, stage, up, mid, low, MY_KRW, MY_VOL)
+            self._print_sell_signal_report(candle_request_dto, stage, up, mid, low, MY_KRW, MY_VOL)
 
-                if (data_util.is_downward_trend(up.tolist()[-3:]) and data_util.is_downward_trend(
-                        mid.tolist()[-3:]) and data_util.is_downward_trend(low.tolist()[-2:])
-                        and self.is_profit(candle_request_dto.ticker) == True and MY_VOL != 0):
+            # 이익이면 팔고
+            if self.is_profit(candle_request_dto.ticker):
+                # 기울기 우하향일 때 매도
+                if data_util.is_downward_trend(up.tolist()[-3:]) and data_util.is_downward_trend(mid.tolist()[-3:]) and data_util.is_downward_trend(low.tolist()[-2:]) and MY_VOL != 0:
                     return OrderRequestDto(
                         ticker=candle_request_dto.ticker,
                         volume=MY_VOL,
                     )
+            # 아니면 30 분이나 1시간 데이터로 확인해야됨
+            # else:
+            #      # 30 분 도 1스테이지고 60분도 1스테이지면 그냥 손절하자
+            #      data_min30 = self.candle_data_repository.find_all_by_ticker_and_interval(candle_request_dto.ticker, IntervalType(UnitType.HALF_HOUR).MINUTE)
+            #      data_day = self.candle_data_repository.find_all_by_ticker_and_interval(candle_request_dto.ticker, IntervalType.DAY)
+            #      self._print_sell_if_not_profit_report(candle_request_dto, data_min30, data_day)
+            #      if data_min30.iloc[-1]["stage"] == StageType.STABLE_INCREASE or data_day.iloc[-1]["stage"] == StageType.STABLE_INCREASE:
+            #          return OrderRequestDto(
+            #              ticker=candle_request_dto.ticker,
+            #              volume=MY_VOL,
+            #          )
 
