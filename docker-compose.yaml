@@ -1,6 +1,0 @@
-services:
-  server-container:
-    image: upbit_trading:v1
-    ports:
-      - "8000:8000"
-    build: .

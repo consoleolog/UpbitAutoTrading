@@ -129,9 +129,10 @@ class OrderService:
                 self.logger.info(f"""
                 {'-' * 40}
                 HISTOGRAM PEEK OUT (MINUS)
-                STAGE : {stage}
-                    {candle_request_dto.ticker} 매수 신호 
-                Ticker : {candle_request_dto.ticker}
+                {candle_request_dto.ticker} 매수 신호 
+                STAGE    : {stage}
+                Ticker   : {candle_request_dto.ticker}
+                Interval : {candle_request_dto.interval}
                     
                 MACD (상)  
                 List   : {up.tolist()[-6:]}
@@ -159,7 +160,10 @@ class OrderService:
 
                 self.logger.info(f"""
                 {'-' * 40} 
-                       {candle_request_dto.ticker} 매도 신호
+                {candle_request_dto.ticker} 매도 신호 
+                STAGE    : {stage}
+                Ticker   : {candle_request_dto.ticker}
+                Interval : {candle_request_dto.interval}
                 
                 MACD (상)  
                 List   : {up.tolist()[-3:]}

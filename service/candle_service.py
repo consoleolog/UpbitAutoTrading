@@ -33,7 +33,6 @@ class CandleService:
         data[MACD.UP_HIST] = data[MACD.UPPER] - data[MACD.SIGNAL]
         data[MACD.MID_HIST] = data[MACD.MIDDLE] - data[MACD.SIGNAL]
         data[MACD.LOW_HIST] = data[MACD.LOWER] - data[MACD.SIGNAL]
-
         return data
 
     def get_candle_data(self, candle_request_dto: CandleRequestDto):
@@ -54,5 +53,6 @@ class CandleService:
 
     def save_data(self, candle_data: CandleData):
         self.candle_data_repository.save(candle_data)
+
 
 
