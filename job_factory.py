@@ -22,7 +22,8 @@ class JobFactory:
         self.order_data_repository = OrderDataRepository(connection=self.connection)
         self.order_service = OrderService(
             upbit_module=self.upbit_module,
-            order_data_repository=self.order_data_repository
+            order_data_repository=self.order_data_repository,
+            candle_data_repository=self.candle_data_repository,
         )
         self.logger = Logger().get_logger(__class__.__name__)
 

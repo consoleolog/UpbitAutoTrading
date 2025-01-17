@@ -1,14 +1,8 @@
 import unittest
-from typing import Union
-
-from pandas import Series, DataFrame
 
 from database import connection
 from logger import Logger
 from models.dto.candle_request_dto import CandleRequestDto
-from models.dto.order_request_dto import OrderRequestDto
-from models.type.macd import MACD
-from models.type.stage_type import StageType
 from module.upbit_module import UpbitModule
 from repository.candle_data_repository import CandleDataRepository
 from repository.order_data_repository import OrderDataRepository
@@ -27,7 +21,7 @@ class OrderServiceTest(unittest.TestCase):
         self.candle_data_repository = CandleDataRepository(connection)
         self.candle_service = CandleService(self.candle_data_repository)
 
-        self.order_service = OrderService(self.order_data_repository)
+        self.order_service = OrderService(self.order_data_repository, self.candle_data_repository)
 
     def test_is_profit(self):
         ticker = "KRW-ETH"

@@ -49,7 +49,7 @@ class UpbitModule:
         else:
             self.logger.warning("OrderRequestDto is Empty")
 
-    def get_currencies(self)->Optional[list]:
+    def get_currencies(self)->list:
         server_url = "https://api.upbit.com"
         payload = {
             'access_key': self.access_key,
@@ -62,7 +62,7 @@ class UpbitModule:
         if res.status_code == 200:
             return res.json()
         else:
-            return None
+            return self.Upbit.get_balance()
 
     def get_balance(self, ticker: str) -> Optional[float]:
         try:

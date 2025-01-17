@@ -44,5 +44,3 @@ sudo docker -v || {
 
   echo -e "\n=== SUCCESS DOCKER SETUP ==="
 }
-
-echo ">>> Docker Is Already Installed"

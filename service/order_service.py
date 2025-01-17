@@ -1,18 +1,14 @@
 from typing import Union, Optional
-
 from pandas import DataFrame, Series
-
-from database import connection
 from logger import Logger
 from models.dto.candle_request_dto import CandleRequestDto
 from models.dto.order_request_dto import OrderRequestDto
 from models.dto.order_response_dto import OrderResponseDto
 from models.entity.order_data import OrderData
-from models.type.interval_type import IntervalType
 from models.type.macd import MACD
 from models.type.stage_type import StageType
-from models.type.unit_type import UnitType
 from module.upbit_module import UpbitModule
+from repository.candle_data_repository import CandleDataRepository
 from repository.order_data_repository import OrderDataRepository
 from util import data_util
 from util.data_util import is_empty, is_upward_trend, is_downward_trend
@@ -21,10 +17,12 @@ from util.data_util import is_empty, is_upward_trend, is_downward_trend
 class OrderService:
     def __init__(self,
                  order_data_repository: OrderDataRepository,
+                 candle_data_repository: CandleDataRepository,
                  upbit_module: UpbitModule = UpbitModule(),
         ):
         self.order_data_repository = order_data_repository
         self.upbit_module = upbit_module
+        self.candle_data_repository = candle_data_repository
 
         self.logger = Logger().get_logger(__class__.__name__)
 
@@ -185,7 +183,6 @@ class OrderService:
                          low_hist[-10:].min() < 0, low_hist.iloc[-1] < 0,
                          up_hist[-6:].min() < up_hist.iloc[-1], mid_hist[-6:].min() < mid_hist.iloc[-1],
                          low_hist[-6:].min() < low_hist.iloc[-1]])
-                    self.logger.debug(peekout)
                     # Histogram 의 피크아웃을 판단
                     if peekout:
                         self._print_buy_signal_report(candle_request_dto, stage, up, mid, low, MY_KRW, MY_VOL)

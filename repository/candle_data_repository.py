@@ -1,5 +1,6 @@
 import pandas as pd
 
+from database import engine
 from logger import Logger
 from models.entity.candle_data import CandleData
 from models.type.interval_type import IntervalType
@@ -49,8 +50,11 @@ class CandleDataRepository:
             AND INTERVAL = %s
 
         """
-        data = pd.read_sql(sql, self.connection, params=(ticker, interval))
-        return data
+        try:
+            return pd.read_sql(sql, engine, params=(ticker, interval))
+        except Exception:
+            return pd.read_sql(sql, self.connection, params=(ticker, interval))
+
     def save(self, candle_data: CandleData):
         with self.connection.cursor() as cursor:
             cursor.execute("""
