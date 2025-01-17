@@ -11,6 +11,7 @@ from repository.order_data_repository import OrderDataRepository
 from service.candle_service import CandleService
 from service.order_service import OrderService
 from util import data_util
+from util.data_util import is_empty
 
 
 class JobFactory:
@@ -44,36 +45,46 @@ class JobFactory:
 
         stage = data_util.get_stage_from_ema(data=data)
 
-        candle_data = CandleData(
-            ticker=candle_request_dto.ticker,
-            close=float(data[CandleResponseDto.CLOSE].iloc[-1]),
-            ema_short=float(data[EMA.SHORT].iloc[-1]),
-            ema_middle=float(data[EMA.MIDDLE].iloc[-1]),
-            ema_long=float(data[EMA.LONG].iloc[-1]),
-            stage=stage,
-            macd_upper=float(data[MACD.UPPER].iloc[-1]),
-            macd_middle=float(data[MACD.MIDDLE].iloc[-1]),
-            macd_lower=float(data[MACD.LOWER].iloc[-1]),
-            interval=candle_request_dto.interval,
-        )
+        if stage != 0 and not is_empty(stage):
 
-        candle_service.save_data(candle_data=candle_data)
+            candle_data = CandleData(
+                ticker=candle_request_dto.ticker,
+                close=float(data[CandleResponseDto.CLOSE].iloc[-1]),
+                ema_short=float(data[EMA.SHORT].iloc[-1]),
+                ema_middle=float(data[EMA.MIDDLE].iloc[-1]),
+                ema_long=float(data[EMA.LONG].iloc[-1]),
+                stage=stage,
+                macd_upper=float(data[MACD.UPPER].iloc[-1]),
+                macd_middle=float(data[MACD.MIDDLE].iloc[-1]),
+                macd_lower=float(data[MACD.LOWER].iloc[-1]),
+                interval=candle_request_dto.interval,
+            )
 
-        order_request_dto = self.order_service.create_order_request_dto(
-            candle_request_dto=candle_request_dto,
-            data=data,
-            stage=stage
-        )
-        if order_request_dto is not None:
-            # 매수 신호
-            if order_request_dto.price is not None:
-                order_response_dto = self.order_service.buy_market_order(order_request_dto)
-                self.order_service.save_data(order_response_dto)
+            candle_service.save_data(candle_data=candle_data)
 
-            # 매도 신호
-            if order_request_dto.volume is not None:
-                order_response_dto = self.order_service.sell_market_order(order_request_dto)
-                self.order_service.save_data(order_response_dto)
+            order_request_dto = self.order_service.create_order_request_dto(
+                candle_request_dto=candle_request_dto,
+                data=data,
+                stage=stage
+            )
+
+            if not is_empty(order_request_dto):
+
+                # 매수 신호
+                if order_request_dto.price is not None:
+                    order_response_dto = self.order_service.buy_market_order(order_request_dto)
+                    self.order_service.save_data(order_response_dto)
+
+                # 매도 신호
+                if order_request_dto.volume is not None:
+                    order_response_dto = self.order_service.sell_market_order(order_request_dto)
+                    self.order_service.save_data(order_response_dto)
 
 
+            # order_request_dto 가 None 일 때 pass
+            else:
+                pass
+        # stage 가 0 일 때 pass
+        else:
+            pass
 

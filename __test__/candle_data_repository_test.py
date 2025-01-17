@@ -1,11 +1,9 @@
 import unittest
-from typing import List
 
 import pandas as pd
 
 from database import connection
 from logger import Logger
-from models.entity.candle_data import CandleData
 from models.type.interval_type import IntervalType
 from models.type.unit_type import UnitType
 
@@ -40,11 +38,9 @@ class CandleDataRepositoryTest(unittest.TestCase):
             AND INTERVAL = %s
             
         """
-        # 매개변수 전달 방식 수정
         data = pd.read_sql(sql, self.connection, params=(ticker, interval))
         self.logger.debug(data)
-        for i in data.itertuples():  # Pandas DataFrame을 이터레이트할 때 itertuples() 사용
-            self.logger.debug(i)
+
 
 
 

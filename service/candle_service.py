@@ -8,19 +8,20 @@ from models.type.ema import EMA
 from models.type.macd import MACD
 from module.upbit_module import UpbitModule
 from repository.candle_data_repository import CandleDataRepository
+from util.data_util import is_empty
 
 
 class CandleService:
     def __init__(self,
-                 ema: EMA,
-                 upbit_module: UpbitModule,
-                 candle_data_repository: CandleDataRepository):
+                 candle_data_repository: CandleDataRepository,
+                 ema: EMA = EMA(),
+                 upbit_module: UpbitModule=UpbitModule()):
         self.candle_data_repository = candle_data_repository
         self.ema = ema
         self.upbit_module = upbit_module
         self.logger = Logger().get_logger(__class__.__name__)
 
-    def create_sub_data(self, data: DataFrame):
+    def create_sub_data(self, data: DataFrame)->DataFrame:
         data[EMA.SHORT] = data[CandleResponseDto.CLOSE].ewm(span=self.ema.short).mean()
         data[EMA.MIDDLE] = data[CandleResponseDto.CLOSE].ewm(span=self.ema.middle).mean()
         data[EMA.LONG] = data[CandleResponseDto.CLOSE].ewm(span=self.ema.long).mean()
@@ -35,17 +36,15 @@ class CandleService:
         data[MACD.LOW_HIST] = data[MACD.LOWER] - data[MACD.SIGNAL]
         return data
 
-    def get_candle_data(self, candle_request_dto: CandleRequestDto):
+    def get_candle_data(self, candle_request_dto: CandleRequestDto)->DataFrame:
         try:
             data = self.upbit_module.get_candles_data(candle_request_dto)
-            if data is None:
-                candle_request_dto.set_count(150)
-                data = self.upbit_module.get_candles_data(candle_request_dto)
+            if not is_empty(data):
                 data = self.create_sub_data(data=data)
                 return data
-            data = self.create_sub_data(data=data)
-            return data
-        except TypeError:
+            else:
+                raise ValueError()
+        except ValueError:
             data = self.candle_data_repository.find_all_by_ticker_and_interval(
                 ticker=candle_request_dto.ticker,
                 interval=candle_request_dto.interval,
@@ -53,8 +52,12 @@ class CandleService:
             data = self.create_sub_data(data=data)
             return data
 
-    def save_data(self, candle_data: CandleData):
-        self.candle_data_repository.save(candle_data)
+
+    def save_data(self, candle_data: CandleData) -> None:
+        if not is_empty(candle_data):
+            self.candle_data_repository.save(candle_data)
+        else:
+            self.logger.warning("CandleData is Empty")
 
 
 
