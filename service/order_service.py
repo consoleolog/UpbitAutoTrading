@@ -43,8 +43,6 @@ class OrderService:
     def is_profit(self, ticker)->Optional[bool]:
         profit = self.upbit_module.get_profit(ticker)
         self._print_profit(ticker, profit)
-        profit = self.upbit_module.get_profit(ticker)
-        self.logger.debug(profit)
         if not is_empty(profit):
             if profit > 0.1:
                 return True
