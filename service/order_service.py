@@ -210,20 +210,20 @@ class OrderService:
             else:
                 # 매도 검토
                 if stage == StageType.STABLE_INCREASE or stage == StageType.END_OF_INCREASE or stage == StageType.START_OF_DECREASE:
-                    peekout = all([up_hist[-10:].max() > 0, up_hist.iloc[-1] > 0, mid_hist[-10:].max() > 0, mid_hist.iloc[-1] > 0, low_hist[-10:].max() > 0, low_hist.iloc[-1] > 0,
-                                up_hist[-6:].max() > up_hist.iloc[-1], mid_hist[-6:].max() > mid_hist.iloc[-1], low_hist[-6:].max() > low_hist.iloc[-1]])
-                    self.logger.debug(peekout)
-                    if peekout:
-                        self._print_sell_signal_report(candle_request_dto, stage, up, mid, low, MY_KRW, MY_VOL)
-                        # MACD (상) (중) (하) 가 모두 우하향이라면
-                        if is_downward_trend(up.tolist()[-3:]) and is_downward_trend(
-                                mid.tolist()[-3:]) and is_downward_trend(low.tolist()[-2:]):
-                            # 수익률이 0.1 이 넘는다면
-                            if self.is_profit(candle_request_dto.ticker):
-                                return OrderRequestDto(ticker=candle_request_dto.ticker, volume=MY_VOL)
-                            # 수익률이 안넘으면 30분 데이터랑 60분 데이터의 스테이지를 보고 손절 판단
-                            else:
-                                pass
+                    # peekout = all([up_hist[-10:].max() > 0, up_hist.iloc[-1] > 0, mid_hist[-10:].max() > 0, mid_hist.iloc[-1] > 0, low_hist[-10:].max() > 0, low_hist.iloc[-1] > 0,
+                    #             up_hist[-6:].max() > up_hist.iloc[-1], mid_hist[-6:].max() > mid_hist.iloc[-1], low_hist[-6:].max() > low_hist.iloc[-1]])
+                    # self.logger.debug(peekout)
+                    # if peekout:
+                    self._print_sell_signal_report(candle_request_dto, stage, up, mid, low, MY_KRW, MY_VOL)
+                    # MACD (상) (중) (하) 가 모두 우하향이라면
+                    if is_downward_trend(up.tolist()[-3:]) and is_downward_trend(
+                            mid.tolist()[-3:]) and is_downward_trend(low.tolist()[-2:]):
+                        # 수익률이 0.1 이 넘는다면
+                        if self.is_profit(candle_request_dto.ticker):
+                            return OrderRequestDto(ticker=candle_request_dto.ticker, volume=MY_VOL)
+                        # 수익률이 안넘으면 30분 데이터랑 60분 데이터의 스테이지를 보고 손절 판단
+                        else:
+                            pass
 
 
 
