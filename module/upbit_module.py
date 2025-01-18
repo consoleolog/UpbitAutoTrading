@@ -62,7 +62,7 @@ class UpbitModule:
         if res.status_code == 200:
             return res.json()
         else:
-            return self.Upbit.get_balance()
+            return self.Upbit.get_balances()
 
     def get_balance(self, ticker: str) -> Optional[float]:
         try:
@@ -74,8 +74,7 @@ class UpbitModule:
             for c in currencies:
                 if c["currency"] == format_ticker:
                     return float(c["balance"])
-                else:
-                    return None
+            return None
 
     def get_current_price(self, ticker)-> Optional[float]:
         try :
@@ -101,8 +100,8 @@ class UpbitModule:
             for c in currencies:
                 if c["currency"] == format_ticker:
                     return float(c["avg_buy_price"])
-                else:
-                    return None
+            return None
+
 
     def get_profit(self, ticker)-> Optional[float]:
         current_price = self.get_current_price(ticker)

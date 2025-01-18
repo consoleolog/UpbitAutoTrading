@@ -1,5 +1,10 @@
+import os
 from typing import Union, Optional
+
+from dotenv import load_dotenv
 from pandas import DataFrame, Series
+from slack_sdk import WebClient
+
 from logger import Logger
 from models.dto.candle_request_dto import CandleRequestDto
 from models.dto.order_request_dto import OrderRequestDto
@@ -11,9 +16,9 @@ from module.upbit_module import UpbitModule
 from repository.candle_data_repository import CandleDataRepository
 from repository.order_data_repository import OrderDataRepository
 from util import data_util
-from util.data_util import is_empty, is_upward_trend, is_downward_trend
+from util.data_util import is_empty, is_upward_trend, is_downward_trend, get_slope
 
-
+load_dotenv()
 class OrderService:
     def __init__(self,
                  order_data_repository: OrderDataRepository,
@@ -23,6 +28,8 @@ class OrderService:
         self.order_data_repository = order_data_repository
         self.upbit_module = upbit_module
         self.candle_data_repository = candle_data_repository
+
+        self.client = WebClient(token=os.getenv('SLACK_TOKEN'))
 
         self.logger = Logger().get_logger(__class__.__name__)
 
@@ -47,6 +54,7 @@ class OrderService:
             return None
 
     def buy_market_order(self, order_request_dto: OrderRequestDto):
+        self._print_buy_log(order_request_dto)
         result = self.upbit_module.buy_market_order(order_request_dto)
         return OrderResponseDto(
             uuid=result['uuid'],
@@ -65,6 +73,7 @@ class OrderService:
         )
 
     def sell_market_order(self, order_request_dto: OrderRequestDto):
+        self._print_sell_log(order_request_dto)
         result = self.upbit_module.sell_market_order(order_request_dto)
         return OrderResponseDto(
             uuid=result['uuid'],
@@ -195,14 +204,15 @@ class OrderService:
                     # 피크 아웃이 아닐 때 손절을 검토
                     else:
                         pass
-
+                # 4 5 6 스테이지는 아니지만 MACD 가 우상향 일 때
+                elif get_slope(up.tolist()[-6:]) > 1:
+                    pass
             else:
                 # 매도 검토
                 if stage == StageType.STABLE_INCREASE or stage == StageType.END_OF_INCREASE or stage == StageType.START_OF_DECREASE:
-
                     peekout = all([up_hist[-10:].max() > 0, up_hist.iloc[-1] > 0, mid_hist[-10:].max() > 0, mid_hist.iloc[-1] > 0, low_hist[-10:].max() > 0, low_hist.iloc[-1] > 0,
                                 up_hist[-6:].max() > up_hist.iloc[-1], mid_hist[-6:].max() > mid_hist.iloc[-1], low_hist[-6:].max() > low_hist.iloc[-1]])
-
+                    self.logger.debug(peekout)
                     if peekout:
                         self._print_sell_signal_report(candle_request_dto, stage, up, mid, low, MY_KRW, MY_VOL)
                         # MACD (상) (중) (하) 가 모두 우하향이라면
@@ -213,10 +223,7 @@ class OrderService:
                                 return OrderRequestDto(ticker=candle_request_dto.ticker, volume=MY_VOL)
                             # 수익률이 안넘으면 30분 데이터랑 60분 데이터의 스테이지를 보고 손절 판단
                             else:
-
                                 pass
-        else:
-            return None
 
 
 

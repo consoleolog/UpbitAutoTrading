@@ -50,4 +50,12 @@ def is_upward_trend(data):
 def is_empty(value):
     if isinstance(value, pd.DataFrame):
         return value.empty
-    return value == 0 or value is None or value == ""
+    return value == 0 or value is None
+
+
+def get_slope(data):
+    if len(data) < 2:
+        return None
+    x = list(range(len(data)))
+    slope, _, _, _, _ = linregress(x, data)
+    return slope
