@@ -46,7 +46,7 @@ class JobFactory:
 
         stage = data_util.get_stage_from_ema(data=data)
 
-        if stage != 0 and not is_empty(stage):
+        if stage != 0:
 
             candle_data = CandleData(
                 ticker=candle_request_dto.ticker,
@@ -69,8 +69,7 @@ class JobFactory:
                 stage=stage
             )
 
-            if not is_empty(order_request_dto):
-
+            if order_request_dto is not None:
                 # 매수 신호
                 if order_request_dto.price is not None:
                     order_response_dto = self.order_service.buy_market_order(order_request_dto)
@@ -80,7 +79,6 @@ class JobFactory:
                 if order_request_dto.volume is not None:
                     order_response_dto = self.order_service.sell_market_order(order_request_dto)
                     self.order_service.save_data(order_response_dto)
-
 
             # order_request_dto 가 None 일 때 pass
             else:

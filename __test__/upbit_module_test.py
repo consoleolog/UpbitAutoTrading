@@ -61,6 +61,13 @@ class UpbitModuleTest(unittest.TestCase):
         self.logger.debug(balances)
         self.logger.debug(type(balances))
 
+    def test_sell_market_order(self):
+        ticker = "KRW-AAVE"
+
+        self.upbit_module.sell_market_order(
+            # ticker=
+        )
+
     def test_get_current_price(self):
         ticker = "KRW-AAVE"
         try :

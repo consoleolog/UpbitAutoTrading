@@ -14,9 +14,9 @@ tickers = [
     "KRW-AAVE",
     "KRW-SOL",
     "KRW-BSV",
-    "KRW-AVAX",
-    "KRW-EGLD",
-    "KRW-ENS",
+    # "KRW-AVAX",
+    # "KRW-EGLD",
+    # "KRW-ENS",
 ]
 
 logger = Logger().get_logger("scheduler")

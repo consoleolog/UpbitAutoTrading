@@ -185,9 +185,9 @@ class OrderService:
                         self._print_buy_signal_report(candle_request_dto, stage, up, mid, low, MY_KRW, MY_VOL)
                         # MACD (상) (중) (하) 의 기울기가 우상향이라면
                         if candle_request_dto.interval == IntervalType(UnitType.MINUTE_5).MINUTE:
-                            if get_slope(up.tolist()[-6:]) > 0.5 and get_slope(mid.tolist()[-6:]) > 0.5 and get_slope(low.tolist()[-6:]) > 0.4:
+                            if get_slope(up.tolist()[-6:]) > 0.6 and get_slope(mid.tolist()[-6:]) > 0.6 and get_slope(low.tolist()[-6:]) > 0.6:
                                 return OrderRequestDto(ticker=candle_request_dto.ticker, price=PRICE)
-                        elif get_slope(up.tolist()[-3:]) > 0.5 and get_slope(mid.tolist()[-3:]) > 0.5 and get_slope(low.tolist()[-3:]) > 0.4:
+                        elif get_slope(up.tolist()[-4:]) > 0.6 and get_slope(mid.tolist()[-4:]) > 0.6 and get_slope(low.tolist()[-4:]) > 0.6:
                                 return OrderRequestDto(ticker=candle_request_dto.ticker, price=PRICE)
 
             else:
@@ -196,8 +196,7 @@ class OrderService:
 
                     self._print_sell_signal_report(candle_request_dto, stage, up, mid, low, MY_KRW, MY_VOL)
                     # MACD (상) (중) (하) 가 모두 우하향이라면
-                    if is_downward_trend(up.tolist()[-3:]) and is_downward_trend(
-                            mid.tolist()[-3:]) and is_downward_trend(low.tolist()[-2:]):
+                    if get_slope(up.tolist()[-3:]) < 0 and get_slope(mid.tolist()[-3:]) < 0 and get_slope(low.tolist()[-2:]) < 0:
                         # 수익률이 0.1 이 넘는다면
                         if self.is_profit(candle_request_dto.ticker):
                             return OrderRequestDto(ticker=candle_request_dto.ticker, volume=MY_VOL)
@@ -226,7 +225,6 @@ class OrderService:
                                     self.client.chat_postMessage(channel='#public-bot', text=message)
                             except Exception as e:
                                 pass
-
 
 
 
