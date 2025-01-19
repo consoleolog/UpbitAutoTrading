@@ -203,22 +203,29 @@ class OrderService:
                             return OrderRequestDto(ticker=candle_request_dto.ticker, volume=MY_VOL)
                         # 수익률이 안넘으면 30분 데이터랑 60분 데이터의 스테이지를 보고 손절 판단
                         else:
-                            data_min30 = self.candle_data_repository.find_all_by_ticker_and_interval(candle_request_dto.ticker, IntervalType(UnitType.HALF_HOUR).MINUTE)
-                            data_hour = self.candle_data_repository.find_all_by_ticker_and_interval(candle_request_dto.ticker, IntervalType(UnitType.HOUR).MINUTE)
-                            data_hour4 = self.candle_data_repository.find_all_by_ticker_and_interval(candle_request_dto.ticker, IntervalType(UnitType.HOUR_4).MINUTE)
+                            try:
+                                data_min30 = self.candle_data_repository.find_all_by_ticker_and_interval(
+                                    candle_request_dto.ticker, IntervalType(UnitType.HALF_HOUR).MINUTE)
+                                data_hour = self.candle_data_repository.find_all_by_ticker_and_interval(
+                                    candle_request_dto.ticker, IntervalType(UnitType.HOUR).MINUTE)
+                                data_hour4 = self.candle_data_repository.find_all_by_ticker_and_interval(
+                                    candle_request_dto.ticker, IntervalType(UnitType.HOUR_4).MINUTE)
 
-                            if data_min30.iloc[-1]["stage"] == 1 or data_hour.iloc[-1]["stage"] == 1 or data_hour4.iloc[-1]["stage"] == 1:
-                                message = f"""
-                                {'-' * 40}
-                                Ticker : {candle_request_dto.ticker}
-                                
-                                Profit          : {self.upbit_module.get_profit(candle_request_dto.ticker)}
-                                Minute30 Stage  : {data_min30.iloc[-1]["stage"]}
-                                Minute60 Stage  : {data_hour.iloc[-1]["stage"]}
-                                Minute240 Stage : {data_hour4.iloc[-1]["stage"]}
-                                {'-' * 40}
-                                """
-                                self.client.chat_postMessage(channel='#public-bot', text=message)
+                                if data_min30.iloc[-1]["stage"] == 1 or data_hour.iloc[-1]["stage"] == 1 or \
+                                        data_hour4.iloc[-1]["stage"] == 1:
+                                    message = f"""
+                                    {'-' * 40}
+                                    Ticker : {candle_request_dto.ticker}
+
+                                    Profit          : {self.upbit_module.get_profit(candle_request_dto.ticker)}
+                                    Minute30 Stage  : {data_min30.iloc[-1]["stage"]}
+                                    Minute60 Stage  : {data_hour.iloc[-1]["stage"]}
+                                    Minute240 Stage : {data_hour4.iloc[-1]["stage"]}
+                                    {'-' * 40}
+                                    """
+                                    self.client.chat_postMessage(channel='#public-bot', text=message)
+                            except Exception as e:
+                                pass
 
 
 

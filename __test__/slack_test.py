@@ -31,7 +31,7 @@ class SlackTest(unittest.TestCase):
         self.client = WebClient(token=self.slack_token)
 
         candle_request_dto = CandleRequestDto(
-            ticker="KRW-AAVE"
+            ticker="KRW-BCH"
         )
 
         data_min30 = self.candle_data_repository.find_all_by_ticker_and_interval(candle_request_dto.ticker,
