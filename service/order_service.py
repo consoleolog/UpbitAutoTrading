@@ -1,8 +1,8 @@
 import os
-from typing import Union, Optional
+from typing import Optional
 
 from dotenv import load_dotenv
-from pandas import DataFrame, Series
+from pandas import DataFrame
 from slack_sdk import WebClient
 
 from logger import Logger
@@ -10,8 +10,10 @@ from models.dto.candle_request_dto import CandleRequestDto
 from models.dto.order_request_dto import OrderRequestDto
 from models.dto.order_response_dto import OrderResponseDto
 from models.entity.order_data import OrderData
+from models.type.interval_type import IntervalType
 from models.type.macd import MACD
 from models.type.stage_type import StageType
+from models.type.unit_type import UnitType
 from module.upbit_module import UpbitModule
 from repository.candle_data_repository import CandleDataRepository
 from repository.order_data_repository import OrderDataRepository
@@ -161,28 +163,16 @@ class OrderService:
         MY_VOL : {vol}
         {'-' * 55}""")
 
-    def _print_sell_if_not_profit_report(self, candle_request_dto, data_min30, data_day):
-        self.logger.debug(f"""
-        {'-' * 30}
-        {candle_request_dto.ticker} 손절 검토
-        MINUTE 30 STAGE : {data_min30.iloc[-1]["stage"]}
-        DAY       STAGE : {data_day.iloc[-1]["stage"]}
-        {'-' * 30}""")
-
     def create_order_request_dto(self, candle_request_dto: CandleRequestDto ,data: DataFrame, stage: StageType)->Optional[OrderRequestDto]:
         MY_KRW = self.upbit_module.get_balance("KRW")
+        PRICE = 7000
 
         if not is_empty(MY_KRW):
-            up: Union[Series, None, DataFrame] = data[MACD.UPPER]
-            mid: Union[Series, None, DataFrame] = data[MACD.MIDDLE]
-            low: Union[Series, None, DataFrame] = data[MACD.LOWER]
-
-            up_hist: Union[Series, None, DataFrame] = data[MACD.UP_HIST]
-            mid_hist: Union[Series, None, DataFrame] = data[MACD.MID_HIST]
-            low_hist: Union[Series, None, DataFrame] = data[MACD.LOW_HIST]
+            up, mid, low = data[MACD.UPPER], data[MACD.MIDDLE], data[MACD.LOWER]
+            up_hist, mid_hist, low_hist = data[MACD.UP_HIST], data[MACD.MID_HIST], data[MACD.LOW_HIST]
 
             MY_VOL = self.upbit_module.get_balance(candle_request_dto.ticker)
-            if is_empty(MY_VOL):
+            if is_empty(MY_VOL) and MY_KRW > PRICE:
                 # 매수 검토
                 if stage == StageType.STABLE_DECREASE or stage == StageType.END_OF_DECREASE or stage == StageType.START_OF_INCREASE:
                     peekout = all(
@@ -193,25 +183,17 @@ class OrderService:
                     # Histogram 의 피크아웃을 판단
                     if peekout:
                         self._print_buy_signal_report(candle_request_dto, stage, up, mid, low, MY_KRW, MY_VOL)
-
                         # MACD (상) (중) (하) 의 기울기가 우상향이라면
-                        if is_upward_trend(up.tolist()[-6:]) and is_upward_trend(
-                                mid.tolist()[-6:]) and is_upward_trend(low.tolist()[-6:]):
-                            return OrderRequestDto(ticker=candle_request_dto.ticker, price=7000)
+                        if candle_request_dto.interval == IntervalType(UnitType.MINUTE_5).MINUTE:
+                            if get_slope(up.tolist()[-6:]) > 0.5 and get_slope(mid.tolist()[-6:]) > 0.5 and get_slope(low.tolist()[-6:]) > 0.4:
+                                return OrderRequestDto(ticker=candle_request_dto.ticker, price=PRICE)
+                        elif get_slope(up.tolist()[-3:]) > 0.5 and get_slope(mid.tolist()[-3:]) > 0.5 and get_slope(low.tolist()[-3:]) > 0.4:
+                                return OrderRequestDto(ticker=candle_request_dto.ticker, price=PRICE)
 
-                    # 피크 아웃이 아닐 때 손절을 검토
-                    else:
-                        pass
-                # 4 5 6 스테이지는 아니지만 MACD 가 우상향 일 때
-                elif get_slope(up.tolist()[-6:]) > 1:
-                    pass
             else:
                 # 매도 검토
                 if stage == StageType.STABLE_INCREASE or stage == StageType.END_OF_INCREASE or stage == StageType.START_OF_DECREASE:
-                    # peekout = all([up_hist[-10:].max() > 0, up_hist.iloc[-1] > 0, mid_hist[-10:].max() > 0, mid_hist.iloc[-1] > 0, low_hist[-10:].max() > 0, low_hist.iloc[-1] > 0,
-                    #             up_hist[-6:].max() > up_hist.iloc[-1], mid_hist[-6:].max() > mid_hist.iloc[-1], low_hist[-6:].max() > low_hist.iloc[-1]])
-                    # self.logger.debug(peekout)
-                    # if peekout:
+
                     self._print_sell_signal_report(candle_request_dto, stage, up, mid, low, MY_KRW, MY_VOL)
                     # MACD (상) (중) (하) 가 모두 우하향이라면
                     if is_downward_trend(up.tolist()[-3:]) and is_downward_trend(
@@ -221,7 +203,25 @@ class OrderService:
                             return OrderRequestDto(ticker=candle_request_dto.ticker, volume=MY_VOL)
                         # 수익률이 안넘으면 30분 데이터랑 60분 데이터의 스테이지를 보고 손절 판단
                         else:
-                            pass
+                            data_min30 = self.candle_data_repository.find_all_by_ticker_and_interval(candle_request_dto.ticker, IntervalType(UnitType.HALF_HOUR).MINUTE)
+                            data_hour = self.candle_data_repository.find_all_by_ticker_and_interval(candle_request_dto.ticker, IntervalType(UnitType.HOUR).MINUTE)
+                            data_hour4 = self.candle_data_repository.find_all_by_ticker_and_interval(candle_request_dto.ticker, IntervalType(UnitType.HOUR_4).MINUTE)
+
+                            if data_min30.iloc[-1]["stage"] == 1 or data_hour.iloc[-1]["stage"] == 1 or data_hour4.iloc[-1]["stage"] == 1:
+                                message = f"""
+                                {'-' * 40}
+                                Ticker : {candle_request_dto.ticker}
+                                
+                                Profit          : {self.upbit_module.get_profit(candle_request_dto.ticker)}
+                                Minute30 Stage  : {data_min30.iloc[-1]["stage"]}
+                                Minute60 Stage  : {data_hour.iloc[-1]["stage"]}
+                                Minute240 Stage : {data_hour4.iloc[-1]["stage"]}
+                                {'-' * 40}
+                                """
+                                self.client.chat_postMessage(channel='#public-bot', text=message)
+
+
+
 
 
 

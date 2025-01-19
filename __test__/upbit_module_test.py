@@ -52,6 +52,10 @@ class UpbitModuleTest(unittest.TestCase):
         self.logger.debug(res.json())
         self.logger.debug(type(res.json()))
 
+        for c in res.json():
+            if c['currency'] != 'KRW':
+                profit = self.upbit_module.get_profit(f"KRW-{c['currency']}")
+                self.logger.debug(f"{c['currency']} - {profit}")
     def test_get_balances(self):
         balances = self.Upbit.get_balances()
         self.logger.debug(balances)

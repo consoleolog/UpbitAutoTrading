@@ -32,11 +32,17 @@ class UpbitModule:
             self.logger.warning("CandleRequestDto is Empty")
 
     def sell_market_order(self, order_request_dto: OrderRequestDto):
-        if not data_util.is_empty(order_request_dto):
-            return self.Upbit.sell_market_order(
-                ticker=order_request_dto.ticker,
-                volume=order_request_dto.volume,
-            )
+        if order_request_dto is not None:
+            if order_request_dto.volume is None:
+                return self.Upbit.sell_market_order(
+                    ticker=order_request_dto.ticker,
+                    volume=self.Upbit.get_balance(ticker=order_request_dto.ticker),
+                )
+            else:
+                return self.Upbit.sell_market_order(
+                    ticker=order_request_dto.ticker,
+                    volume=order_request_dto.volume,
+                )
         else:
             self.logger.warning("OrderRequestDto is Empty")
 

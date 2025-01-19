@@ -9,7 +9,7 @@ class EMA:
             self,
             short:int = 10,
             middle:int = 20,
-            long:int = 60,
+            long:int = 40,
     ):
         self.short = short
         self.middle = middle
