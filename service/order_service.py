@@ -179,7 +179,7 @@ class OrderService:
                          low_hist[-10:].min() < 0, low_hist.iloc[-1] < 0,
                          up_hist[-6:].min() < up_hist.iloc[-1], mid_hist[-6:].min() < mid_hist.iloc[-1],
                          low_hist[-6:].min() < low_hist.iloc[-1]])
-                    increase = data_utils.get_slope(up.tolist()[-6:]) > data_utils.get_slope(mid.tolist()[-6:]) > data_utils.get_slope(low.tolist()[-6:]) > 100
+                    increase = data_utils.get_slope(up.tolist()[-6:]) > 100 and data_utils.get_slope(mid.tolist()[-6:]) > 100 and data_utils.get_slope(low.tolist()[-6:]) > 100
                     # Histogram 의 피크아웃을 판단
                     if peekout and increase:
                         self._print_buy_signal_report(candle_request_dto, stage, up, mid, low, MY_KRW, MY_VOL)
@@ -190,7 +190,7 @@ class OrderService:
             # 매도 검토
             elif stage == StageType.STABLE_INCREASE or stage == StageType.END_OF_INCREASE or stage == StageType.START_OF_DECREASE:
                     self._print_sell_signal_report(candle_request_dto, stage, up, mid, low, MY_KRW, MY_VOL)
-                    decrease = 0 < data_utils.get_slope(up.tolist()[-3:]) < data_utils.get_slope(mid.tolist()[-3:]) < data_utils.get_slope(low.tolist()[-3:])
+                    decrease = 100 > data_utils.get_slope(up.tolist()[-3:]) and 100 > data_utils.get_slope(mid.tolist()[-3:]) and 100 > data_utils.get_slope(low.tolist()[-3:])
                     # MACD (상) (중) (하) 가 모두 우하향이라면
                     if decrease or (data_utils.get_slope(up.tolist()[-3:]) < 0 and data_utils.get_slope(mid.tolist()[-3:]) < 0) :
                         # 수익률이 0.1 이 넘는다면
