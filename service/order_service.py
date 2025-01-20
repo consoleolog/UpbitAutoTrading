@@ -180,21 +180,20 @@ class OrderService:
                          low_hist[-10:].min() < 0, low_hist.iloc[-1] < 0,
                          up_hist[-6:].min() < up_hist.iloc[-1], mid_hist[-6:].min() < mid_hist.iloc[-1],
                          low_hist[-6:].min() < low_hist.iloc[-1]])
+                    increase = get_slope(up.tolist()[-6:]) > get_slope(mid.tolist()[-6:]) > get_slope(low.tolist()[-6:]) > 100
                     # Histogram 의 피크아웃을 판단
-                    if peekout:
+                    if peekout and increase:
                         self._print_buy_signal_report(candle_request_dto, stage, up, mid, low, MY_KRW, MY_VOL)
                         # MACD (상) (중) (하) 의 기울기가 우상향이라면
                         if candle_request_dto.interval == IntervalType(UnitType.MINUTE_5).MINUTE:
-                            if get_slope(up.tolist()[-6:]) > 0.6 and get_slope(mid.tolist()[-6:]) > 0.6 and get_slope(low.tolist()[-6:]) > 0.6:
-                                return OrderRequestDto(ticker=candle_request_dto.ticker, price=PRICE)
-                        elif get_slope(up.tolist()[-4:]) > 0.6 and get_slope(mid.tolist()[-4:]) > 0.6 and get_slope(low.tolist()[-4:]) > 0.6:
-                                return OrderRequestDto(ticker=candle_request_dto.ticker, price=PRICE)
+                            return OrderRequestDto(ticker=candle_request_dto.ticker, price=PRICE)
+
             # 매도 검토
             elif stage == StageType.STABLE_INCREASE or stage == StageType.END_OF_INCREASE or stage == StageType.START_OF_DECREASE:
-
                     self._print_sell_signal_report(candle_request_dto, stage, up, mid, low, MY_KRW, MY_VOL)
+                    decrease = 0 < get_slope(up.tolist()[-3:]) < get_slope(mid.tolist()[-3:]) < get_slope(low.tolist()[-3:])
                     # MACD (상) (중) (하) 가 모두 우하향이라면
-                    if get_slope(up.tolist()[-3:]) < 0 and get_slope(mid.tolist()[-3:]) < 0 and get_slope(low.tolist()[-2:]) < 0:
+                    if decrease:
                         # 수익률이 0.1 이 넘는다면
                         if self.is_profit(candle_request_dto.ticker):
                             return OrderRequestDto(ticker=candle_request_dto.ticker, volume=MY_VOL)
