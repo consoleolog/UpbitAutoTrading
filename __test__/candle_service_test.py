@@ -13,7 +13,6 @@ from models.type.unit_type import UnitType
 from module.upbit_module import UpbitModule
 from repository.candle_data_repository import CandleDataRepository
 from service.candle_service import CandleService
-from util.data_util import is_empty
 
 
 class CandleServiceTest(unittest.TestCase):
@@ -47,22 +46,21 @@ class CandleServiceTest(unittest.TestCase):
             ticker=ticker,
             interval=interval
         )
-        if not is_empty(data):
 
-            data[EMA.SHORT] = data[CandleResponseDto.CLOSE].ewm(span=self.ema.short).mean()
-            data[EMA.MIDDLE] = data[CandleResponseDto.CLOSE].ewm(span=self.ema.middle).mean()
-            data[EMA.LONG] = data[CandleResponseDto.CLOSE].ewm(span=self.ema.long).mean()
+        data[EMA.SHORT] = data[CandleResponseDto.CLOSE].ewm(span=self.ema.short).mean()
+        data[EMA.MIDDLE] = data[CandleResponseDto.CLOSE].ewm(span=self.ema.middle).mean()
+        data[EMA.LONG] = data[CandleResponseDto.CLOSE].ewm(span=self.ema.long).mean()
 
-            data[MACD.UPPER] = data[EMA.SHORT] - data[EMA.MIDDLE]
-            data[MACD.MIDDLE] = data[EMA.SHORT] - data[EMA.LONG]
-            data[MACD.LOWER] = data[EMA.MIDDLE] - data[EMA.LONG]
+        data[MACD.UPPER] = data[EMA.SHORT] - data[EMA.MIDDLE]
+        data[MACD.MIDDLE] = data[EMA.SHORT] - data[EMA.LONG]
+        data[MACD.LOWER] = data[EMA.MIDDLE] - data[EMA.LONG]
 
-            data[MACD.SIGNAL] = data[CandleResponseDto.CLOSE].ewm(span=9).mean()
-            data[MACD.UP_HIST] = data[MACD.UPPER] - data[MACD.SIGNAL]
-            data[MACD.MID_HIST] = data[MACD.MIDDLE] - data[MACD.SIGNAL]
-            data[MACD.LOW_HIST] = data[MACD.LOWER] - data[MACD.SIGNAL]
+        data[MACD.SIGNAL] = data[CandleResponseDto.CLOSE].ewm(span=9).mean()
+        data[MACD.UP_HIST] = data[MACD.UPPER] - data[MACD.SIGNAL]
+        data[MACD.MID_HIST] = data[MACD.MIDDLE] - data[MACD.SIGNAL]
+        data[MACD.LOW_HIST] = data[MACD.LOWER] - data[MACD.SIGNAL]
 
-            self.logger.debug(data)
+        self.logger.debug(data)
 
     def test_save_data(self):
         candle_data = CandleData(
@@ -78,6 +76,4 @@ class CandleServiceTest(unittest.TestCase):
             interval=IntervalType(UnitType.MINUTE_5).MINUTE,
         )
 
-        if not is_empty(candle_data):
-            self.logger.debug(candle_data)
-
+        self.logger.debug(candle_data)

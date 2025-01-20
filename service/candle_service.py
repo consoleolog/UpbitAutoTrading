@@ -1,5 +1,4 @@
 from pandas import DataFrame
-
 from logger import Logger
 from models.dto.candle_request_dto import CandleRequestDto
 from models.entity.candle_data import CandleData
@@ -8,8 +7,6 @@ from models.type.ema import EMA
 from models.type.macd import MACD
 from module.upbit_module import UpbitModule
 from repository.candle_data_repository import CandleDataRepository
-from util.data_util import is_empty
-
 
 class CandleService:
     def __init__(self,
@@ -39,7 +36,7 @@ class CandleService:
     def get_candle_data(self, candle_request_dto: CandleRequestDto)->DataFrame:
         try:
             data = self.upbit_module.get_candles_data(candle_request_dto)
-            if not is_empty(data):
+            if data:
                 data = self.create_sub_data(data=data)
                 return data
             else:
@@ -54,7 +51,7 @@ class CandleService:
 
 
     def save_data(self, candle_data: CandleData) -> None:
-        if not is_empty(candle_data):
+        if candle_data:
             self.candle_data_repository.save(candle_data)
         else:
             self.logger.warning("CandleData is Empty")

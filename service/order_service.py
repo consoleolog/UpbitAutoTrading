@@ -18,7 +18,7 @@ from module.upbit_module import UpbitModule
 from repository.candle_data_repository import CandleDataRepository
 from repository.order_data_repository import OrderDataRepository
 from util import data_util
-from util.data_util import is_empty, is_upward_trend, is_downward_trend, get_slope
+from util.data_util import get_slope
 
 load_dotenv()
 class OrderService:
@@ -36,7 +36,7 @@ class OrderService:
         self.logger = Logger().get_logger(__class__.__name__)
 
     def save_data(self, order_response_dto: OrderResponseDto):
-        if not is_empty(order_response_dto):
+        if order_response_dto is not None:
             order_data = OrderData.create_by_order_response_dto(order_response_dto)
             self.order_data_repository.save(order_data)
         else:
@@ -45,7 +45,7 @@ class OrderService:
     def is_profit(self, ticker)->Optional[bool]:
         profit = self.upbit_module.get_profit(ticker)
         self._print_profit(ticker, profit)
-        if not is_empty(profit):
+        if profit is not None:
             if profit > 0.1:
                 return True
             else:
@@ -125,15 +125,15 @@ class OrderService:
 
         MACD (상)  
         List   : {up.tolist()[-6:]}
-        Result : {data_util.is_upward_trend(up.tolist()[-6:])} 
+        Result : {get_slope(up.tolist()[-6:])} 
 
         MACD (중) :
         List   : {mid.tolist()[-6:]}
-        Result : {data_util.is_upward_trend(mid.tolist()[-6:])} 
+        Result : {get_slope(mid.tolist()[-6:])} 
 
         MACD (하)
         List   : {low.tolist()[-6:]}
-        Result : {data_util.is_upward_trend(low.tolist()[-6:])} 
+        Result : {get_slope(low.tolist()[-6:])} 
 
         KRW    : {krw}
         MY_VOL : {vol}
@@ -149,15 +149,15 @@ class OrderService:
 
         MACD (상)  
         List   : {up.tolist()[-3:]}
-        Result : {data_util.is_downward_trend(up.tolist()[-3:])} 
+        Result : {get_slope(up.tolist()[-3:])} 
 
         MACD (중) :
         List   : {mid.tolist()[-3:]}
-        Result : {data_util.is_downward_trend(mid.tolist()[-3:])} 
+        Result : {get_slope(mid.tolist()[-3:])} 
 
         MACD (하)
         List   : {low.tolist()[-2:]}
-        Result : {data_util.is_downward_trend(low.tolist()[-2:])} 
+        Result : {get_slope(low.tolist()[-3:])} 
 
         KRW    : {krw}
         MY_VOL : {vol}
@@ -167,12 +167,12 @@ class OrderService:
         MY_KRW = self.upbit_module.get_balance("KRW")
         PRICE = 7000
 
-        if not is_empty(MY_KRW):
+        if MY_KRW:
             up, mid, low = data[MACD.UPPER], data[MACD.MIDDLE], data[MACD.LOWER]
             up_hist, mid_hist, low_hist = data[MACD.UP_HIST], data[MACD.MID_HIST], data[MACD.LOW_HIST]
 
             MY_VOL = self.upbit_module.get_balance(candle_request_dto.ticker)
-            if is_empty(MY_VOL) and MY_KRW > PRICE:
+            if MY_VOL is not None and MY_VOL != 0 and MY_KRW > PRICE:
                 # 매수 검토
                 if stage == StageType.STABLE_DECREASE or stage == StageType.END_OF_DECREASE or stage == StageType.START_OF_INCREASE:
                     peekout = all(
@@ -189,10 +189,8 @@ class OrderService:
                                 return OrderRequestDto(ticker=candle_request_dto.ticker, price=PRICE)
                         elif get_slope(up.tolist()[-4:]) > 0.6 and get_slope(mid.tolist()[-4:]) > 0.6 and get_slope(low.tolist()[-4:]) > 0.6:
                                 return OrderRequestDto(ticker=candle_request_dto.ticker, price=PRICE)
-
-            else:
-                # 매도 검토
-                if stage == StageType.STABLE_INCREASE or stage == StageType.END_OF_INCREASE or stage == StageType.START_OF_DECREASE:
+            # 매도 검토
+            elif stage == StageType.STABLE_INCREASE or stage == StageType.END_OF_INCREASE or stage == StageType.START_OF_DECREASE:
 
                     self._print_sell_signal_report(candle_request_dto, stage, up, mid, low, MY_KRW, MY_VOL)
                     # MACD (상) (중) (하) 가 모두 우하향이라면
@@ -225,8 +223,3 @@ class OrderService:
                                     self.client.chat_postMessage(channel='#public-bot', text=message)
                             except Exception as e:
                                 pass
-
-
-
-
-

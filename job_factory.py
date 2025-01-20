@@ -11,8 +11,6 @@ from repository.order_data_repository import OrderDataRepository
 from service.candle_service import CandleService
 from service.order_service import OrderService
 from util import data_util
-from util.data_util import is_empty
-
 
 class JobFactory:
     def __init__(self):

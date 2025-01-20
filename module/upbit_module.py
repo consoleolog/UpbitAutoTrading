@@ -10,7 +10,6 @@ from pyupbit import Upbit
 from logger import Logger
 from models.dto.candle_request_dto import CandleRequestDto
 from models.dto.order_request_dto import OrderRequestDto
-from util import data_util
 
 load_dotenv()
 
@@ -22,7 +21,7 @@ class UpbitModule:
         self.logger = Logger().get_logger(__class__.__name__)
 
     def get_candles_data(self, candle_request_dto: CandleRequestDto):
-        if not data_util.is_empty(candle_request_dto):
+        if candle_request_dto:
             return pyupbit.get_ohlcv(
                 ticker=candle_request_dto.ticker,
                 count=candle_request_dto.count,
@@ -47,7 +46,7 @@ class UpbitModule:
             self.logger.warning("OrderRequestDto is Empty")
 
     def buy_market_order(self, order_request_dto: OrderRequestDto):
-        if not data_util.is_empty(order_request_dto):
+        if order_request_dto:
             return self.Upbit.buy_market_order(
                 ticker=order_request_dto.ticker,
                 price=order_request_dto.price,
@@ -112,7 +111,7 @@ class UpbitModule:
     def get_profit(self, ticker)-> Optional[float]:
         current_price = self.get_current_price(ticker)
         avg_buy_price = self.get_avg_buy_price(ticker)
-        if not data_util.is_empty(current_price) and not data_util.is_empty(avg_buy_price):
+        if current_price and avg_buy_price:
             return (current_price - avg_buy_price) / avg_buy_price * 100.0
         else:
             return None

@@ -13,7 +13,6 @@ from models.dto.candle_request_dto import CandleRequestDto
 from models.type.interval_type import IntervalType
 from models.type.unit_type import UnitType
 from module.upbit_module import UpbitModule
-from util import data_util
 
 
 class UpbitModuleTest(unittest.TestCase):
@@ -30,14 +29,13 @@ class UpbitModuleTest(unittest.TestCase):
     def test_get_candles_data(self):
         candle_request_dto = CandleRequestDto(ticker="KRW-AAVE", interval=IntervalType(UnitType.MINUTE_5).MINUTE)
 
-        if not data_util.is_empty(candle_request_dto):
-            data = pyupbit.get_ohlcv(
-                ticker=candle_request_dto.ticker,
-                count=candle_request_dto.count,
-                interval=candle_request_dto.interval
-            )
-            self.logger.debug(data)
-            self.logger.debug(data.iloc[-1])
+        data = pyupbit.get_ohlcv(
+            ticker=candle_request_dto.ticker,
+            count=candle_request_dto.count,
+            interval=candle_request_dto.interval
+        )
+        self.logger.debug(data)
+        self.logger.debug(data.iloc[-1])
     def test_get_currencies(self):
         server_url = "https://api.upbit.com"
         payload = {
@@ -124,7 +122,6 @@ class UpbitModuleTest(unittest.TestCase):
         ticker = "KRW-ETH"
         current_price = self.upbit_module.get_current_price(ticker)
         avg_buy_price = self.upbit_module.get_avg_buy_price(ticker)
-        if not data_util.is_empty(current_price) and not data_util.is_empty(avg_buy_price):
-            profit = (current_price - avg_buy_price) / avg_buy_price * 100.0
-            self.logger.debug(profit)
-            self.logger.debug(type(profit))
+        profit = (current_price - avg_buy_price) / avg_buy_price * 100.0
+        self.logger.debug(profit)
+        self.logger.debug(type(profit))
