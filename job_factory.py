@@ -10,7 +10,7 @@ from repository.candle_data_repository import CandleDataRepository
 from repository.order_data_repository import OrderDataRepository
 from service.candle_service import CandleService
 from service.order_service import OrderService
-from util import data_util
+from utils import data_utils
 
 class JobFactory:
     def __init__(self):
@@ -42,7 +42,7 @@ class JobFactory:
 
         data = candle_service.get_candle_data(candle_request_dto)
 
-        stage = data_util.get_stage_from_ema(data=data)
+        stage = data_utils.get_stage_from_ema(data=data)
 
         if stage != 0:
 

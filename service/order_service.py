@@ -17,8 +17,7 @@ from models.type.unit_type import UnitType
 from module.upbit_module import UpbitModule
 from repository.candle_data_repository import CandleDataRepository
 from repository.order_data_repository import OrderDataRepository
-from util import data_util
-from util.data_util import get_slope
+from utils import data_utils
 
 load_dotenv()
 class OrderService:
@@ -125,15 +124,15 @@ class OrderService:
 
         MACD (상)  
         List   : {up.tolist()[-6:]}
-        Result : {get_slope(up.tolist()[-6:])} 
+        Result : {data_utils.get_slope(up.tolist()[-6:])} 
 
         MACD (중) :
         List   : {mid.tolist()[-6:]}
-        Result : {get_slope(mid.tolist()[-6:])} 
+        Result : {data_utils.get_slope(mid.tolist()[-6:])} 
 
         MACD (하)
         List   : {low.tolist()[-6:]}
-        Result : {get_slope(low.tolist()[-6:])} 
+        Result : {data_utils.get_slope(low.tolist()[-6:])} 
 
         KRW    : {krw}
         MY_VOL : {vol}
@@ -149,15 +148,15 @@ class OrderService:
 
         MACD (상)  
         List   : {up.tolist()[-3:]}
-        Result : {get_slope(up.tolist()[-3:])} 
+        Result : {data_utils.get_slope(up.tolist()[-3:])} 
 
         MACD (중) :
         List   : {mid.tolist()[-3:]}
-        Result : {get_slope(mid.tolist()[-3:])} 
+        Result : {data_utils.get_slope(mid.tolist()[-3:])} 
 
         MACD (하)
-        List   : {low.tolist()[-2:]}
-        Result : {get_slope(low.tolist()[-3:])} 
+        List   : {low.tolist()[-3:]}
+        Result : {data_utils.get_slope(low.tolist()[-3:])} 
 
         KRW    : {krw}
         MY_VOL : {vol}
@@ -180,7 +179,7 @@ class OrderService:
                          low_hist[-10:].min() < 0, low_hist.iloc[-1] < 0,
                          up_hist[-6:].min() < up_hist.iloc[-1], mid_hist[-6:].min() < mid_hist.iloc[-1],
                          low_hist[-6:].min() < low_hist.iloc[-1]])
-                    increase = get_slope(up.tolist()[-6:]) > get_slope(mid.tolist()[-6:]) > get_slope(low.tolist()[-6:]) > 100
+                    increase = data_utils.get_slope(up.tolist()[-6:]) > data_utils.get_slope(mid.tolist()[-6:]) > data_utils.get_slope(low.tolist()[-6:]) > 100
                     # Histogram 의 피크아웃을 판단
                     if peekout and increase:
                         self._print_buy_signal_report(candle_request_dto, stage, up, mid, low, MY_KRW, MY_VOL)
@@ -191,34 +190,10 @@ class OrderService:
             # 매도 검토
             elif stage == StageType.STABLE_INCREASE or stage == StageType.END_OF_INCREASE or stage == StageType.START_OF_DECREASE:
                     self._print_sell_signal_report(candle_request_dto, stage, up, mid, low, MY_KRW, MY_VOL)
-                    decrease = 0 < get_slope(up.tolist()[-3:]) < get_slope(mid.tolist()[-3:]) < get_slope(low.tolist()[-3:])
+                    decrease = 0 < data_utils.get_slope(up.tolist()[-3:]) < data_utils.get_slope(mid.tolist()[-3:]) < data_utils.get_slope(low.tolist()[-3:])
                     # MACD (상) (중) (하) 가 모두 우하향이라면
-                    if decrease:
+                    if decrease or (data_utils.get_slope(up.tolist()[-3:]) < 0 and data_utils.get_slope(mid.tolist()[-3:]) < 0) :
                         # 수익률이 0.1 이 넘는다면
                         if self.is_profit(candle_request_dto.ticker):
                             return OrderRequestDto(ticker=candle_request_dto.ticker, volume=MY_VOL)
-                        # 수익률이 안넘으면 30분 데이터랑 60분 데이터의 스테이지를 보고 손절 판단
-                        else:
-                            try:
-                                data_min30 = self.candle_data_repository.find_all_by_ticker_and_interval(
-                                    candle_request_dto.ticker, IntervalType(UnitType.HALF_HOUR).MINUTE)
-                                data_hour = self.candle_data_repository.find_all_by_ticker_and_interval(
-                                    candle_request_dto.ticker, IntervalType(UnitType.HOUR).MINUTE)
-                                data_hour4 = self.candle_data_repository.find_all_by_ticker_and_interval(
-                                    candle_request_dto.ticker, IntervalType(UnitType.HOUR_4).MINUTE)
 
-                                if data_min30.iloc[-1]["stage"] == 1 or data_hour.iloc[-1]["stage"] == 1 or \
-                                        data_hour4.iloc[-1]["stage"] == 1:
-                                    message = f"""
-                                    {'-' * 40}
-                                    Ticker : {candle_request_dto.ticker}
-
-                                    Profit          : {self.upbit_module.get_profit(candle_request_dto.ticker)}
-                                    Minute30 Stage  : {data_min30.iloc[-1]["stage"]}
-                                    Minute60 Stage  : {data_hour.iloc[-1]["stage"]}
-                                    Minute240 Stage : {data_hour4.iloc[-1]["stage"]}
-                                    {'-' * 40}
-                                    """
-                                    self.client.chat_postMessage(channel='#public-bot', text=message)
-                            except Exception as e:
-                                pass

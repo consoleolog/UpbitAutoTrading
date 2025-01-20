@@ -8,7 +8,7 @@ from repository.candle_data_repository import CandleDataRepository
 from repository.order_data_repository import OrderDataRepository
 from service.candle_service import CandleService
 from service.order_service import OrderService
-from util.data_util import get_stage_from_ema
+from utils import data_utils
 
 
 class OrderServiceTest(unittest.TestCase):
@@ -38,7 +38,7 @@ class OrderServiceTest(unittest.TestCase):
         candle_request_dto = CandleRequestDto()
         data = self.candle_service.get_candle_data(candle_request_dto)
 
-        stage = get_stage_from_ema(data)
+        stage = data_utils.get_stage_from_ema(data)
 
         order_request_dto = self.order_service.create_order_request_dto(candle_request_dto, data, stage)
 
