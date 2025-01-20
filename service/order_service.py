@@ -172,7 +172,7 @@ class OrderService:
             up_hist, mid_hist, low_hist = data[MACD.UP_HIST], data[MACD.MID_HIST], data[MACD.LOW_HIST]
 
             MY_VOL = self.upbit_module.get_balance(candle_request_dto.ticker)
-            if MY_VOL is not None and MY_VOL != 0 and MY_KRW > PRICE:
+            if MY_VOL is None or MY_VOL == 0 and MY_KRW > PRICE:
                 # 매수 검토
                 if stage == StageType.STABLE_DECREASE or stage == StageType.END_OF_DECREASE or stage == StageType.START_OF_INCREASE:
                     peekout = all(
