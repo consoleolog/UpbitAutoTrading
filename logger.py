@@ -1,19 +1,13 @@
+# -*- coding: utf-8 -*-
 import logging
 import os
-import smtplib
-from email import encoders
-from email.mime.base import MIMEBase
-from email.mime.multipart import MIMEMultipart
 from logging.handlers import RotatingFileHandler
 
-from dotenv import load_dotenv
+LOG_FOLDER = f"{os.getcwd()}/log"
+FMT = f"[%(levelname)s] %(asctime)s : %(module)s : %(funcName)s : %(lineno)d :: -  %(message)s"
+DATE_FMT = '%Y-%m-%d %H:%M:%S'
 
-load_dotenv()
-
-class Logger:
-
-    FMT = f"[%(levelname)s] %(asctime)s : %(module)s : %(funcName)s : %(lineno)d :: -  %(message)s"
-    DATE_FMT = '%Y-%m-%d %H:%M:%S'
+class LoggerFactory:
 
     class CustomFormatter(logging.Formatter):
         grey = '\x1b[38;21m'
@@ -42,9 +36,7 @@ class Logger:
             formatter = logging.Formatter(log_fmt, datefmt=self.datefmt)
             return formatter.format(record)
 
-    LOG_FOLDER = f"{os.getcwd()}/log"
-    DEFAULT_FILE_NAME = "auto_trading.log"
-    LOG_FILE = f"{LOG_FOLDER}/{DEFAULT_FILE_NAME}"
+    LOG_FOLDER = LOG_FOLDER
     LOG_FILE_SIZE = 2097152
     BACKUP_COUNT = 10
     CRITICAL = 50
@@ -53,22 +45,14 @@ class Logger:
     INFO = 20
     DEBUG = 10
     NOTSET = 0
+
     try:
         if not os.path.exists(LOG_FOLDER):
             os.makedirs(LOG_FOLDER)
     except OSError:
-        print(f" 폴더 생성하다 에러남 {LOG_FOLDER}")
+        print(f"Error with Create Folder {LOG_FOLDER}")
 
     FORMATTER = logging.Formatter(fmt=FMT)
-
-    HANDLER = RotatingFileHandler(
-        encoding='utf-8',
-        filename=LOG_FILE,
-        maxBytes=LOG_FILE_SIZE,
-        backupCount=BACKUP_COUNT
-    )
-    HANDLER.setLevel(logging.DEBUG)
-    HANDLER.setFormatter(FORMATTER)
 
     STREAM_HANDLER = logging.StreamHandler()
     STREAM_HANDLER.setLevel(logging.DEBUG)
@@ -76,14 +60,33 @@ class Logger:
     REGISTERED_LOGGER = {}
 
     @classmethod
-    def get_logger(cls, name):
+    def get_logger(cls, name, log_file=None):
+        """
+        :param name: 로거 이름
+        :param log_file: 로그 파일 이름 (기본값: name.log)
+        :return: logging.Logger 객체
+        """
         logger = logging.getLogger(name)
         if name in cls.REGISTERED_LOGGER:
             return logger
 
+        if log_file is None:
+            log_file = f"{name}.log"
+        log_file_path = f"{cls.LOG_FOLDER}/{log_file}"
+
+        file_handler = RotatingFileHandler(
+            filename=log_file_path,
+            maxBytes=cls.LOG_FILE_SIZE,
+            backupCount=cls.BACKUP_COUNT,
+            encoding='utf-8'
+        )
+        file_handler.setLevel(logging.DEBUG)
+        file_handler.setFormatter(cls.FORMATTER)
+
         logger.addHandler(cls.STREAM_HANDLER)
-        logger.addHandler(cls.HANDLER)
+        logger.addHandler(file_handler)
         logger.setLevel(logging.DEBUG)
+
         cls.REGISTERED_LOGGER[name] = logger
         return logger
 
@@ -100,43 +103,22 @@ class Logger:
         cls.STREAM_HANDLER.setLevel(level)
 
     @classmethod
-    def change_log_file(cls, log_file=DEFAULT_FILE_NAME):
-        """파일 핸들러의 로그 파일을 변경"""
-        old_log_file = f"{cls.LOG_FILE}.1"
-        cls.LOG_FILE = f"{cls.LOG_FOLDER}/{log_file}"
+    def change_log_file(cls, log_file):
+        """모든 로거의 파일 핸들러 로그 파일 변경"""
         new_file_handler = RotatingFileHandler(
-            filename=cls.LOG_FILE,
+            filename=f"{cls.LOG_FOLDER}/{log_file}",
             maxBytes=cls.LOG_FILE_SIZE,
             backupCount=cls.BACKUP_COUNT,
+            encoding='utf-8'
         )
         new_file_handler.setLevel(logging.DEBUG)
         new_file_handler.setFormatter(cls.FORMATTER)
 
         for logger in cls.REGISTERED_LOGGER.values():
-            logger.removeHandler(cls.HANDLER)
+            for handler in logger.handlers:
+                if isinstance(handler, RotatingFileHandler):
+                    logger.removeHandler(handler)
+                    break
             logger.addHandler(new_file_handler)
-            cls.HANDLER.close()
 
         cls.HANDLER = new_file_handler
-
-        msg = MIMEMultipart('alternative')
-        msg['Subject'] = '[Upbit Auto Trading] 로그 파일 백업'
-        msg['From'] = os.getenv('SMTP_FROM')
-        msg['To'] = os.getenv('SMTP_TO')
-        with open(cls.LOG_FILE, 'rb') as handler:
-            file = MIMEBase('application', 'octet-stream')
-            file.set_payload(handler.read())
-            encoders.encode_base64(file)
-            file.add_header("Content-Disposition", f'attachment; filename="{old_log_file}"')
-            msg.attach(file)
-        s = smtplib.SMTP(os.getenv('SMTP_HOST'), os.getenv('SMTP_PORT') or 587)
-        s.starttls()
-        s.login(os.getenv("SMTP_ID"), os.getenv("SMTP_PASSWORD"))
-        s.sendmail(msg['From'], msg['To'], msg.as_string())
-        s.close()
-
-        try:
-            if os.path.exists(old_log_file):
-                os.remove(old_log_file)
-        except Exception as e:
-            print(f"기존 로그 파일 삭제 중 오류 발생: {e}")
