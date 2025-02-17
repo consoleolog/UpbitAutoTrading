@@ -24,7 +24,7 @@ conn = psycopg2.connect(
     port=port,
 )
 
-def insert_order(order_info: OrderInfo):
+async def insert_order(order_info: OrderInfo):
     cur = conn.cursor()
     cur.execute(
         """

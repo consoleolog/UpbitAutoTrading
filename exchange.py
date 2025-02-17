@@ -28,14 +28,14 @@ def get_krw() -> float:
     krw = balances["KRW"]
     return float(krw["free"])
 
-def create_buy_order(ticker:str, amount: float):
+async def create_buy_order(ticker:str, amount: float):
     ex.options['createMarketBuyOrderRequiresPrice'] = False
     return ex.create_market_buy_order(
         symbol=ticker,
         amount=amount
     )
 
-def create_sell_order(ticker:str, amount: float):
+async def create_sell_order(ticker:str, amount: float):
     return ex.create_market_sell_order(
         symbol=ticker,
         amount=amount
