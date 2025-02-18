@@ -52,4 +52,4 @@ def get_data(ticker, timeframe, short_period = 5, mid_period= 20, long_period = 
 
 def get_profit(order, curr_price):
     buy_price = float(order["price"])
-    return (curr_price - buy_price) / (buy_price * 100.0)
+    return ((curr_price - buy_price) / buy_price) * 100.0
