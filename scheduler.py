@@ -15,7 +15,6 @@ trade_scheduler.add_job(
             "BTC/KRW",
             "ETH/KRW",
             "BCH/KRW",
-            "ENS/KRW",
             "SOL/KRW",
             "ETC/KRW",
         ]
