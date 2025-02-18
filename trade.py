@@ -17,11 +17,12 @@ def execute(ticker, timeframe: TimeFrame):
     balance = exchange.get_balance(ticker)
 
     if balance == 0:
-        bullish = data[MACD.SHORT_BULLISH].iloc[-2:].isin([True]).any()
-        if bullish and rsi <= 43 and stage in [Stage.STABLE_DECREASE, Stage.END_OF_DECREASE, Stage.START_OF_INCREASE]:
+        short_bullish = data[MACD.SHORT_BULLISH].iloc[-2:].isin([True]).any()
+        long_bullish = data[MACD.LONG_BULLISH].iloc[-2:].isin([True]).any()
+        if (short_bullish or long_bullish) and rsi <= 45 and stage in [Stage.STABLE_DECREASE, Stage.END_OF_DECREASE, Stage.START_OF_INCREASE]:
             exchange.create_buy_order(ticker, 20000)
             mapper.insert_order(ticker, float(data["close"].iloc[-1]), "bid")
-        info["data"] = f"[MACD: {bullish} | RSI: {rsi}]"
+        info["data"] = f"[MACD: 1020 {short_bullish} | 1326 {long_bullish} | RSI: {rsi}]"
     else:
         orders = mapper.get_buy_order(ticker)
         profit = utils.get_profit(orders.iloc[-1], data["close"].iloc[-1])
