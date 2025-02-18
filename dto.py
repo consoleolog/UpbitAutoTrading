@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 from pandas import DataFrame
-
 from constant import Stage, EMA
-
 
 class EMADto:
     def __init__(self, data, period:int):
@@ -198,6 +196,8 @@ class OrderInfo:
         self.locked = locked
         self.executed_volume = executed_volume
         self.trades_count = trades_count
+        self.volume = volume
+        self.remaining_volume = remaining_volume
 
     @staticmethod
     def from_buy(dicts):

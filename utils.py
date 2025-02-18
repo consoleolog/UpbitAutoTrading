@@ -23,6 +23,7 @@ def get_data(ticker, timeframe, short_period = 5, mid_period= 20, long_period = 
     LongMACD = MACDDto(data, 12, 26)
     data[MACD.LONG] = LongMACD.val
     data[MACD.LONG_SIG] = LongMACD.signal
+    data[MACD.LONG_HIST] = LongMACD.histogram
     data[MACD.LONG_BULLISH] = LongMACD.bullish
     data[MACD.LONG_BEARISH] = LongMACD.bearish
 
@@ -48,3 +49,7 @@ def get_data(ticker, timeframe, short_period = 5, mid_period= 20, long_period = 
     data[RSI.LONG_BEARISH] = LongRSI.bearish
 
     return data
+
+def get_profit(order, curr_price):
+    buy_price = float(order["price"])
+    return ((curr_price - buy_price) / buy_price) * 100.0

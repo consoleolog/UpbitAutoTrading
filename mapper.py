@@ -1,10 +1,9 @@
+# -*- coding: utf-8 -*-
+import os
 import pandas as pd
 import psycopg2
-
-import os
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
-
 from dto import OrderInfo
 
 load_dotenv()
@@ -24,7 +23,7 @@ conn = psycopg2.connect(
     port=port,
 )
 
-async def insert_order(order_info: OrderInfo):
+def insert_order(order_info: OrderInfo):
     cur = conn.cursor()
     cur.execute(
         """
