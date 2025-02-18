@@ -25,12 +25,17 @@ def get_krw() -> float:
     krw = balances["KRW"]
     return float(krw["free"])
 
-def create_buy_order(ticker:str, amount: float):
+def create_buy_order(ticker: str, amount: float):
+    ex.load_markets()
+    market_info = ex.market(ticker)
     ex.options['createMarketBuyOrderRequiresPrice'] = False
+
     return ex.create_market_buy_order(
         symbol=ticker,
-        amount=amount
+        amount=amount,
+        params={'market': market_info}  # 명확한 마켓 정보 전달
     )
+
 
 def create_sell_order(ticker:str, amount: float):
     return ex.create_market_sell_order(
