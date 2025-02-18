@@ -23,13 +23,13 @@ conn = psycopg2.connect(
     port=port,
 )
 
-def insert_order(order_info: OrderInfo):
+def insert_order(market, price, side):
     cur = conn.cursor()
     cur.execute(
         """
         INSERT INTO UPBIT_ORDER(TICKER, PRICE, SIDE)
         VALUES (%s, %s, %s);
-        """,(order_info.market, order_info.locked, order_info.side),
+        """,(market, price, side),
     )
     conn.commit()
     cur.close()
