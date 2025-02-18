@@ -45,7 +45,7 @@ def get_buy_order(_ticker):
     FROM UPBIT_ORDER AS O
     WHERE O.TICKER = %(ticker)s
     AND O.SIDE = 'bid'
-    ORDER BY O.CREATED_AT
+    ORDER BY O.CREATED_AT DESC
     LIMIT 1;
     """
     params = {"ticker": ticker}
