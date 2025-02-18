@@ -45,7 +45,8 @@ def get_buy_order(_ticker):
     FROM UPBIT_ORDER AS O
     WHERE O.TICKER = %(ticker)s
     AND O.SIDE = 'bid'
-    ORDER BY O.CREATED_AT DESC;
+    ORDER BY O.CREATED_AT
+    LIMIT 1;
     """
     params = {"ticker": ticker}
     return pd.read_sql(sql, engine, params=params)
