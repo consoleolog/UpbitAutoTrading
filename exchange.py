@@ -26,10 +26,21 @@ def get_krw() -> float:
     return float(krw["free"])
 
 def create_buy_order(ticker: str, amount: float):
-    ex.load_markets()
     ex.options['createMarketBuyOrderRequiresPrice'] = False
-    format_ticker = ticker.split("/")[1] + "-" + ticker.split("/")[0]
+    ex.encode = lambda s: s.encode('utf-8')
+
+    format_ticker = ticker
+    if "/" in ticker:
+        base, quote = ticker.split("/")
+        format_ticker = f"{quote}-{base}"
     try:
+        return ex.create_market_buy_order(
+            symbol=format_ticker,
+            amount=amount,
+        )
+    except UnicodeEncodeError as e:
+        print(e)
+        format_ticker = format_ticker.encode("utf-8")
         return ex.create_market_buy_order(
             symbol=format_ticker,
             amount=amount,
@@ -40,6 +51,7 @@ def create_buy_order(ticker: str, amount: float):
             symbol=ticker,
             amount=amount,
         )
+
 
 def create_sell_order(ticker:str, amount: float):
     return ex.create_market_sell_order(
