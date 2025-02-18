@@ -3,6 +3,8 @@ import os
 import ccxt
 import pandas as pd
 from dotenv import load_dotenv
+from pyupbit import Upbit
+
 from constant import TimeFrame
 from dto import TickerInfo
 
@@ -26,27 +28,21 @@ def get_krw() -> float:
     return float(krw["free"])
 
 def create_buy_order(ticker: str, amount: float):
-    ex.options['createMarketBuyOrderRequiresPrice'] = False
-    ex.encode = lambda s: s.encode('utf-8')
-    try:
-        return ex.create_market_buy_order(
-            symbol=ticker,
-            amount=amount,
-        )
-    except Exception as e:
-        symbol, payment_currency = ticker.split("/")
-        format_ticker = f"{payment_currency}-{symbol}"
-        return ex.create_market_buy_order(
-            symbol=format_ticker,
-            amount=amount,
-        )
-
-
+    symbol, payment_currency = ticker.split("/")
+    format_ticker = f"{payment_currency}-{symbol}"
+    upbit = Upbit(accessKey, secretKey)
+    return upbit.buy_market_order(
+        ticker=format_ticker,
+        price=amount,
+    )
 
 def create_sell_order(ticker:str, amount: float):
-    return ex.create_market_sell_order(
-        symbol=ticker,
-        amount=amount
+    symbol, payment_currency = ticker.split("/")
+    format_ticker = f"{payment_currency}-{symbol}"
+    upbit = Upbit(accessKey, secretKey)
+    return upbit.sell_market_order(
+        ticker=format_ticker,
+        volume=amount,
     )
 
 def get_current_price(ticker:str)->float:
