@@ -34,8 +34,7 @@ def insert_order(market, price, side):
     conn.commit()
     cur.close()
 
-def get_buy_order(_ticker):
-    ticker = _ticker.split("/")[1] + "-" + _ticker.split("/")[0]
+def get_buy_order(ticker):
     sql = """
     SELECT O.ORDER_ID,
            O.TICKER,
