@@ -10,7 +10,7 @@ trade_scheduler.add_job(
     trigger='interval',
     minutes=2,
     kwargs={
-        "timeframe": TimeFrame.MINUTE_5,
+        "timeframe": TimeFrame.MINUTE_15,
         "tickers": [
             "BTC/KRW",
             "ETH/KRW",
