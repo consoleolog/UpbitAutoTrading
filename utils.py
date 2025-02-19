@@ -49,7 +49,3 @@ def get_data(ticker, timeframe, short_period = 5, mid_period= 20, long_period = 
     data[RSI.LONG_BEARISH] = LongRSI.bearish
 
     return data
-
-def get_profit(order, curr_price):
-    buy_price = float(order["price"])
-    return ((curr_price - buy_price) / buy_price) * 100.0

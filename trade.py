@@ -1,13 +1,19 @@
 # -*- coding: utf-8 -*-
 import exchange
-import utils
 import mapper
+import utils
 from constant import RSI, MACD, TimeFrame, Stage
 from dto import EMADto, OrderInfo
 from concurrent.futures import ThreadPoolExecutor
 from logger import LoggerFactory
 
 logger = LoggerFactory().get_logger("trade", "UpbitTrading")
+
+def calculate_profit(ticker):
+    orders = mapper.get_buy_order(ticker)
+    buy_price = float(orders.iloc[-1]["price"])
+    curr_price = exchange.get_current_price(ticker)
+    return ((curr_price - buy_price) / buy_price) * 100.0
 
 def execute(ticker, timeframe: TimeFrame):
     info = {}
@@ -21,15 +27,14 @@ def execute(ticker, timeframe: TimeFrame):
         long_bullish = data[MACD.LONG_BULLISH].iloc[-2:].isin([True]).any()
         if (short_bullish or long_bullish) and rsi <= 45 and stage in [Stage.STABLE_DECREASE, Stage.END_OF_DECREASE, Stage.START_OF_INCREASE]:
             exchange.create_buy_order(ticker, 20000)
-            mapper.insert_order(ticker, float(data["close"].iloc[-1]), "bid")
+            mapper.insert_order(ticker, exchange.get_current_price(ticker), "bid")
         info["data"] = f"[MACD: 1020 {short_bullish} | 1326 {long_bullish} | RSI: {rsi}]"
     else:
-        orders = mapper.get_buy_order(ticker)
-        profit = utils.get_profit(orders.iloc[-1], data["close"].iloc[-1])
-        if profit >= 0.1:
+        profit = calculate_profit(ticker)
+        if profit > 0.1:
             exchange.create_sell_order(ticker, balance)
-            mapper.insert_order(ticker, float(data["close"].iloc[-1]), "ask")
-        info["profit"] = f"[Profit: {profit}]"
+            mapper.insert_order(ticker, exchange.get_current_price(ticker), "ask")
+        info["profit"] = profit
     info["info"] = f"[Ticker: {ticker} | Stage: {stage}]"
     return info
 

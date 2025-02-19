@@ -16,7 +16,7 @@ ex = ccxt.upbit(config={
     'secret': secretKey,
     'enableRateLimit': True,
 })
-
+upbit = Upbit(accessKey, secretKey)
 def get_ticker_info(ticker:str) -> TickerInfo:
     tickers = ex.fetch_tickers()
     info = tickers[ticker]
@@ -28,20 +28,18 @@ def get_krw() -> float:
     return float(krw["free"])
 
 def create_buy_order(ticker: str, amount: float):
-    symbol, payment_currency = ticker.split("/")
-    format_ticker = f"{payment_currency}-{symbol}"
-    upbit = Upbit(accessKey, secretKey)
     return upbit.buy_market_order(
-        ticker=format_ticker,
+        ticker=format_ticker(ticker),
         price=amount,
     )
 
-def create_sell_order(ticker:str, amount: float):
+def format_ticker(ticker):
     symbol, payment_currency = ticker.split("/")
-    format_ticker = f"{payment_currency}-{symbol}"
-    upbit = Upbit(accessKey, secretKey)
+    return f"{payment_currency}-{symbol}"
+
+def create_sell_order(ticker:str, amount: float):
     return upbit.sell_market_order(
-        ticker=format_ticker,
+        ticker=format_ticker(ticker),
         volume=amount,
     )
 
@@ -55,9 +53,9 @@ def get_avg_buy_price(ticker:str)->float:
 
 def get_balance(ticker: str) -> float:
     try:
-        format_ticker = ticker.replace("/KRW", "")
+        t = ticker.replace("/KRW", "")
         balances = ex.fetch_balance()
-        balance = balances[format_ticker]
+        balance = balances[t]
         return float(balance['free'])
     except KeyError:
         return float(0)
