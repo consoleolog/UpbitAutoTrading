@@ -27,10 +27,11 @@ def get_krw() -> float:
     krw = balances["KRW"]
     return float(krw["free"])
 
-def create_buy_order(ticker: str, amount: float):
-    return upbit.buy_market_order(
-        ticker=format_ticker(ticker),
-        price=amount,
+def create_buy_order(ticker:str, amount: float):
+    ex.options['createMarketBuyOrderRequiresPrice'] = False
+    return ex.create_market_buy_order(
+        symbol=ticker,
+        amount=amount
     )
 
 def format_ticker(ticker):
@@ -38,9 +39,9 @@ def format_ticker(ticker):
     return f"{payment_currency}-{symbol}"
 
 def create_sell_order(ticker:str, amount: float):
-    return upbit.sell_market_order(
-        ticker=format_ticker(ticker),
-        volume=amount,
+    return ex.create_market_sell_order(
+        symbol=ticker,
+        amount=amount
     )
 
 def get_current_price(ticker:str)->float:
