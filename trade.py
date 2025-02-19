@@ -11,7 +11,7 @@ logger = LoggerFactory().get_logger("trade", "UpbitTrading")
 
 def execute(ticker, timeframe: TimeFrame):
     info = {}
-    data = utils.get_data(ticker, timeframe)
+    data = utils.get_data(ticker, timeframe, 5, 8, 13)
     stage = EMADto.get_stage(data)
     rsi = data[RSI.LONG].iloc[-1]
     balance = exchange.get_balance(ticker)
