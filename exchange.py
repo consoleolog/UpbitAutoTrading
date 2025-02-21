@@ -4,6 +4,7 @@ import ccxt
 import pandas as pd
 from dotenv import load_dotenv
 from pyupbit import Upbit
+import pyupbit
 
 from constant import TimeFrame
 from dto import TickerInfo
@@ -45,8 +46,7 @@ def create_sell_order(ticker:str, amount: float):
     )
 
 def get_current_price(ticker:str)->float:
-    ticker_info = get_ticker_info(ticker)
-    return float(ticker_info.close)
+    return pyupbit.get_current_price(format_ticker(ticker))
 
 def get_avg_buy_price(ticker:str)->float:
     ticker_info = get_ticker_info(ticker)
