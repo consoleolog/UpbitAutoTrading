@@ -22,12 +22,18 @@ def execute(ticker, timeframe: TimeFrame):
     balance = exchange.get_balance(ticker)
 
     if balance == 0:
-        short_bullish = data[MACD.SHORT_BULLISH].iloc[-2:].isin([True]).any()
-        long_bullish = data[MACD.LONG_BULLISH].iloc[-2:].isin([True]).any()
-        if (short_bullish or long_bullish) and rsi <= 45 and stage in [Stage.STABLE_DECREASE, Stage.END_OF_DECREASE, Stage.START_OF_INCREASE]:
+        peekout = all([
+            data[MACD.SHORT_HIST].iloc[-1] <= 0,
+            data[MACD.MID_HIST].iloc[-1] <= 0,
+            data[MACD.LONG_HIST].iloc[-1] <= 0,
+            data[MACD.SHORT_HIST].iloc[-1] > data[MACD.SHORT_HIST].iloc[-7:].min(),
+            data[MACD.MID_HIST].iloc[-1] > data[MACD.MID_HIST].iloc[-7:].min(),
+            data[MACD.LONG_HIST].iloc[-1] > data[MACD.LONG_HIST].iloc[-7:].min() 
+        ])
+        if peekout and rsi <= 45 and stage in [Stage.STABLE_DECREASE, Stage.END_OF_DECREASE, Stage.START_OF_INCREASE]:
             mapper.insert_order(ticker, exchange.get_current_price(ticker), "bid")
             exchange.create_buy_order(ticker, 20000)
-        info["data"] = f"[MACD: 1020 {short_bullish} | 1326 {long_bullish} | RSI: {rsi}]"
+        info["data"] = f"[MACD: {peekout} | RSI: {rsi}]"
     else:
         profit = calculate_profit(ticker, float(data["close"].iloc[-1]))
         if profit > 0.1:

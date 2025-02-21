@@ -13,14 +13,21 @@ def get_data(ticker, timeframe, short_period = 5, mid_period= 20, long_period = 
     data[EMA.LONG] = EMADto(data["close"], long_period).val
 
     # MACD
-    ShortMACD = MACDDto(data, 10, 20)
+    ShortMACD = MACDDto(data, short_period, mid_period)
     data[MACD.SHORT] = ShortMACD.val
     data[MACD.SHORT_SIG]  = ShortMACD.signal
     data[MACD.SHORT_HIST] = ShortMACD.histogram
     data[MACD.SHORT_BULLISH] = ShortMACD.bullish
     data[MACD.SHORT_BEARISH] = ShortMACD.bearish
+    
+    MidMACD = MACDDto(data, short_period, long_period)
+    data[MACD.MID] = MidMACD.val
+    data[MACD.MID_SIG] = MidMACD.signal
+    data[MACD.MID_HIST] = MidMACD.histogram
+    data[MACD.MID_BULLISH] = MidMACD.bullish
+    data[MACD.MID_BEARISH] = MidMACD.bearish
 
-    LongMACD = MACDDto(data, 12, 26)
+    LongMACD = MACDDto(data, mid_period, long_period)
     data[MACD.LONG] = LongMACD.val
     data[MACD.LONG_SIG] = LongMACD.signal
     data[MACD.LONG_HIST] = LongMACD.histogram
