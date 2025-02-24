@@ -38,7 +38,7 @@ def execute(ticker, timeframe: TimeFrame):
         info["data"] = f"[MACD: {peekout} | RSI: {rsi}]"
     else:
         profit = calculate_profit(ticker, exchange.get_current_price(ticker))
-        if profit > 0.1:
+        if profit > 0.1 and stage in [Stage.STABLE_INCREASE, Stage.END_OF_INCREASE, Stage.START_OF_DECREASE]:
             mapper.insert_order(ticker, exchange.get_current_price(ticker), "ask")
             exchange.create_sell_order(ticker, balance)
         info["profit"] = profit
