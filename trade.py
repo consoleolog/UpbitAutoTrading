@@ -2,7 +2,7 @@
 import exchange
 import mapper
 import utils
-from constant import RSI, MACD, TimeFrame, Stage
+from constant import RSI, MACD, TimeFrame, Stage, STOCHASTIC
 from dto import EMADto
 from concurrent.futures import ThreadPoolExecutor
 from logger import LoggerFactory
@@ -46,6 +46,10 @@ def execute(ticker, timeframe: TimeFrame):
 
     if balance != 0:
         profit = calculate_profit(ticker, exchange.get_current_price(ticker))
+        stoch_bearish = data[STOCHASTIC.BEARISH].iloc[-2:].isin([True]).any()
+        if profit < 0 and stoch_bearish and stage == Stage.STABLE_INCREASE:
+            mapper.update_status(ticker, exchange.get_current_price(ticker), "ask")
+            exchange.create_sell_order(ticker, balance)
         if profit > 0.1 and stage in [Stage.STABLE_INCREASE, Stage.END_OF_INCREASE, Stage.START_OF_DECREASE]:
             mapper.update_status(ticker, exchange.get_current_price(ticker), "ask")
             exchange.create_sell_order(ticker, balance)
