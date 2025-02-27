@@ -4,7 +4,6 @@ import pandas as pd
 import psycopg2
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
-from dto import OrderInfo
 
 load_dotenv()
 host = os.getenv("DB_HOST")
@@ -23,30 +22,44 @@ conn = psycopg2.connect(
     port=port,
 )
 
-def insert_order(market, price, side):
+def init_status(ticker):
+    cur = conn.cursor()
+    try:
+        cur.execute(
+            """
+            INSERT INTO UPBIT_STATUS(TICKER)
+            VALUES (%s);
+            """, (ticker,)
+        )
+        conn.commit()
+        cur.close()
+    except psycopg2.errors.UniqueViolation:
+        conn.rollback()
+
+def update_status(ticker, price, side):
     cur = conn.cursor()
     cur.execute(
         """
-        INSERT INTO UPBIT_ORDER(TICKER, PRICE, SIDE)
-        VALUES (%s, %s, %s);
-        """,(market, price, side),
+        UPDATE UPBIT_STATUS
+        SET PRICE = %s,
+            SIDE = %s,
+            UPDATED_AT = NOW()
+        WHERE UPBIT_STATUS.TICKER = %s;
+        """,(price, side, ticker)
     )
     conn.commit()
     cur.close()
 
-def get_buy_order(ticker):
+def get_status(ticker):
     sql = """
-    SELECT O.ORDER_ID,
-           O.TICKER,
-           O.PRICE,
-           O.SIDE,
-           O.CREATED_AT
-    FROM UPBIT_ORDER AS O
-    WHERE O.TICKER = %(ticker)s
-    AND O.SIDE = 'bid'
-    ORDER BY O.CREATED_AT DESC
-    LIMIT 1;
+    SELECT S.TICKER,
+           S.PRICE,
+           S.SIDE,
+           S.CREATED_AT,
+           S.UPDATED_AT
+    FROM UPBIT_STATUS AS S 
+    WHERE S.TICKER = %(ticker)s
     """
     params = {"ticker": ticker}
-    return pd.read_sql(sql, engine, params=params)
-
+    data = pd.read_sql(sql, engine, params=params)
+    return data.iloc[-1]
