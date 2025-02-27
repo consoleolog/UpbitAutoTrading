@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import cctx
+
 import exchange
 import mapper
 import utils
@@ -39,9 +41,9 @@ def execute(ticker, timeframe: TimeFrame):
         data[MACD.MID_BULLISH].iloc[-2:].isin([True]).any(),
         data[MACD.LONG_BULLISH].iloc[-2:].isin([True]).any(),
     ])
-    if bullish and rsi <= 40 and stage in [Stage.STABLE_DECREASE, Stage.END_OF_DECREASE, Stage.START_OF_INCREASE]:
-        update_status(ticker)
+    if bullish and rsi <= 40 and exchange.get_krw() > 20000 and stage in [Stage.STABLE_DECREASE, Stage.END_OF_DECREASE, Stage.START_OF_INCREASE]:
         exchange.create_buy_order(ticker, 20000)
+        update_status(ticker)
     info["data"] = f"[MACD: {peekout} | RSI: {rsi}]"
 
     if balance != 0:
