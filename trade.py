@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import cctx
-
 import exchange
 import mapper
 import utils
