@@ -52,8 +52,6 @@ def execute(ticker, timeframe: TimeFrame):
         if profit < 0 and (stoch_bearish or macd_bearish or rsi_bearish) and stage == Stage.STABLE_INCREASE:
             mapper.update_status(ticker, exchange.get_current_price(ticker), "ask")
             exchange.create_sell_order(ticker, balance)
-        if macd_bearish and stage in [Stage.STABLE_DECREASE, Stage.END_OF_DECREASE, Stage.START_OF_INCREASE]:
-            pass
         if profit > 0.1 and (stoch_bearish or macd_bearish or rsi_bearish):
             mapper.update_status(ticker, exchange.get_current_price(ticker), "ask")
             exchange.create_sell_order(ticker, balance)
