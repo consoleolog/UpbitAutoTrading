@@ -28,29 +28,24 @@ def execute(ticker, timeframe: TimeFrame):
     stage = EMADto.get_stage(data)
     rsi = data[RSI.LONG].iloc[-1]
     balance = exchange.get_balance(ticker)
-
-    peekout = all([
-        data[MACD.SHORT_HIST].iloc[-1] > data[MACD.SHORT_HIST].iloc[-7:].min(),
-        data[MACD.MID_HIST].iloc[-1] > data[MACD.MID_HIST].iloc[-7:].min(),
-        data[MACD.LONG_HIST].iloc[-1] > data[MACD.LONG_HIST].iloc[-7:].min()
-    ])
+    info["info"] = f"[Ticker: {ticker} | Stage: {stage}]"
     bullish = all([
         data[MACD.SHORT_BULLISH].iloc[-2:].isin([True]).any(),
         data[MACD.MID_BULLISH].iloc[-2:].isin([True]).any(),
         data[MACD.LONG_BULLISH].iloc[-2:].isin([True]).any(),
     ])
+    info["data"] = f"[MACD: {bullish} | RSI: {rsi}]"
     if bullish and rsi <= 40 and exchange.get_krw() > 20000 and stage in [Stage.STABLE_DECREASE, Stage.END_OF_DECREASE, Stage.START_OF_INCREASE]:
         exchange.create_buy_order(ticker, 20000)
         update_status(ticker)
-    info["data"] = f"[MACD: {peekout} | RSI: {rsi}]"
+        return info
 
     if balance != 0:
         profit = calculate_profit(ticker, exchange.get_current_price(ticker))
         stoch_bearish = data[STOCHASTIC.BEARISH].iloc[-2:].isin([True]).any()
         macd_bearish = data[MACD.LONG_BEARISH].iloc[-2:].isin([True]).any() or data[MACD.SHORT_BEARISH].iloc[-2:].isin([True]).any()
-        rsi_bearish = data[RSI.LONG_BEARISH].iloc[-2:].isin([True]).any()
+        rsi_bearish = data[RSI.LONG_BEARISH].iloc[-2:].isin([True]).any() or data[MACD.SHORT_BEARISH].iloc[-2:].isin([True]).any()
         info["profit"] = profit
-        info["info"] = f"[Ticker: {ticker} | Stage: {stage}]"
         if profit < 0 and (stoch_bearish or macd_bearish or rsi_bearish) and stage == Stage.STABLE_INCREASE:
             mapper.update_status(ticker, exchange.get_current_price(ticker), "ask")
             exchange.create_sell_order(ticker, balance)
@@ -64,6 +59,7 @@ def execute(ticker, timeframe: TimeFrame):
             exchange.create_sell_order(ticker, balance)
             return info
     return info
+
 def loop(tickers, timeframe, workers=3):
     with ThreadPoolExecutor(max_workers=workers) as executor:
         futures = [executor.submit(execute, ticker, timeframe) for ticker in tickers]
