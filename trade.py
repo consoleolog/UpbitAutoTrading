@@ -35,8 +35,8 @@ def execute(ticker, timeframe: TimeFrame):
         data[MACD.LONG_BULLISH].iloc[-2:].isin([True]).any(),
     ])
     info["data"] = f"[MACD: {bullish} | RSI: {rsi}]"
-    if bullish and (rsi <= 40 or rsi > 50) and exchange.get_krw() > 20000 and stage in [Stage.STABLE_DECREASE, Stage.END_OF_DECREASE, Stage.START_OF_INCREASE]:
-        exchange.create_buy_order(ticker, 20000)
+    if bullish and rsi <= 35 and exchange.get_krw() > 30000 and stage in [Stage.STABLE_DECREASE, Stage.END_OF_DECREASE, Stage.START_OF_INCREASE]:
+        exchange.create_buy_order(ticker, 30000)
         update_status(ticker)
         return info
 
@@ -46,10 +46,6 @@ def execute(ticker, timeframe: TimeFrame):
         macd_bearish = data[MACD.LONG_BEARISH].iloc[-2:].isin([True]).any() or data[MACD.SHORT_BEARISH].iloc[-2:].isin([True]).any()
         info["profit"] = profit
         if profit < 0 and (stoch_bearish or macd_bearish) and stage == Stage.STABLE_INCREASE:
-            mapper.update_status(ticker, exchange.get_current_price(ticker), "ask")
-            exchange.create_sell_order(ticker, balance)
-            return info
-        if macd_bearish:
             mapper.update_status(ticker, exchange.get_current_price(ticker), "ask")
             exchange.create_sell_order(ticker, balance)
             return info
