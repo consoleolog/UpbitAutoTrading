@@ -10,6 +10,8 @@ tickers = [
     "ETH/KRW",
     "BCH/KRW",
     "SOL/KRW",
+    "AAVE/KRW",
+    "BSV/KRW"
 ]
 trade_scheduler.add_job(
     func=trade.loop,
