@@ -33,6 +33,8 @@ def execute(ticker, timeframe: TimeFrame):
         data[MACD.SHORT_BULLISH].iloc[-2:].isin([True]).any(),
         data[MACD.MID_BULLISH].iloc[-2:].isin([True]).any(),
         data[MACD.LONG_BULLISH].iloc[-2:].isin([True]).any(),
+        data[RSI.LONG_BULLISH].iloc[-4:].isin([True]).any(),
+        data[STOCHASTIC.BULLISH].iloc[-4:].isin([True]).any(),
     ])
     info["data"] = f"[MACD: {bullish} | RSI: {rsi}]"
     if bullish and rsi <= 40 and exchange.get_krw() > 20000 and stage in [Stage.STABLE_DECREASE, Stage.END_OF_DECREASE, Stage.START_OF_INCREASE]:
