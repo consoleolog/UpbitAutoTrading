@@ -6,7 +6,7 @@ on:
       - main
 jobs:
   SSH:
-    runs-on: ubuntu
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: ssh to compute engine
